@@ -530,6 +530,13 @@
 <body>
 
 <header class="header">
+  <div id="countdown-bar" style="display:none;background:rgba(200,150,62,0.15);border-bottom:1px solid rgba(200,150,62,0.25);padding:5px 16px;text-align:center;">
+    <span style="font-size:0.62rem;color:var(--dorado-claro);letter-spacing:0.08em;text-transform:uppercase;margin-right:8px;">✈️ El viaje comienza en</span>
+    <span id="cd-dias"  style="font-size:0.78rem;font-weight:700;color:white;"></span><span style="font-size:0.6rem;color:var(--dorado-claro);margin:0 4px;">d</span>
+    <span id="cd-horas" style="font-size:0.78rem;font-weight:700;color:white;"></span><span style="font-size:0.6rem;color:var(--dorado-claro);margin:0 4px;">h</span>
+    <span id="cd-mins"  style="font-size:0.78rem;font-weight:700;color:white;"></span><span style="font-size:0.6rem;color:var(--dorado-claro);margin:0 4px;">m</span>
+    <span id="cd-segs"  style="font-size:0.78rem;font-weight:700;color:white;"></span><span style="font-size:0.6rem;color:var(--dorado-claro);margin-left:4px;">s</span>
+  </div>
   <div class="header-inner">
     <div class="logo-area">
       <h1>Asturias · Concierge</h1>
@@ -563,12 +570,12 @@ const ITINERARIO = [
     manana: [
       { tipo: "traslado", emoji: "✈️", texto: "Transfer privado Aeropuerto OVD → Oviedo", detalle: "Minibús Mercedes-Benz con guía AsturiaMe", incluido: true },
       { tipo: "actividad", emoji: "🏨", texto: "Check-in Hotel Silken Monumental Naranco", detalle: "Asistencia durante el check-in", incluido: true },
-      { tipo: "gastro", emoji: "🍽️", texto: "Comida en restaurante seleccionado", detalle: "Mesa reservada · Consumo no incluido", incluido: false },
+      { tipo: "gastro", emoji: "🍽️", servicio: "Almuerzo", nombre: "Sidrería La Pumarada", subtipo: "Sidrería tradicional · Calle Gascona, Oviedo", precio: "€25–40", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=Sidrería+La+Pumarada+Oviedo+Calle+Gascona", incluido: false },
     ],
     tarde: [
       { tipo: "actividad", emoji: "🏛️", texto: "Visita guiada Casco Antiguo de Oviedo", detalle: "Antigua capital del Reino de Asturias · Plazas históricas y sidrerías", incluido: true },
       { tipo: "actividad", emoji: "⛪", texto: "Visita guiada Catedral con Cámara Santa (UNESCO)", detalle: "Patrimonio de la Humanidad", incluido: true },
-      { tipo: "gastro", emoji: "🦪", texto: "Cena en restaurante a definir", detalle: "Mesa reservada · Consumo no incluido", incluido: false },
+      { tipo: "gastro", emoji: "🦪", servicio: "Cena", nombre: "Restaurante El Monumental", subtipo: "Hotel Silken Monumental Naranco 4★ · Sin traslado", precio: "€30–50", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=Hotel+Silken+Monumental+Naranco+Oviedo", incluido: false },
     ],
     gastronomia: [
       { tipo: "Sidra Asturiana", nombre: "Calle Gascona — El Bulevar de la Sidra", desc: "La calle más célebre de Oviedo para iniciarse en el escanciado. Sidrerías tradicionales con bocados de queso afuega'l pitu y morcilla.", maps: "https://maps.google.com/?q=Calle+Gascona+Oviedo" },
@@ -584,11 +591,11 @@ const ITINERARIO = [
       { tipo: "traslado", emoji: "🚌", texto: "Salida de Oviedo rumbo al oriente asturiano", detalle: "Paisajes rurales, praderas y hórreos tradicionales", incluido: true },
       { tipo: "actividad", emoji: "🏔️", texto: "Visita Lagos de Covadonga (empresa autorizada)", detalle: "Parque Nacional Picos de Europa · Sujeto a climatología", incluido: true },
       { tipo: "actividad", emoji: "⛪", texto: "Visita Basílica y Santa Cueva de Covadonga", detalle: "Lugar fundacional del Reino de Asturias", incluido: true },
-      { tipo: "gastro", emoji: "🍲", texto: "Almuerzo en La Casa de la Fabada · 14:00 h", detalle: "Mesa reservada · Consumo no incluido", incluido: false },
+      { tipo: "gastro", emoji: "🍲", servicio: "Almuerzo · 14:00 h", nombre: "La Casa de la Fabada", subtipo: "Cocina tradicional asturiana · Soto de Cangas", precio: "€20–35", ninos: "Media", distincion: null, maps: "https://maps.google.com/?q=La+Casa+de+la+Fabada+Soto+de+Cangas", incluido: false },
     ],
     tarde: [
       { tipo: "actividad", emoji: "🌉", texto: "Visita guiada Cangas de Onís", detalle: "Puente romano medieval · Primera capital del Reino", incluido: true },
-      { tipo: "gastro", emoji: "🍽️", texto: "Cena en restaurante seleccionado en Gijón", detalle: "Mesa reservada · Consumo no incluido", incluido: false },
+      { tipo: "gastro", emoji: "🍽️", servicio: "Cena", nombre: "La Corte de Pelayo", subtipo: "Cocina asturiana · Frente al Teatro Campoamor · Oviedo", precio: "€35–55", ninos: "Media", distincion: "Cachopo Campeón de Asturias", maps: "https://maps.google.com/?q=La+Corte+de+Pelayo+Oviedo", incluido: false },
     ],
     gastronomia: [
       { tipo: "Almuerzo estrella", nombre: "La Casa de la Fabada · Arriondas", desc: "Referente indiscutible de la fabada asturiana. Faba asturiana con morcilla, chorizo y lacón curados. Ambiente rural auténtico.", maps: "https://maps.google.com/?q=La+Casa+de+la+Fabada+Arriondas+Asturias" },
@@ -602,11 +609,14 @@ const ITINERARIO = [
     hotel: { nombre: "Hotel Silken Monumental Naranco", estrellas: "4★", detalle: "3ª noche · Oviedo" },
     manana: [
       { tipo: "actividad", emoji: "🚲", texto: "Paseo familiar en bicicletas por la Senda del Oso", detalle: "Recorrido suave entre montañas, túneles y paisajes verdes. Apto para todas las edades", incluido: true },
-      { tipo: "gastro", emoji: "🍽️", texto: "Comida en restaurante seleccionado en Teverga", detalle: "Mesa reservada · Consumo no incluido", incluido: false },
+      { tipo: "gastro", emoji: "🍽️", servicio: "Almuerzo", nombre: "Taberna Narciso", subtipo: "Fundada en 1830 · Con música en directo · Teverga", precio: "€15–25", ninos: "Alta", distincion: "★ 4.7 · La mejor valorada del viaje", maps: "https://maps.google.com/?q=Taberna+Narciso+San+Martín+de+Teverga+Asturias", incluido: false },
     ],
     tarde: [
       { tipo: "actividad", emoji: "🏰", texto: "Paseo por el pueblo medieval de Bandujo", detalle: "Uno de los conjuntos rurales mejor conservados de Asturias", incluido: true },
-      { tipo: "gastro", emoji: "🥘", texto: "Cena en restaurante seleccionado en Oviedo", detalle: "Mesa reservada · Consumo no incluido", incluido: false },
+      { tipo: "gastro", emoji: "🥘", servicio: "Cena", nombre: "Casa Fermín", subtipo: "Alta cocina asturiana · Oviedo · Desde 1924", precio: "€70–100", ninos: "Baja", distincion: "Plato Michelin · 2 Soles Repsol", maps: "https://maps.google.com/?q=Casa+Fermín+Oviedo", incluido: false, kidsAlt: [
+        { nombre: "El Raitán", subtipo: "Sidrería tradicional · Plaza del Fontán · Ambiente familiar", precio: "€20–35", maps: "https://maps.google.com/?q=El+Raitán+Oviedo+Plaza+Fontan" },
+        { nombre: "Casa Conrado", subtipo: "Restaurante tradicional familiar desde 1985 · Argüelles 1, Oviedo", precio: "€25–40", maps: "https://maps.google.com/?q=Casa+Conrado+Oviedo" },
+      ]},
     ],
     gastronomia: [
       { tipo: "Zona Teverga", nombre: "Cocina de montaña — Valles del Oso", desc: "Caza, truchas de río y potajes contundentes. Ideal para probar el pote asturiano: berza, patata y carne de cerdo." },
@@ -621,12 +631,12 @@ const ITINERARIO = [
     manana: [
       { tipo: "actividad", emoji: "🍎", texto: "Visita a Llagar tradicional con degustación", detalle: "Cultura sidrera asturiana (UNESCO) · Sidra y quesos locales incluidos", incluido: true },
       { tipo: "actividad", emoji: "📸", texto: "Parada fotográfica en Lastres", detalle: "Uno de los pueblos marineros más bellos de Asturias · Vista panorámica sobre el Cantábrico", incluido: true },
-      { tipo: "gastro", emoji: "🦐", texto: "Almuerzo en restaurante seleccionado · Lastres", detalle: "Mesa reservada · Consumo no incluido", incluido: false },
+      { tipo: "gastro", emoji: "🦐", servicio: "Almuerzo", nombre: "Restaurante El Mirador", subtipo: "Vistas al Cantábrico · Pescados y arroces · Lastres", precio: "€35–55", ninos: "Media", distincion: null, maps: "https://maps.google.com/?q=Restaurante+El+Mirador+Lastres+Colunga", incluido: false },
     ],
     tarde: [
       { tipo: "actividad", emoji: "⛪", texto: "Visita Santuario Virgen de la Cueva · Infiesto", detalle: "Lugar de mayor devoción popular de la comarca", incluido: true },
       { tipo: "actividad", emoji: "🏘️", texto: "Migoya y Vallobal — Raíces familiares González", detalle: "Núcleos rurales vinculados a los antepasados emigrantes a América", incluido: true },
-      { tipo: "gastro", emoji: "🍽️", texto: "Cena en restaurante a definir · Oviedo", detalle: "Mesa reservada · Consumo no incluido", incluido: false },
+      { tipo: "gastro", emoji: "🍽️", servicio: "Cena", nombre: "Restaurante El Monumental", subtipo: "Hotel Silken Monumental Naranco 4★ · Sin traslado", precio: "€30–50", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=Hotel+Silken+Monumental+Naranco+Oviedo", incluido: false },
     ],
     gastronomia: [
       { tipo: "En el llagar", nombre: "Degustación de sidra y quesos asturianos", desc: "Aprenderás el escanciado tradicional. Quesos: Cabrales (azul, curado en cuevas), Afuega'l Pitu y Gamonéu." },
@@ -640,13 +650,16 @@ const ITINERARIO = [
     hotel: { nombre: "Hotel Compostela", estrellas: "4★", detalle: "1 noche · Santiago de Compostela" },
     manana: [
       { tipo: "traslado", emoji: "🚌", texto: "Check-out Oviedo · Salida hacia Galicia", detalle: "Recorrido por la costa cantábrica rumbo a Santiago", incluido: true },
-      { tipo: "gastro", emoji: "🍽️", texto: "Comida en restaurante seleccionado · Santiago", detalle: "Mesa reservada · Consumo no incluido", incluido: false },
+      { tipo: "gastro", emoji: "🍽️", servicio: "Almuerzo", nombre: "Taberna Montes", subtipo: "Cocina gallega · Casco antiguo · Junto a la Catedral", precio: "€25–40", ninos: "Alta", distincion: "★ 4.8 · 800+ reseñas", maps: "https://maps.google.com/?q=Taberna+Montes+Santiago+de+Compostela", incluido: false },
     ],
     tarde: [
       { tipo: "actividad", emoji: "🏨", texto: "Check-in Hotel Compostela", detalle: "Zona histórica de Santiago de Compostela", incluido: true },
       { tipo: "actividad", emoji: "⛪", texto: "Visita guiada Catedral de Santiago de Compostela", detalle: "Entrada incluida · Gran centro de peregrinación de Europa", incluido: true },
       { tipo: "actividad", emoji: "🚶", texto: "Tiempo libre · Paseo por el casco histórico", detalle: "Rúa do Franco, Praza do Obradoiro, Mercado de Abastos", incluido: true },
-      { tipo: "gastro", emoji: "🐙", texto: "Cena en restaurante a definir", detalle: "Mesa reservada · Consumo no incluido", incluido: false },
+      { tipo: "gastro", emoji: "🐙", servicio: "Cena", nombre: "Casa Marcelo", subtipo: "1 Estrella Michelin · Mesa común · Cocina abierta · Santiago", precio: "€90–130", ninos: "Baja", distincion: "★ Estrella Michelin", maps: "https://maps.google.com/?q=Casa+Marcelo+Santiago+de+Compostela", incluido: false, kidsAlt: [
+        { nombre: "O Gato Negro", subtipo: "Tasca gallega tradicional · Rúa do Franco · Familiar y animado", precio: "€20–35", maps: "https://maps.google.com/?q=O+Gato+Negro+Santiago+de+Compostela+Rua+Franco" },
+        { nombre: "Casa Manolo", subtipo: "Cocina gallega informal · Rúa de Fonseca · Ideal para familias", precio: "€25–40", maps: "https://maps.google.com/?q=Casa+Manolo+Santiago+de+Compostela" },
+      ]},
     ],
     gastronomia: [
       { tipo: "Galicia en la mesa", nombre: "Pulpo á feira, empanada y pimientos de Padrón", desc: "El pulpo gallego con aceite, pimentón y sal gruesa sobre tabla de madera es obligatorio. La empanada de atún o zamburiñas es excelente aperitivo." },
@@ -661,12 +674,12 @@ const ITINERARIO = [
     manana: [
       { tipo: "actividad", emoji: "🏛️", texto: "Visita guiada casco antiguo de Santiago", detalle: "Recorrido final por la ciudad antes de partir", incluido: true },
       { tipo: "traslado", emoji: "🚌", texto: "Check-out y salida hacia Asturias", detalle: "Retorno por la costa cantábrica", incluido: true },
-      { tipo: "gastro", emoji: "🍽️", texto: "Comida en restaurante seleccionado en carretera", detalle: "Mesa reservada · Consumo no incluido", incluido: false },
+      { tipo: "gastro", emoji: "🍽️", servicio: "Almuerzo (en ruta)", nombre: "Por confirmar", subtipo: "AsturiaMe seleccionará según recorrido · Día 6", precio: "—", ninos: "Media", distincion: null, maps: null, incluido: false },
     ],
     tarde: [
       { tipo: "actividad", emoji: "🏨", texto: "Check-in Hotel Príncipe de Asturias · Gijón", detalle: "Hotel 5 estrellas · Zona oriente de Asturias", incluido: true },
       { tipo: "actividad", emoji: "♨️", texto: "Tiempo libre · Opción acceso Spa (bajo petición a AsturiaMe)", detalle: "Circuito wellness disponible", incluido: false },
-      { tipo: "gastro", emoji: "🍷", texto: "Cena en restaurante seleccionado", detalle: "Mesa reservada · Consumo no incluido", incluido: false },
+      { tipo: "gastro", emoji: "🍷", servicio: "Cena", nombre: "Por confirmar", subtipo: "AsturiaMe seleccionará según recorrido · Gijón", precio: "—", ninos: "Media", distincion: null, maps: null, incluido: false },
     ],
     gastronomia: [
       { tipo: "Llegada a Gijón", nombre: "Zona portuaria — Cimadevilla", desc: "El puerto y el barrio de Cimadevilla concentran las mejores sidrerías y marisquerías de Gijón. Especial: nécoras y cigalas.", maps: "https://maps.google.com/?q=Cimadevilla+Gijon+Asturias" },
@@ -680,12 +693,15 @@ const ITINERARIO = [
     manana: [
       { tipo: "actividad", emoji: "🏛️", texto: "Visita fotográfica Universidad Laboral de Gijón", detalle: "Edificio más grande de España · Patrimonio industrial asturiano", incluido: true },
       { tipo: "actividad", emoji: "🏘️", texto: "Visita guiada Avilés", detalle: "Casco histórico mejor conservado del norte · Soportales, plazas y palacios", incluido: true },
-      { tipo: "gastro", emoji: "🍽️", texto: "Almuerzo en restaurante a definir · Avilés", detalle: "Mesa reservada · Consumo no incluido", incluido: false },
+      { tipo: "gastro", emoji: "🍽️", servicio: "Almuerzo", nombre: "Casa Gerardo", subtipo: "★ Michelin · 3 Soles Repsol · Prendes, Carreño · Fundado 1882", precio: "€80–120", ninos: "Baja", distincion: "★ Estrella Michelin · 3 Soles Repsol", maps: "https://maps.google.com/?q=Casa+Gerardo+Prendes+Carreño+Asturias", incluido: false, kidsAlt: [
+        { nombre: "Casa Trabanco", subtipo: "Sidrería icónica y familiar · Poago, Gijón · La más auténtica de Asturias", precio: "€20–35", maps: "https://maps.google.com/?q=Casa+Trabanco+Poago+Gijón+Asturias" },
+        { nombre: "Tierra Astur Gijón", subtipo: "Sidrería amplia y familiar · Múltiples opciones para niños", precio: "€20–35", maps: "https://maps.google.com/?q=Tierra+Astur+Gijón" },
+      ]},
     ],
     tarde: [
       { tipo: "actividad", emoji: "🌊", texto: "Visita casco antiguo de Gijón · Cimadevilla", detalle: "Playa de San Lorenzo · Puerto deportivo · Ambiente urbano costero", incluido: true },
       { tipo: "actividad", emoji: "🛍️", texto: "Tiempo libre · Compras y paseo", detalle: "Zona comercial centro de Gijón", incluido: true },
-      { tipo: "gastro", emoji: "🍺", texto: "Cena en restaurante a definir · 20:30 h", detalle: "Mesa reservada · Consumo no incluido", incluido: false },
+      { tipo: "gastro", emoji: "🍺", servicio: "Cena · 20:30 h", nombre: "Abarike", subtipo: "Chef Lara Roguez · Recomendado Guía Michelin · Gijón", precio: "€45–70", ninos: "Media", distincion: "Recomendado Michelin", maps: "https://maps.google.com/?q=Abarike+restaurante+Gijón", incluido: false },
     ],
     gastronomia: [
       { tipo: "Avilés", nombre: "La Ferrería y calle La Cámara", desc: "Las calles del casco histórico de Avilés tienen sidrerías excelentes. Pide pixin (rape) o centollo si está en carta.", maps: "https://maps.google.com/?q=Calle+La+Camara+Aviles+Asturias" },
@@ -700,11 +716,11 @@ const ITINERARIO = [
     manana: [
       { tipo: "actividad", emoji: "🛶", texto: "Descenso del Río Sella en canoas", detalle: "Actividad emblemática del norte · Paisajes verdes, bosques y montañas · Apto para familias", incluido: true },
       { tipo: "actividad", emoji: "🏘️", texto: "Alternativa: Visita guiada Ribadesella", detalle: "Para quien prefiera no hacer el descenso en canoa", incluido: true },
-      { tipo: "gastro", emoji: "🦞", texto: "Almuerzo en zona Llanes · Restaurante a definir", detalle: "Mesa reservada · Consumo no incluido", incluido: false },
+      { tipo: "gastro", emoji: "🦞", servicio: "Almuerzo", nombre: "Bálamu", subtipo: "Taberna marinera · Lonja del Puerto Pesquero de Llanes", precio: "€35–55", ninos: "Media", distincion: "Plato Michelin", maps: "https://maps.google.com/?q=Bálamu+Llanes+lonja+puerto", incluido: false },
     ],
     tarde: [
       { tipo: "actividad", emoji: "⛵", texto: "Visita guiada a Llanes y tiempo libre", detalle: "Puerto, casco histórico, paseo marítimo · Huella de emigrantes indianos asturianos", incluido: true },
-      { tipo: "gastro", emoji: "🍽️", texto: "Cena en restaurante seleccionado", detalle: "Mesa reservada · Consumo no incluido", incluido: false },
+      { tipo: "gastro", emoji: "🍽️", servicio: "Cena", nombre: "Por confirmar · Llanes", subtipo: "Mesa reservada · AsturiaMe gestiona", precio: "—", ninos: "Media", distincion: null, maps: null, incluido: false },
     ],
     gastronomia: [
       { tipo: "Llanes en el plato", nombre: "Oricios, bonito del norte y pixin", desc: "Junio es temporada de bonito del norte (atún del Cantábrico) — uno de los mejores del mundo. El pixin al horno con verduras es espectacular." },
@@ -719,12 +735,13 @@ const ITINERARIO = [
     manana: [
       { tipo: "traslado", emoji: "🏨", texto: "Check-out Gijón · Traslado estación de trenes", detalle: "Salida hacia León", incluido: true },
       { tipo: "traslado", emoji: "🚄", texto: "AVE Gijón → León · 11:09 h (1h 35')", detalle: "Categoría Confort · 11 pasajeros", incluido: true },
-      { tipo: "gastro", emoji: "🍽️", texto: "Almuerzo en restaurante en León", detalle: "Mesa reservada · Consumo no incluido", incluido: false },
+      { tipo: "gastro", emoji: "🍽️", servicio: "Almuerzo", nombre: "El Racimo de Oro", subtipo: "Fundado 1949 · Sobre bodega s. XII · Barrio Húmedo, León", precio: "€25–40", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=El+Racimo+de+Oro+León+Barrio+Húmedo", incluido: false },
     ],
     tarde: [
       { tipo: "actividad", emoji: "🏨", texto: "Check-in Hotel Barceló León Conde de Luna", detalle: "Hotel 4★ en el centro histórico de León", incluido: true },
       { tipo: "actividad", emoji: "🐂", texto: "Corrida de Toros · 19:00 h", detalle: "Experiencia cultural española · Consultar programa con guía AsturiaMe", incluido: false },
       { tipo: "actividad", emoji: "🌙", texto: "Tiempo libre · Barrio Húmedo de León", detalle: "Tapas y ambiente nocturno leonés", incluido: false },
+      { tipo: "gastro", emoji: "🍷", servicio: "Cena", nombre: "Bodega Regia", subtipo: "Edificio s. XIV · Casco histórico · León", precio: "€35–60", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=Bodega+Regia+León+casco+histórico", incluido: false },
     ],
     gastronomia: [
       { tipo: "León en la mesa", nombre: "Barrio Húmedo — tapas gratis con cada caña", desc: "León tiene tradición única en España: cada cerveza o copa incluye una tapa gratis. Calles Ancha, Plegarias y Misericordia son el epicentro.", maps: "https://maps.google.com/?q=Barrio+Humedo+Leon+España" },
@@ -738,7 +755,7 @@ const ITINERARIO = [
     hotel: { nombre: "Regreso · Tren León → Madrid", estrellas: "", detalle: "Salida 18:53 h · Llegada Madrid ~21:07 h" },
     manana: [
       { tipo: "actividad", emoji: "🚶", texto: "Mañana libre en León", detalle: "Catedral de León, Basílica de San Isidoro, Museo Romano — todo a pie desde el hotel", incluido: true },
-      { tipo: "gastro", emoji: "🍻", texto: "Comida en el Barrio Húmedo de León", detalle: "Por cuenta propia · Sin reserva necesaria", incluido: false },
+      { tipo: "gastro", emoji: "🍻", servicio: "Almuerzo · Último del viaje", nombre: "Barceló León Conde Luna", subtipo: "Hotel 4★ · Sin traslado · Cierre del viaje", precio: "€30–50", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=Barceló+León+Conde+Luna", incluido: false },
     ],
     tarde: [
       { tipo: "traslado", emoji: "🏨", texto: "Late Check-out hotel · 17:00 h", detalle: "Tiempo extra en el hotel antes de partir", incluido: true },
@@ -804,6 +821,58 @@ const VUELOS = [
     googleUrl: 'https://www.google.com/search?q=Aeromexico+AM0035+estado+vuelo',
   },
 ];
+
+const WEATHER_LOCS = {
+  'Oviedo':                 { lat: 43.3619, lon: -5.8494 },
+  'Santiago de Compostela': { lat: 42.8782, lon: -8.5448 },
+  'Gijón':                  { lat: 43.5453, lon: -5.6615 },
+  'León':                   { lat: 42.5987, lon: -5.5671 },
+};
+// Índice = día-1 (0=Día1)
+const DIA_CIUDAD = ['Oviedo','Oviedo','Oviedo','Oviedo','Santiago de Compostela','Gijón','Gijón','Gijón','León','León'];
+
+let wxCache = {}; // { 'Oviedo': { time:[...], max:[...], min:[...], precip:[...], code:[...] } }
+
+function wmoInfo(code) {
+  if (code === 0)  return { emoji:'☀️',  desc:'Despejado' };
+  if (code <= 2)   return { emoji:'🌤️',  desc:'Poco nublado' };
+  if (code <= 3)   return { emoji:'⛅',  desc:'Nublado' };
+  if (code <= 48)  return { emoji:'🌫️',  desc:'Niebla' };
+  if (code <= 57)  return { emoji:'🌦️',  desc:'Llovizna' };
+  if (code <= 67)  return { emoji:'🌧️',  desc:'Lluvia' };
+  if (code <= 77)  return { emoji:'🌨️',  desc:'Nieve' };
+  if (code <= 82)  return { emoji:'🌦️',  desc:'Chubascos' };
+  return           { emoji:'⛈️',  desc:'Tormenta' };
+}
+
+function getDiaISO(idx) {
+  const d = new Date('2026-06-19T12:00:00Z');
+  d.setUTCDate(d.getUTCDate() + idx);
+  return d.toISOString().split('T')[0];
+}
+
+function wxForDay(idx) {
+  const city = DIA_CIUDAD[idx];
+  const date = getDiaISO(idx);
+  const d = wxCache[city];
+  if (!d) return null;
+  const i = d.time.indexOf(date);
+  if (i === -1) return null;
+  return { max: Math.round(d.temperature_2m_max[i]), min: Math.round(d.temperature_2m_min[i]), precip: d.precipitation_probability_max[i], code: d.weathercode[i], city };
+}
+
+async function fetchWeather() {
+  for (const [city, coords] of Object.entries(WEATHER_LOCS)) {
+    try {
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weathercode&timezone=Europe%2FMadrid&start_date=2026-06-19&end_date=2026-06-28`;
+      const res = await fetch(url);
+      const data = await res.json();
+      wxCache[city] = data.daily;
+    } catch(e) { wxCache[city] = null; }
+  }
+  if (diaActivo >= 0) renderDia(diaActivo);
+  else if (diaActivo === -2) renderClima();
+}
 
 const HOTEL_MAPS = {
   "Hotel Silken Monumental Naranco": "https://maps.google.com/?q=Hotel+Silken+Monumental+Naranco+Oviedo",
@@ -877,16 +946,65 @@ let cargando = false;
 
 function renderNav() {
   const nav = document.getElementById('nav-dias');
+  const climaBtn  = `<button class="nav-btn ${diaActivo === -2 ? 'active' : ''}" onclick="cambiarDia(-2)">🌤️ Clima</button>`;
   const vuelosBtn = `<button class="nav-btn ${diaActivo === -1 ? 'active' : ''}" onclick="cambiarDia(-1)">✈️ Vuelos</button>`;
   const diasBtns = ITINERARIO.map((d, i) =>
     `<button class="nav-btn ${i === diaActivo ? 'active' : ''}" onclick="cambiarDia(${i})">Día ${d.dia} · ${d.fecha}</button>`
   ).join('');
-  nav.innerHTML = vuelosBtn + diasBtns;
+  nav.innerHTML = climaBtn + vuelosBtn + diasBtns;
   setTimeout(() => {
     const idx = diaActivo === -1 ? 0 : diaActivo + 1;
     const btn = nav.children[idx];
     if (btn) btn.scrollIntoView({ inline: 'center', block: 'nearest' });
   }, 50);
+}
+
+function renderClima() {
+  const contenedor = document.getElementById('contenido-dia');
+  const ciudades = [...new Set(DIA_CIUDAD)];
+  const noData = Object.values(wxCache).every(v => v === null || v === undefined);
+
+  let html = `
+    <div class="dia-hero">
+      <div class="dia-numero">Pronóstico del viaje</div>
+      <div class="dia-titulo">🌤️ Clima · Asturias · Galicia · León</div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px">
+        <span class="dia-fecha">📍 Jun 19 – Jun 28, 2026</span>
+        <span class="horario-pill">Fuente: Open-Meteo</span>
+      </div>
+    </div>
+    <div class="contenido">`;
+
+  if (noData) {
+    html += `<div class="nota">🔄 Cargando pronóstico… El forecast estará disponible ~16 días antes de cada fecha.</div>`;
+  } else {
+    for (let i = 0; i < ITINERARIO.length; i++) {
+      const d = ITINERARIO[i];
+      const wx = wxForDay(i);
+      const ciudad = DIA_CIUDAD[i];
+      if (!wx) continue;
+      const info = wmoInfo(wx.code);
+      const precipColor = wx.precip >= 60 ? '#c0392b' : wx.precip >= 30 ? '#e67e22' : '#2d6b54';
+      html += `
+        <div style="background:white;border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 6px rgba(0,0,0,0.06);">
+          <div style="font-size:1.8rem;flex-shrink:0;">${info.emoji}</div>
+          <div style="flex:1;">
+            <p style="font-size:0.6rem;color:var(--gris);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1px;">Día ${d.dia} · ${d.fecha} · ${ciudad}</p>
+            <p style="font-size:0.82rem;font-weight:600;color:var(--texto);">${d.titulo}</p>
+            <p style="font-size:0.7rem;color:var(--gris);margin-top:1px;">${info.desc}</p>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <p style="font-size:1rem;font-weight:700;color:var(--verde);">${wx.max}°<span style="font-size:0.75rem;color:var(--gris);font-weight:400;">/${wx.min}°</span></p>
+            <p style="font-size:0.68rem;font-weight:600;color:${precipColor};">💧 ${wx.precip}%</p>
+          </div>
+        </div>`;
+    }
+    html += `<div class="nota" style="margin-top:4px;">💡 Junio en el norte de España: 18–22°C, lluvia posible. Lleva siempre impermeable ligero.</div>`;
+  }
+
+  html += `</div>`;
+  contenedor.innerHTML = html;
+  window.scrollTo(0, 0);
 }
 
 function renderVuelos() {
@@ -958,6 +1076,11 @@ function renderDia(idx) {
   const d = ITINERARIO[idx];
   const contenedor = document.getElementById('contenido-dia');
 
+  const wx = wxForDay(idx);
+  const wxPill = wx
+    ? `<span class="horario-pill">${wmoInfo(wx.code).emoji} ${wx.max}°/${wx.min}° · 💧${wx.precip}%</span>`
+    : `<span class="horario-pill" style="opacity:0.5">🌡️ Cargando…</span>`;
+
   let html = `
     <div class="dia-hero">
       <div class="dia-numero">Día ${d.dia} de 10 · ${d.diaSemana}</div>
@@ -965,6 +1088,7 @@ function renderDia(idx) {
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px">
         <span class="dia-fecha">📍 ${d.subtitulo}</span>
         ${d.horario ? `<span class="horario-pill">⏰ ${d.horario}</span>` : ''}
+        ${wxPill}
       </div>
     </div>
     <div class="contenido">
@@ -1017,16 +1141,47 @@ function renderRestaurante(g) {
 
 function renderActividad(a) {
   if (a.tipo === 'gastro') {
+    const ninosColor = { Alta: { bg:'#e8f4ee', color:'#2d6b54', icon:'★' }, Media: { bg:'#fef9e7', color:'#9a6700', icon:'◐' }, Baja: { bg:'#fdecea', color:'#c0392b', icon:'✕' } };
+    const nc = a.ninos ? ninosColor[a.ninos] : null;
+    const ninosBadge = nc ? `<span style="font-size:0.6rem;padding:2px 8px;border-radius:10px;font-weight:600;background:${nc.bg};color:${nc.color};">${nc.icon} Niños: ${a.ninos}</span>` : '';
+    const distincionBadge = a.distincion ? `<span style="font-size:0.6rem;padding:2px 8px;border-radius:10px;font-weight:600;background:#fce4ec;color:#c41230;margin-left:4px;">${a.distincion}</span>` : '';
     const mapsLink = a.maps ? `<a href="${a.maps}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:7px;font-size:0.68rem;color:var(--dorado);text-decoration:none;font-weight:600;background:rgba(200,150,62,0.1);padding:4px 9px;border-radius:20px;border:1px solid rgba(200,150,62,0.25);">📍 Ver en Maps</a>` : '';
+    let kidsAltHtml = '';
+    if (a.ninos === 'Baja' && a.kidsAlt?.length) {
+      const alts = a.kidsAlt.map(k => `
+        <div style="display:flex;align-items:flex-start;gap:9px;padding:9px 10px;background:white;border-radius:10px;margin-bottom:5px;border:1px solid #d4edda;">
+          <span style="font-size:0.9rem;flex-shrink:0;">🧒</span>
+          <div style="flex:1;">
+            <p style="font-size:0.78rem;font-weight:600;color:var(--texto);margin-bottom:1px;">${k.nombre}</p>
+            <p style="font-size:0.67rem;color:var(--gris);">${k.subtipo}</p>
+            <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+              <span style="font-size:0.65rem;padding:2px 7px;border-radius:10px;background:#e8f4ee;color:#2d6b54;font-weight:600;">${k.precio}/persona</span>
+              ${k.maps ? `<a href="${k.maps}" target="_blank" style="font-size:0.65rem;color:var(--dorado);text-decoration:none;font-weight:600;">📍 Maps</a>` : ''}
+            </div>
+          </div>
+        </div>`).join('');
+      kidsAltHtml = `
+        <div style="margin-top:6px;padding:10px 12px;background:#f1f9f1;border-radius:12px;border:1px solid #a5d6a7;">
+          <p style="font-size:0.6rem;color:#2d6b54;letter-spacing:0.1em;text-transform:uppercase;font-weight:700;margin-bottom:8px;">👨‍👩‍👧 Alternativas kid-friendly cerca</p>
+          ${alts}
+        </div>`;
+    }
     return `
-      <div style="background:white;border-radius:14px;padding:13px 15px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px;box-shadow:0 1px 6px rgba(0,0,0,0.06);border-left:3px solid var(--dorado);">
-        <div style="width:36px;height:36px;background:rgba(200,150,62,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">${a.emoji}</div>
-        <div style="flex:1;min-width:0;">
-          <p style="font-size:0.85rem;font-weight:600;color:var(--texto);margin-bottom:3px;line-height:1.3;">${a.texto}</p>
-          ${a.detalle ? `<p style="font-size:0.72rem;color:var(--gris);line-height:1.4;">${a.detalle}</p>` : ''}
-          <span style="display:inline-block;font-size:0.58rem;letter-spacing:0.08em;text-transform:uppercase;padding:2px 7px;border-radius:10px;margin-top:5px;font-weight:500;background:#fef3e2;color:#c8763e;">Gasto propio</span>
-          ${mapsLink}
+      <div style="margin-bottom:8px;">
+        <div style="background:white;border-radius:14px;padding:13px 15px;display:flex;align-items:flex-start;gap:12px;box-shadow:0 1px 6px rgba(0,0,0,0.06);border-left:3px solid var(--dorado);">
+          <div style="width:36px;height:36px;background:rgba(200,150,62,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">${a.emoji}</div>
+          <div style="flex:1;min-width:0;">
+            <p style="font-size:0.6rem;color:var(--dorado);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:2px;font-weight:500;">${a.servicio || a.texto}</p>
+            ${a.nombre ? `<p style="font-size:0.9rem;font-weight:700;color:var(--texto);margin-bottom:2px;line-height:1.25;">${a.nombre}</p>` : ''}
+            ${a.subtipo ? `<p style="font-size:0.7rem;color:var(--gris);margin-bottom:5px;">${a.subtipo}</p>` : ''}
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px;">
+              ${a.precio ? `<span style="font-size:0.68rem;padding:2px 8px;border-radius:10px;font-weight:600;background:#f0f4ff;color:#1a3a6b;">${a.precio}/persona</span>` : ''}
+              ${ninosBadge}${distincionBadge}
+            </div>
+            ${mapsLink}
+          </div>
         </div>
+        ${kidsAltHtml}
       </div>`;
   }
   const cls = a.tipo === 'traslado' ? 'traslado' : '';
@@ -1038,7 +1193,9 @@ function renderActividad(a) {
 
 function renderChips() {
   const d = diaActivo >= 0 ? ITINERARIO[diaActivo] : null;
-  const chips = d
+  const chips = diaActivo === -2
+    ? [`¿Lloverá en Oviedo?`, `¿Qué llevar de ropa?`, `Clima en Santiago`, `Temperatura en León`, `¿Necesito impermeable?`]
+    : d
     ? [`¿Qué como hoy?`, `¿Qué está incluido?`, `Cuéntame sobre ${d.subtitulo.split(' · ')[0]}`, `Propina en España`, `Historia de Asturias`, `Contacto AsturiaMe`]
     : [`¿A qué hora sale el vuelo?`, `Cambio de terminal en Madrid`, `¿Cuánto equipaje puedo llevar?`, `Contacto AsturiaMe`];
   document.getElementById('chips-container').innerHTML = chips.map(c =>
@@ -1049,7 +1206,9 @@ function renderChips() {
 function cambiarDia(idx) {
   diaActivo = idx;
   renderNav();
-  if (idx === -1) {
+  if (idx === -2) {
+    renderClima();
+  } else if (idx === -1) {
     renderVuelos();
   } else {
     renderDia(idx);
@@ -1168,6 +1327,29 @@ document.getElementById('fecha-display').textContent = now.toLocaleDateString('e
   const hoy = new Date(); hoy.setHours(0,0,0,0); inicio.setHours(0,0,0,0);
   const diff = Math.floor((hoy - inicio) / 86400000);
   cambiarDia(diff >= 0 && diff < ITINERARIO.length ? diff : 0);
+  fetchWeather();
+
+  // Countdown
+  const VIAJE_INICIO = new Date('2026-06-19T00:00:00');
+  function tickCountdown() {
+    const ahora = new Date();
+    const resta = VIAJE_INICIO - ahora;
+    if (resta <= 0) {
+      document.getElementById('countdown-bar').style.display = 'none';
+      return;
+    }
+    document.getElementById('countdown-bar').style.display = 'block';
+    const d = Math.floor(resta / 86400000);
+    const h = Math.floor((resta % 86400000) / 3600000);
+    const m = Math.floor((resta % 3600000) / 60000);
+    const s = Math.floor((resta % 60000) / 1000);
+    document.getElementById('cd-dias').textContent  = String(d).padStart(2,'0');
+    document.getElementById('cd-horas').textContent = String(h).padStart(2,'0');
+    document.getElementById('cd-mins').textContent  = String(m).padStart(2,'0');
+    document.getElementById('cd-segs').textContent  = String(s).padStart(2,'0');
+  }
+  tickCountdown();
+  setInterval(tickCountdown, 1000);
 })();
 </script>
 </body>
