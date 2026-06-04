@@ -1016,7 +1016,20 @@ function renderRestaurante(g) {
 }
 
 function renderActividad(a) {
-  const cls = a.tipo === 'gastro' ? 'gastronomica' : a.tipo === 'traslado' ? 'traslado' : '';
+  if (a.tipo === 'gastro') {
+    const mapsLink = a.maps ? `<a href="${a.maps}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:7px;font-size:0.68rem;color:var(--dorado);text-decoration:none;font-weight:600;background:rgba(200,150,62,0.1);padding:4px 9px;border-radius:20px;border:1px solid rgba(200,150,62,0.25);">📍 Ver en Maps</a>` : '';
+    return `
+      <div style="background:white;border-radius:14px;padding:13px 15px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px;box-shadow:0 1px 6px rgba(0,0,0,0.06);border-left:3px solid var(--dorado);">
+        <div style="width:36px;height:36px;background:rgba(200,150,62,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">${a.emoji}</div>
+        <div style="flex:1;min-width:0;">
+          <p style="font-size:0.85rem;font-weight:600;color:var(--texto);margin-bottom:3px;line-height:1.3;">${a.texto}</p>
+          ${a.detalle ? `<p style="font-size:0.72rem;color:var(--gris);line-height:1.4;">${a.detalle}</p>` : ''}
+          <span style="display:inline-block;font-size:0.58rem;letter-spacing:0.08em;text-transform:uppercase;padding:2px 7px;border-radius:10px;margin-top:5px;font-weight:500;background:#fef3e2;color:#c8763e;">Gasto propio</span>
+          ${mapsLink}
+        </div>
+      </div>`;
+  }
+  const cls = a.tipo === 'traslado' ? 'traslado' : '';
   const tag = a.incluido !== undefined
     ? `<span class="tag ${a.incluido ? 'tag-incluido' : 'tag-propio'}">${a.incluido ? 'Incluido' : 'Gasto propio'}</span>`
     : '';
