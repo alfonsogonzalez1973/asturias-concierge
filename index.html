@@ -423,6 +423,108 @@
     0%, 80%, 100% { opacity: 0; }
     40% { opacity: 1; }
   }
+
+  /* VUELOS */
+  .vuelo-card {
+    background: white;
+    border-radius: 14px;
+    padding: 14px 15px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    border-top: 3px solid var(--verde);
+  }
+  .vuelo-card.conexion { border-top-color: var(--dorado); }
+  .vuelo-card.regreso { border-top-color: #5b8a6e; }
+
+  .vuelo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .vuelo-aerolinea {
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gris);
+    margin-bottom: 2px;
+  }
+  .vuelo-numero { font-size: 1rem; font-weight: 600; color: var(--verde); font-family: 'Playfair Display', serif; }
+  .vuelo-fecha-pill {
+    background: var(--crema);
+    border: 1px solid rgba(26,74,58,0.15);
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 0.68rem;
+    color: var(--verde);
+  }
+  .vuelo-ruta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .vuelo-origen, .vuelo-destino { flex: 1; }
+  .vuelo-origen { text-align: left; }
+  .vuelo-destino { text-align: right; }
+  .vuelo-iata { font-size: 1.5rem; font-weight: 700; color: var(--texto); line-height: 1; }
+  .vuelo-ciudad { font-size: 0.65rem; color: var(--gris); margin-top: 2px; }
+  .vuelo-hora { font-size: 0.9rem; font-weight: 600; color: var(--verde); margin-top: 4px; }
+  .vuelo-terminal { font-size: 0.62rem; color: var(--gris); margin-top: 1px; }
+  .vuelo-linea {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  .vuelo-linea-bar {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, var(--verde), var(--dorado));
+    position: relative;
+  }
+  .vuelo-linea-bar::after { content: '✈'; position: absolute; right: -4px; top: -8px; font-size: 0.75rem; color: var(--dorado); }
+  .vuelo-duracion { font-size: 0.6rem; color: var(--gris); margin-top: 3px; }
+  .vuelo-detalles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 11px;
+    background: var(--crema);
+    border-radius: 10px;
+    padding: 9px 10px;
+  }
+  .vuelo-detalle-item { font-size: 0.68rem; color: var(--gris); }
+  .vuelo-detalle-item strong { display: block; color: var(--texto); font-size: 0.72rem; }
+  .vuelo-nota {
+    font-size: 0.71rem;
+    color: var(--verde);
+    background: rgba(26,74,58,0.06);
+    border-radius: 8px;
+    padding: 7px 10px;
+    margin-bottom: 10px;
+    border-left: 2px solid var(--verde-claro);
+  }
+  .vuelo-btns { display: flex; gap: 7px; flex-wrap: wrap; }
+  .vuelo-btn {
+    flex: 1;
+    min-width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-decoration: none;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    border: none;
+  }
+  .vuelo-btn-primary { background: var(--verde); color: white; }
+  .vuelo-btn-secondary { background: var(--crema); color: var(--verde); border: 1px solid rgba(26,74,58,0.2); }
 </style>
 </head>
 <body>
@@ -649,6 +751,60 @@ const ITINERARIO = [
   },
 ];
 
+const VUELOS = [
+  {
+    tipo: 'ida',
+    aerolinea: 'Aeroméxico',
+    numero: 'AM 0034',
+    fecha: 'Jueves 18 Jun 2026',
+    fechaCorta: '18 Jun',
+    origen: { codigo: 'MTY', ciudad: 'Monterrey', terminal: 'Terminal B', hora: '10:45' },
+    destino: { codigo: 'MAD', ciudad: 'Madrid', terminal: 'Terminal 1', hora: '05:00 (19 Jun)' },
+    avion: 'Boeing 787-9',
+    duracion: '10h 15min',
+    asientos: '20A · 20B · 20C · 20D',
+    clase: 'Turista',
+    comidas: 'Comida caliente + bebidas alcohólicas',
+    nota: '⏰ Llegar Terminal B MTY a las 07:45 (3h antes). Vuelo nocturno — llevar almohada de cuello y audífonos.',
+    flightawareUrl: 'https://flightaware.com/live/flight/AMX34',
+    googleUrl: 'https://www.google.com/search?q=Aeromexico+AM0034+estado+vuelo',
+  },
+  {
+    tipo: 'conexion',
+    aerolinea: 'Air Europa Express',
+    numero: 'UX 7401',
+    fecha: 'Viernes 19 Jun 2026',
+    fechaCorta: '19 Jun',
+    origen: { codigo: 'MAD', ciudad: 'Madrid', terminal: 'Terminal 2', hora: '08:30' },
+    destino: { codigo: 'OVD', ciudad: 'Asturias', terminal: '', hora: '09:45' },
+    avion: 'Air Europa Express',
+    duracion: '1h 15min',
+    asientos: '06C (y adyacentes)',
+    clase: 'Flex',
+    comidas: 'No incluido',
+    nota: '⚠️ Conexión en MAD: llegan T1 a las 05:00, salen T2 a las 08:30. Tiempo de conexión: 3h 30min. Hay lanzadera entre terminales.',
+    flightawareUrl: 'https://flightaware.com/live/flight/AEA7401',
+    googleUrl: 'https://www.google.com/search?q=Air+Europa+UX7401+estado+vuelo',
+  },
+  {
+    tipo: 'regreso',
+    aerolinea: 'Aeroméxico',
+    numero: 'AM 0035',
+    fecha: 'Sábado 4 Jul 2026',
+    fechaCorta: '4 Jul',
+    origen: { codigo: 'MAD', ciudad: 'Madrid', terminal: 'Terminal 1', hora: '09:00' },
+    destino: { codigo: 'MTY', ciudad: 'Monterrey', terminal: 'Terminal B', hora: '12:10' },
+    avion: 'Boeing 787-9',
+    duracion: '11h 10min',
+    asientos: '23A · 23B · 23C · 23D',
+    clase: 'Turista',
+    comidas: 'Comida caliente + bebidas alcohólicas',
+    nota: '⏰ Estar en Terminal 1 MAD a las 06:00 (3h antes). Llegan a Monterrey Terminal B a las 12:10.',
+    flightawareUrl: 'https://flightaware.com/live/flight/AMX35',
+    googleUrl: 'https://www.google.com/search?q=Aeromexico+AM0035+estado+vuelo',
+  },
+];
+
 const CONTEXTO_CONCIERGE = `Eres el concierge privado de Alfonso (Poncho) González durante su viaje familiar a Asturias, España (19-28 junio 2026), organizado por AsturiaMe.
 
 Puedes responder sobre CUALQUIER tema que surja durante el viaje: hoteles, restaurantes, transporte, frases en español/gallego, clima, propinas, cambio de dinero, farmacias, emergencias, atracciones, historia, cultura, gastronomía, o cualquier duda práctica de viajero. No te limites solo al itinerario.
@@ -714,14 +870,81 @@ let cargando = false;
 
 function renderNav() {
   const nav = document.getElementById('nav-dias');
-  nav.innerHTML = ITINERARIO.map((d, i) =>
+  const vuelosBtn = `<button class="nav-btn ${diaActivo === -1 ? 'active' : ''}" onclick="cambiarDia(-1)">✈️ Vuelos</button>`;
+  const diasBtns = ITINERARIO.map((d, i) =>
     `<button class="nav-btn ${i === diaActivo ? 'active' : ''}" onclick="cambiarDia(${i})">Día ${d.dia} · ${d.fecha}</button>`
   ).join('');
-  // Scroll al botón activo
+  nav.innerHTML = vuelosBtn + diasBtns;
   setTimeout(() => {
-    const btn = nav.children[diaActivo];
+    const idx = diaActivo === -1 ? 0 : diaActivo + 1;
+    const btn = nav.children[idx];
     if (btn) btn.scrollIntoView({ inline: 'center', block: 'nearest' });
   }, 50);
+}
+
+function renderVuelos() {
+  const contenedor = document.getElementById('contenido-dia');
+  const tipoLabel = { ida: '✈️ Vuelo de Ida', conexion: '🔗 Conexión Interna', regreso: '🏠 Vuelo de Regreso' };
+  const tipoClass = { ida: '', conexion: 'conexion', regreso: 'regreso' };
+
+  let html = `
+    <div class="dia-hero">
+      <div class="dia-numero">Información de vuelos</div>
+      <div class="dia-titulo">✈️ Vuelos del Viaje</div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px">
+        <span class="dia-fecha">📍 MTY · MAD · OVD · MTY</span>
+        <span class="horario-pill">4 pasajeros</span>
+      </div>
+    </div>
+    <div class="contenido">
+  `;
+
+  VUELOS.forEach(v => {
+    html += `
+      <div class="vuelo-card ${tipoClass[v.tipo]}">
+        <div class="vuelo-header">
+          <div>
+            <div class="vuelo-aerolinea">${tipoLabel[v.tipo]} · ${v.aerolinea}</div>
+            <div class="vuelo-numero">${v.numero}</div>
+          </div>
+          <div class="vuelo-fecha-pill">📅 ${v.fechaCorta}</div>
+        </div>
+        <div class="vuelo-ruta">
+          <div class="vuelo-origen">
+            <div class="vuelo-iata">${v.origen.codigo}</div>
+            <div class="vuelo-ciudad">${v.origen.ciudad}</div>
+            <div class="vuelo-hora">${v.origen.hora}</div>
+            ${v.origen.terminal ? `<div class="vuelo-terminal">${v.origen.terminal}</div>` : ''}
+          </div>
+          <div class="vuelo-linea">
+            <div class="vuelo-linea-bar"></div>
+            <div class="vuelo-duracion">${v.duracion}</div>
+          </div>
+          <div class="vuelo-destino">
+            <div class="vuelo-iata">${v.destino.codigo}</div>
+            <div class="vuelo-ciudad">${v.destino.ciudad}</div>
+            <div class="vuelo-hora">${v.destino.hora}</div>
+            ${v.destino.terminal ? `<div class="vuelo-terminal">${v.destino.terminal}</div>` : ''}
+          </div>
+        </div>
+        <div class="vuelo-detalles">
+          <div class="vuelo-detalle-item"><strong>Asientos</strong>${v.asientos}</div>
+          <div class="vuelo-detalle-item"><strong>Avión</strong>${v.avion}</div>
+          <div class="vuelo-detalle-item"><strong>Clase</strong>${v.clase}</div>
+          <div class="vuelo-detalle-item"><strong>Comidas</strong>${v.comidas}</div>
+        </div>
+        <div class="vuelo-nota">${v.nota}</div>
+        <div class="vuelo-btns">
+          <a href="${v.googleUrl}" target="_blank" class="vuelo-btn vuelo-btn-primary">📡 Estado en tiempo real</a>
+          <a href="${v.flightawareUrl}" target="_blank" class="vuelo-btn vuelo-btn-secondary">🛫 FlightAware</a>
+        </div>
+      </div>
+    `;
+  });
+
+  html += `</div>`;
+  contenedor.innerHTML = html;
+  window.scrollTo(0, 0);
 }
 
 function renderDia(idx) {
@@ -794,7 +1017,11 @@ function renderChips() {
 function cambiarDia(idx) {
   diaActivo = idx;
   renderNav();
-  renderDia(idx);
+  if (idx === -1) {
+    renderVuelos();
+  } else {
+    renderDia(idx);
+  }
   renderChips();
 }
 
