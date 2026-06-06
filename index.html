@@ -626,12 +626,12 @@ const ITINERARIO = [
   },
   {
     dia: 4, fecha: "22 Jun", diaSemana: "Lunes",
-    titulo: "Piloña, Raíces Familiares & Lastres", subtitulo: "Llagar · Lastres · Vallobal · Migoya", horario: "09:00 – 19:00",
+    titulo: "Avilés, Lastres & Raíces Familiares", subtitulo: "Avilés · Lastres · Vallobal · Migoya", horario: "09:00 – 19:00",
     hotel: { nombre: "Hotel Silken Monumental Naranco", estrellas: "4★", detalle: "4ª noche · Oviedo" },
     manana: [
-      { tipo: "actividad", emoji: "🍎", texto: "Visita a Llagar tradicional con degustación", detalle: "Cultura sidrera asturiana (UNESCO) · Sidra y quesos locales incluidos", incluido: true },
+      { tipo: "actividad", emoji: "🏘️", texto: "Visita guiada a Avilés", detalle: "Casco histórico mejor conservado del norte · Soportales, plazas y palacios medievales", incluido: true },
       { tipo: "actividad", emoji: "📸", texto: "Parada fotográfica en Lastres", detalle: "Uno de los pueblos marineros más bellos de Asturias · Vista panorámica sobre el Cantábrico", incluido: true },
-      { tipo: "gastro", emoji: "🦐", servicio: "Almuerzo", nombre: "Restaurante El Mirador", subtipo: "Vistas al Cantábrico · Pescados y arroces · Lastres", precio: "€35–55", ninos: "Media", distincion: null, maps: "https://maps.google.com/?q=Restaurante+El+Mirador+Lastres+Colunga", incluido: false },
+      { tipo: "gastro", emoji: "🦐", servicio: "Almuerzo · 13:30 h", nombre: "Restaurante El Mirador de San Roque", subtipo: "Vistas al Cantábrico · Pescados y arroces · Lastres", precio: "€35–55", ninos: "Media", distincion: null, maps: "https://maps.google.com/?q=Restaurante+El+Mirador+Lastres+Colunga", incluido: false },
     ],
     tarde: [
       { tipo: "actividad", emoji: "⛪", texto: "Visita Santuario Virgen de la Cueva · Infiesto", detalle: "Lugar de mayor devoción popular de la comarca", incluido: true },
@@ -639,7 +639,7 @@ const ITINERARIO = [
       { tipo: "gastro", emoji: "🍽️", servicio: "Cena", nombre: "Restaurante El Monumental", subtipo: "Hotel Silken Monumental Naranco 4★ · Sin traslado", precio: "€30–50", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=Hotel+Silken+Monumental+Naranco+Oviedo", incluido: false },
     ],
     gastronomia: [
-      { tipo: "En el llagar", nombre: "Degustación de sidra y quesos asturianos", desc: "Aprenderás el escanciado tradicional. Quesos: Cabrales (azul, curado en cuevas), Afuega'l Pitu y Gamonéu." },
+      { tipo: "Avilés", nombre: "La Ferrería y calle La Cámara", desc: "Las calles del casco histórico de Avilés tienen sidrerías excelentes. Pide pixin (rape) o centollo si está en carta.", maps: "https://maps.google.com/?q=Calle+La+Camara+Aviles+Asturias" },
       { tipo: "Almuerzo en Lastres", nombre: "Mariscos y pescado del Cantábrico", desc: "Lastres es conocida por su flota pesquera. Oricios, nécoras, merluza a la sidra y percebes cuando hay temporada.", maps: "https://maps.google.com/?q=Puerto+de+Lastres+Asturias" },
     ],
     nota: "Jornada emocionalmente significativa. Vallobal y Migoya están en la comarca de Piloña — tierra de emigrantes asturianos a América en los siglos XIX-XX."
@@ -656,10 +656,7 @@ const ITINERARIO = [
       { tipo: "actividad", emoji: "🏨", texto: "Check-in Hotel Compostela", detalle: "Zona histórica de Santiago de Compostela", incluido: true },
       { tipo: "actividad", emoji: "⛪", texto: "Visita guiada Catedral de Santiago de Compostela", detalle: "Entrada incluida · Gran centro de peregrinación de Europa", incluido: true },
       { tipo: "actividad", emoji: "🚶", texto: "Tiempo libre · Paseo por el casco histórico", detalle: "Rúa do Franco, Praza do Obradoiro, Mercado de Abastos", incluido: true },
-      { tipo: "gastro", emoji: "🐙", servicio: "Cena", nombre: "Casa Marcelo", subtipo: "1 Estrella Michelin · Mesa común · Cocina abierta · Santiago", precio: "€90–130", ninos: "Baja", distincion: "★ Estrella Michelin", maps: "https://maps.google.com/?q=Casa+Marcelo+Santiago+de+Compostela", incluido: false, kidsAlt: [
-        { nombre: "O Gato Negro", subtipo: "Tasca gallega tradicional · Rúa do Franco · Familiar y animado", precio: "€20–35", maps: "https://maps.google.com/?q=O+Gato+Negro+Santiago+de+Compostela+Rua+Franco" },
-        { nombre: "Casa Manolo", subtipo: "Cocina gallega informal · Rúa de Fonseca · Ideal para familias", precio: "€25–40", maps: "https://maps.google.com/?q=Casa+Manolo+Santiago+de+Compostela" },
-      ]},
+      { tipo: "gastro", emoji: "🍽️", servicio: "Cena", nombre: "Restaurante del Hotel Compostela", subtipo: "Hotel Compostela 4★ · Santiago de Compostela · Sin traslado", precio: "€30–50", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=Hotel+Compostela+Santiago+de+Compostela", incluido: false },
     ],
     gastronomia: [
       { tipo: "Galicia en la mesa", nombre: "Pulpo á feira, empanada y pimientos de Padrón", desc: "El pulpo gallego con aceite, pimentón y sal gruesa sobre tabla de madera es obligatorio. La empanada de atún o zamburiñas es excelente aperitivo." },
@@ -670,30 +667,33 @@ const ITINERARIO = [
   {
     dia: 6, fecha: "24 Jun", diaSemana: "Miércoles",
     titulo: "Santiago → Regreso a Asturias", subtitulo: "Casco antiguo · Gijón", horario: "09:00 – 19:00",
-    hotel: { nombre: "Hotel Príncipe de Asturias", estrellas: "5★", detalle: "3 noches · Zona Oriente (Villaviciosa/Gijón)" },
+    hotel: { nombre: "Artiem Asturias", estrellas: "5★", detalle: "3 noches · Villaviciosa · Zona Oriente" },
     manana: [
       { tipo: "actividad", emoji: "🏛️", texto: "Visita guiada casco antiguo de Santiago", detalle: "Recorrido final por la ciudad antes de partir", incluido: true },
       { tipo: "traslado", emoji: "🚌", texto: "Check-out y salida hacia Asturias", detalle: "Retorno por la costa cantábrica", incluido: true },
-      { tipo: "gastro", emoji: "🍽️", servicio: "Almuerzo (en ruta)", nombre: "Por confirmar", subtipo: "AsturiaMe seleccionará según recorrido · Día 6", precio: "—", ninos: "Media", distincion: null, maps: null, incluido: false },
+      { tipo: "gastro", emoji: "🐙", servicio: "Almuerzo · 13:30 h", nombre: "Casa Marcelo", subtipo: "1 Estrella Michelin · Mesa común · Cocina abierta · Santiago de Compostela", precio: "€90–130", ninos: "Baja", distincion: "★ Estrella Michelin", maps: "https://maps.google.com/?q=Casa+Marcelo+Santiago+de+Compostela", incluido: false, kidsAlt: [
+        { nombre: "O Gato Negro", subtipo: "Tasca gallega tradicional · Rúa do Franco · Familiar y animado", precio: "€20–35", maps: "https://maps.google.com/?q=O+Gato+Negro+Santiago+de+Compostela+Rua+Franco" },
+        { nombre: "Casa Manolo", subtipo: "Cocina gallega informal · Rúa de Fonseca · Ideal para familias", precio: "€25–40", maps: "https://maps.google.com/?q=Casa+Manolo+Santiago+de+Compostela" },
+      ]},
     ],
     tarde: [
-      { tipo: "actividad", emoji: "🏨", texto: "Check-in Hotel Príncipe de Asturias · Gijón", detalle: "Hotel 5 estrellas · Zona oriente de Asturias", incluido: true },
+      { tipo: "actividad", emoji: "🏨", texto: "Check-in Artiem Asturias · Villaviciosa", detalle: "Hotel 5 estrellas · Concejo de Villaviciosa · Zona oriente de Asturias", incluido: true },
       { tipo: "actividad", emoji: "♨️", texto: "Tiempo libre · Opción acceso Spa (bajo petición a AsturiaMe)", detalle: "Circuito wellness disponible", incluido: false },
-      { tipo: "gastro", emoji: "🍷", servicio: "Cena", nombre: "Por confirmar", subtipo: "AsturiaMe seleccionará según recorrido · Gijón", precio: "—", ninos: "Media", distincion: null, maps: null, incluido: false },
+      { tipo: "gastro", emoji: "🍷", servicio: "Cena", nombre: "Restaurante del hotel", subtipo: "Artiem Asturias 5★ · Villaviciosa · Sin traslado", precio: "€30–50", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=Artiem+Asturias+Villaviciosa", incluido: false },
     ],
     gastronomia: [
-      { tipo: "Llegada a Gijón", nombre: "Zona portuaria — Cimadevilla", desc: "El puerto y el barrio de Cimadevilla concentran las mejores sidrerías y marisquerías de Gijón. Especial: nécoras y cigalas.", maps: "https://maps.google.com/?q=Cimadevilla+Gijon+Asturias" },
+      { tipo: "Villaviciosa", nombre: "Capital de la manzana y la sidra", desc: "Villaviciosa es la 'villa de la sidra' por excelencia. Sus llagares y bares tradicionales son ideales para una copa antes de cenar.", maps: "https://maps.google.com/?q=Villaviciosa+Asturias" },
     ],
-    nota: "Cambio de base: del interior histórico al oriente costero de Asturias. El Hotel Príncipe de Asturias tiene spa — buena oportunidad para reponer energías."
+    nota: "Cambio de base: de Santiago al oriente costero de Asturias. El Artiem Asturias en Villaviciosa tiene spa — buena oportunidad para reponer energías."
   },
   {
     dia: 7, fecha: "25 Jun", diaSemana: "Jueves",
-    titulo: "Gijón, Cultura Sidrera & el Mar", subtitulo: "Universidad Laboral · Avilés · Gijón", horario: "10:00 – 19:00",
-    hotel: { nombre: "Hotel Príncipe de Asturias", estrellas: "5★", detalle: "2ª noche · Zona Oriente" },
+    titulo: "Gijón, Cultura Sidrera & el Mar", subtitulo: "Universidad Laboral · Llagar · Gijón", horario: "09:30 – 19:00",
+    hotel: { nombre: "Artiem Asturias", estrellas: "5★", detalle: "2ª noche · Villaviciosa · Zona Oriente" },
     manana: [
       { tipo: "actividad", emoji: "🏛️", texto: "Visita fotográfica Universidad Laboral de Gijón", detalle: "Edificio más grande de España · Patrimonio industrial asturiano", incluido: true },
-      { tipo: "actividad", emoji: "🏘️", texto: "Visita guiada Avilés", detalle: "Casco histórico mejor conservado del norte · Soportales, plazas y palacios", incluido: true },
-      { tipo: "gastro", emoji: "🍽️", servicio: "Almuerzo", nombre: "Casa Gerardo", subtipo: "★ Michelin · 3 Soles Repsol · Prendes, Carreño · Fundado 1882", precio: "€80–120", ninos: "Baja", distincion: "★ Estrella Michelin · 3 Soles Repsol", maps: "https://maps.google.com/?q=Casa+Gerardo+Prendes+Carreño+Asturias", incluido: false, kidsAlt: [
+      { tipo: "actividad", emoji: "🍎", texto: "Visita Llagar Castañón con degustación · 11:00 h", detalle: "Cultura sidrera asturiana (UNESCO) · Sidra y quesos locales incluidos", incluido: true },
+      { tipo: "gastro", emoji: "🍽️", servicio: "Almuerzo · 13:30 h", nombre: "Casa Gerardo", subtipo: "★ Michelin · 3 Soles Repsol · Prendes, Carreño · Fundado 1882", precio: "€80–120", ninos: "Baja", distincion: "★ Estrella Michelin · 3 Soles Repsol", maps: "https://maps.google.com/?q=Casa+Gerardo+Prendes+Carreño+Asturias", incluido: false, kidsAlt: [
         { nombre: "Casa Trabanco", subtipo: "Sidrería icónica y familiar · Poago, Gijón · La más auténtica de Asturias", precio: "€20–35", maps: "https://maps.google.com/?q=Casa+Trabanco+Poago+Gijón+Asturias" },
         { nombre: "Tierra Astur Gijón", subtipo: "Sidrería amplia y familiar · Múltiples opciones para niños", precio: "€20–35", maps: "https://maps.google.com/?q=Tierra+Astur+Gijón" },
       ]},
@@ -704,19 +704,19 @@ const ITINERARIO = [
       { tipo: "gastro", emoji: "🍺", servicio: "Cena · 20:30 h", nombre: "Abarike", subtipo: "Chef Lara Roguez · Recomendado Guía Michelin · Gijón", precio: "€45–70", ninos: "Media", distincion: "Recomendado Michelin", maps: "https://maps.google.com/?q=Abarike+restaurante+Gijón", incluido: false },
     ],
     gastronomia: [
-      { tipo: "Avilés", nombre: "La Ferrería y calle La Cámara", desc: "Las calles del casco histórico de Avilés tienen sidrerías excelentes. Pide pixin (rape) o centollo si está en carta.", maps: "https://maps.google.com/?q=Calle+La+Camara+Aviles+Asturias" },
+      { tipo: "En el llagar", nombre: "Degustación de sidra y quesos asturianos", desc: "Aprenderás el escanciado tradicional. Quesos: Cabrales (azul, curado en cuevas), Afuega'l Pitu y Gamonéu." },
       { tipo: "Cena en Gijón", nombre: "Zona Cimadevilla — sidra y mariscos nocturnos", desc: "Gijón tiene escena nocturna animada. La zona de Cimadevilla y el Muro de San Lorenzo son ideales para cena tardía.", maps: "https://maps.google.com/?q=Cimadevilla+Gijon+Asturias" },
     ],
-    nota: "La Universidad Laboral de Gijón es el edificio más grande de España — la escala es impresionante aunque sea visita fotográfica desde exterior."
+    nota: "La Universidad Laboral de Gijón es el edificio más grande de España — la escala es impresionante aunque sea visita fotográfica desde exterior. El Llagar Castañón es una de las visitas más auténticas del viaje."
   },
   {
     dia: 8, fecha: "26 Jun", diaSemana: "Viernes",
     titulo: "Descenso del Río Sella & Llanes", subtitulo: "Canoas · Llanes · Costa Oriental", horario: "10:00 – 19:00",
-    hotel: { nombre: "Hotel Príncipe de Asturias", estrellas: "5★", detalle: "3ª noche · Zona Oriente" },
+    hotel: { nombre: "Artiem Asturias", estrellas: "5★", detalle: "3ª noche · Villaviciosa · Zona Oriente" },
     manana: [
       { tipo: "actividad", emoji: "🛶", texto: "Descenso del Río Sella en canoas", detalle: "Actividad emblemática del norte · Paisajes verdes, bosques y montañas · Apto para familias", incluido: true },
       { tipo: "actividad", emoji: "🏘️", texto: "Alternativa: Visita guiada Ribadesella", detalle: "Para quien prefiera no hacer el descenso en canoa", incluido: true },
-      { tipo: "gastro", emoji: "🦞", servicio: "Almuerzo", nombre: "Bálamu", subtipo: "Taberna marinera · Lonja del Puerto Pesquero de Llanes", precio: "€35–55", ninos: "Media", distincion: "Plato Michelin", maps: "https://maps.google.com/?q=Bálamu+Llanes+lonja+puerto", incluido: false },
+      { tipo: "gastro", emoji: "🍽️", servicio: "Almuerzo · 15:00 h", nombre: "El Corral del Indianu", subtipo: "Alta cocina asturiana · Llanes · ★ Estrella Michelin", precio: "€60–90", ninos: "Media", distincion: "★ Estrella Michelin", maps: "https://maps.google.com/?q=El+Corral+del+Indianu+Llanes+Asturias", incluido: false },
     ],
     tarde: [
       { tipo: "actividad", emoji: "⛵", texto: "Visita guiada a Llanes y tiempo libre", detalle: "Puerto, casco histórico, paseo marítimo · Huella de emigrantes indianos asturianos", incluido: true },
@@ -851,25 +851,42 @@ function getDiaISO(idx) {
   return d.toISOString().split('T')[0];
 }
 
+// Promedios históricos de junio (fallback cuando el pronóstico no alcanza la fecha)
+const CLIMA_HISTORICO = {
+  'Oviedo':                 { max: 21, min: 13, precip: 45, code: 2 },
+  'Santiago de Compostela': { max: 22, min: 13, precip: 50, code: 3 },
+  'Gijón':                  { max: 20, min: 14, precip: 40, code: 2 },
+  'León':                   { max: 26, min: 13, precip: 25, code: 1 },
+};
+
+let wxLoaded = false;
+
 function wxForDay(idx) {
   const city = DIA_CIUDAD[idx];
   const date = getDiaISO(idx);
   const d = wxCache[city];
-  if (!d) return null;
-  const i = d.time.indexOf(date);
-  if (i === -1) return null;
-  return { max: Math.round(d.temperature_2m_max[i]), min: Math.round(d.temperature_2m_min[i]), precip: d.precipitation_probability_max[i], code: d.weathercode[i], city };
+  // Buscar en pronóstico real
+  if (d && d.time) {
+    const i = d.time.indexOf(date);
+    if (i !== -1) {
+      return { max: Math.round(d.temperature_2m_max[i]), min: Math.round(d.temperature_2m_min[i]), precip: d.precipitation_probability_max[i] ?? 0, code: d.weathercode[i], city, real: true };
+    }
+  }
+  // Fallback a promedio histórico
+  const h = CLIMA_HISTORICO[city];
+  return h ? { ...h, city, real: false } : null;
 }
 
 async function fetchWeather() {
   for (const [city, coords] of Object.entries(WEATHER_LOCS)) {
     try {
-      const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weathercode&timezone=Europe%2FMadrid&start_date=2026-06-19&end_date=2026-06-28`;
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weathercode&timezone=Europe%2FMadrid&forecast_days=16`;
       const res = await fetch(url);
       const data = await res.json();
-      wxCache[city] = data.daily;
+      wxCache[city] = (data.daily && data.daily.time) ? data.daily : null;
     } catch(e) { wxCache[city] = null; }
   }
+  wxLoaded = true;
   if (diaActivo >= 0) renderDia(diaActivo);
   else if (diaActivo === -2) renderClima();
 }
@@ -877,7 +894,7 @@ async function fetchWeather() {
 const HOTEL_MAPS = {
   "Hotel Silken Monumental Naranco": "https://maps.google.com/?q=Hotel+Silken+Monumental+Naranco+Oviedo",
   "Hotel Compostela": "https://maps.google.com/?q=Hotel+Compostela+Santiago+de+Compostela",
-  "Hotel Príncipe de Asturias": "https://maps.google.com/?q=Hotel+Principe+de+Asturias+Gijon",
+  "Artiem Asturias": "https://maps.google.com/?q=Artiem+Asturias+Villaviciosa",
   "Hotel Barceló León Conde de Luna": "https://maps.google.com/?q=Hotel+Barcelo+Leon+Conde+de+Luna",
 };
 
@@ -902,10 +919,10 @@ HOTELES DEL VIAJE:
    Tel: <a href="tel:+34981559269">+34 981 559 269</a>
    <a href="https://maps.google.com/?q=Hotel+Compostela+Santiago+de+Compostela" target="_blank">📍 Ver en Maps</a>
 
-3. Hotel Príncipe de Asturias — Gijón (5★, noches 6-8)
-   Dirección: Calle Manso, 2, 33201 Gijón
-   Tel: <a href="tel:+34985367111">+34 985 367 111</a>
-   <a href="https://maps.google.com/?q=Hotel+Principe+de+Asturias+Gijon" target="_blank">📍 Ver en Maps</a>
+3. Artiem Asturias — Villaviciosa (5★, noches 6-8)
+   Dirección: Ctra. de la Playa, s/n, 33310 Villaviciosa, Asturias
+   Tel: <a href="tel:+34985890047">+34 985 890 047</a>
+   <a href="https://maps.google.com/?q=Artiem+Asturias+Villaviciosa" target="_blank">📍 Ver en Maps</a>
 
 4. Hotel Barceló León Conde de Luna — León (4★, noche 9)
    Dirección: Calle Los Condesa de Sagasta, 24, 24001 León
@@ -916,10 +933,10 @@ ITINERARIO RESUMIDO:
 Día 1 (19 Jun): Llegada OVD → Oviedo. Casco antiguo y Catedral UNESCO.
 Día 2 (20 Jun): Lagos de Covadonga, Santuario, Cangas de Onís. Almuerzo Casa de la Fabada.
 Día 3 (21 Jun): Senda del Oso en bici (Teverga). Pueblo medieval Bandujo.
-Día 4 (22 Jun): Llagar con degustación. Lastres. Santuario Infiesto. Raíces González: Migoya y Vallobal (Piloña).
-Día 5 (23 Jun): Santiago de Compostela. Catedral.
-Día 6 (24 Jun): Casco antiguo Santiago → retorno. Check-in Gijón 5★.
-Día 7 (25 Jun): Universidad Laboral Gijón. Avilés. Cimadevilla.
+Día 4 (22 Jun): Visita guiada Avilés. Lastres. Santuario Infiesto. Raíces González: Migoya y Vallobal (Piloña).
+Día 5 (23 Jun): Santiago de Compostela. Catedral. Cena hotel.
+Día 6 (24 Jun): Casco antiguo Santiago → almuerzo Casa Marcelo (Michelin) → retorno. Check-in Artiem Asturias, Villaviciosa 5★.
+Día 7 (25 Jun): Universidad Laboral Gijón. Llagar Castañón con degustación. Cimadevilla.
 Día 8 (26 Jun): Descenso Río Sella en canoas. Llanes.
 Día 9 (27 Jun): AVE Gijón→León 11:09h. Corrida de Toros 19:00h.
 Día 10 (28 Jun): León libre. Tren León→Madrid 18:53h.
@@ -961,8 +978,6 @@ function renderNav() {
 
 function renderClima() {
   const contenedor = document.getElementById('contenido-dia');
-  const ciudades = [...new Set(DIA_CIUDAD)];
-  const noData = Object.values(wxCache).every(v => v === null || v === undefined);
 
   let html = `
     <div class="dia-hero">
@@ -970,38 +985,39 @@ function renderClima() {
       <div class="dia-titulo">🌤️ Clima · Asturias · Galicia · León</div>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px">
         <span class="dia-fecha">📍 Jun 19 – Jun 28, 2026</span>
-        <span class="horario-pill">Fuente: Open-Meteo</span>
+        <span class="horario-pill">${wxLoaded ? 'Open-Meteo' : 'Cargando…'}</span>
       </div>
     </div>
     <div class="contenido">`;
 
-  if (noData) {
-    html += `<div class="nota">🔄 Cargando pronóstico… El forecast estará disponible ~16 días antes de cada fecha.</div>`;
-  } else {
-    for (let i = 0; i < ITINERARIO.length; i++) {
-      const d = ITINERARIO[i];
-      const wx = wxForDay(i);
-      const ciudad = DIA_CIUDAD[i];
-      if (!wx) continue;
-      const info = wmoInfo(wx.code);
-      const precipColor = wx.precip >= 60 ? '#c0392b' : wx.precip >= 30 ? '#e67e22' : '#2d6b54';
-      html += `
-        <div style="background:white;border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 6px rgba(0,0,0,0.06);">
-          <div style="font-size:1.8rem;flex-shrink:0;">${info.emoji}</div>
-          <div style="flex:1;">
-            <p style="font-size:0.6rem;color:var(--gris);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1px;">Día ${d.dia} · ${d.fecha} · ${ciudad}</p>
-            <p style="font-size:0.82rem;font-weight:600;color:var(--texto);">${d.titulo}</p>
-            <p style="font-size:0.7rem;color:var(--gris);margin-top:1px;">${info.desc}</p>
+  for (let i = 0; i < ITINERARIO.length; i++) {
+    const d = ITINERARIO[i];
+    const wx = wxForDay(i);
+    if (!wx) continue;
+    const info = wmoInfo(wx.code);
+    const precipColor = wx.precip >= 60 ? '#c0392b' : wx.precip >= 30 ? '#e67e22' : '#2d6b54';
+    const tag = wx.real
+      ? `<span style="font-size:0.58rem;padding:1px 6px;border-radius:8px;background:#e8f4ee;color:#2d6b54;font-weight:600;">Pronóstico real</span>`
+      : `<span style="font-size:0.58rem;padding:1px 6px;border-radius:8px;background:#f0f4ff;color:#1a3a6b;font-weight:600;">Promedio junio</span>`;
+    html += `
+      <div style="background:white;border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 6px rgba(0,0,0,0.06);">
+        <div style="font-size:1.8rem;flex-shrink:0;">${info.emoji}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:5px;margin-bottom:2px;">
+            <p style="font-size:0.6rem;color:var(--gris);letter-spacing:0.08em;text-transform:uppercase;">Día ${d.dia} · ${d.fecha} · ${wx.city}</p>
+            ${tag}
           </div>
-          <div style="text-align:right;flex-shrink:0;">
-            <p style="font-size:1rem;font-weight:700;color:var(--verde);">${wx.max}°<span style="font-size:0.75rem;color:var(--gris);font-weight:400;">/${wx.min}°</span></p>
-            <p style="font-size:0.68rem;font-weight:600;color:${precipColor};">💧 ${wx.precip}%</p>
-          </div>
-        </div>`;
-    }
-    html += `<div class="nota" style="margin-top:4px;">💡 Junio en el norte de España: 18–22°C, lluvia posible. Lleva siempre impermeable ligero.</div>`;
+          <p style="font-size:0.82rem;font-weight:600;color:var(--texto);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.titulo}</p>
+          <p style="font-size:0.7rem;color:var(--gris);margin-top:1px;">${info.desc}</p>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <p style="font-size:1rem;font-weight:700;color:var(--verde);">${wx.max}°<span style="font-size:0.75rem;color:var(--gris);font-weight:400;">/${wx.min}°</span></p>
+          <p style="font-size:0.68rem;font-weight:600;color:${precipColor};">💧 ${wx.precip}%</p>
+        </div>
+      </div>`;
   }
 
+  html += `<div class="nota" style="margin-top:4px;">💡 Junio en el norte de España: 18–22°C, lluvia frecuente. Lleva siempre impermeable ligero. El pronóstico real se activará ~16 días antes de cada fecha.</div>`;
   html += `</div>`;
   contenedor.innerHTML = html;
   window.scrollTo(0, 0);
@@ -1078,8 +1094,8 @@ function renderDia(idx) {
 
   const wx = wxForDay(idx);
   const wxPill = wx
-    ? `<span class="horario-pill">${wmoInfo(wx.code).emoji} ${wx.max}°/${wx.min}° · 💧${wx.precip}%</span>`
-    : `<span class="horario-pill" style="opacity:0.5">🌡️ Cargando…</span>`;
+    ? `<span class="horario-pill">${wmoInfo(wx.code).emoji} ${wx.max}°/${wx.min}° · 💧${wx.precip}%${wx.real ? '' : ' ~'}</span>`
+    : '';
 
   let html = `
     <div class="dia-hero">
