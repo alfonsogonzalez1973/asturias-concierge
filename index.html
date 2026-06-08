@@ -562,7 +562,28 @@
   }
   .vuelo-btn-primary { background: var(--verde); color: white; }
   .vuelo-btn-secondary { background: var(--crema); color: var(--verde); border: 1px solid rgba(26,74,58,0.2); }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  #trivia-root {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 200;
+    overflow-y: auto;
+    background: linear-gradient(160deg,#0a0f1e 0%,#111827 60%,#0a0f1e 100%);
+  }
+
+  body.trivia-mode .chat-container { display: none !important; }
+  body.trivia-mode #chat-fab       { display: none !important; }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js" crossorigin></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js" crossorigin></script>
 </head>
 <body>
 
@@ -599,6 +620,8 @@
   </div>
 </div>
 <button class="chat-fab" id="chat-fab" title="Abrir concierge">💬</button>
+
+<div id="trivia-root"></div>
 
 <script>
 const ITINERARIO = [
@@ -1002,14 +1025,16 @@ let cargando = false;
 
 function renderNav() {
   const nav = document.getElementById('nav-dias');
+  const triviaBtn = `<button class="nav-btn ${diaActivo === -3 ? 'active' : ''}" onclick="cambiarDia(-3)">🎯 Trivia</button>`;
   const climaBtn  = `<button class="nav-btn ${diaActivo === -2 ? 'active' : ''}" onclick="cambiarDia(-2)">🌤️ Clima</button>`;
   const vuelosBtn = `<button class="nav-btn ${diaActivo === -1 ? 'active' : ''}" onclick="cambiarDia(-1)">✈️ Vuelos</button>`;
   const diasBtns = ITINERARIO.map((d, i) =>
     `<button class="nav-btn ${i === diaActivo ? 'active' : ''}" onclick="cambiarDia(${i})">Día ${d.dia} · ${d.fecha}</button>`
   ).join('');
-  nav.innerHTML = climaBtn + vuelosBtn + diasBtns;
+  nav.innerHTML = triviaBtn + climaBtn + vuelosBtn + diasBtns;
   setTimeout(() => {
-    const idx = diaActivo === -1 ? 0 : diaActivo + 1;
+    // triviaBtn=0, climaBtn=1, vuelosBtn=2, dias start at 3
+    const idx = diaActivo === -3 ? 0 : diaActivo === -2 ? 1 : diaActivo === -1 ? 2 : diaActivo + 3;
     const btn = nav.children[idx];
     if (btn) btn.scrollIntoView({ inline: 'center', block: 'nearest' });
   }, 50);
@@ -1261,12 +1286,22 @@ function renderChips() {
 function cambiarDia(idx) {
   diaActivo = idx;
   renderNav();
-  if (idx === -2) {
-    renderClima();
-  } else if (idx === -1) {
-    renderVuelos();
+  const triviaRoot = document.getElementById('trivia-root');
+  if (idx === -3) {
+    triviaRoot.style.display = 'block';
+    document.body.classList.add('trivia-mode');
+    // scroll trivia to top
+    triviaRoot.scrollTop = 0;
   } else {
-    renderDia(idx);
+    triviaRoot.style.display = 'none';
+    document.body.classList.remove('trivia-mode');
+    if (idx === -2) {
+      renderClima();
+    } else if (idx === -1) {
+      renderVuelos();
+    } else {
+      renderDia(idx);
+    }
   }
   renderChips();
 }
@@ -1415,6 +1450,877 @@ document.getElementById('fecha-display').textContent = now.toLocaleDateString('e
   tickCountdown();
   setInterval(tickCountdown, 1000);
 })();
+</script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+const VIAJEROS = [
+  { id: "abuelo", name: "Momo",    color: "#C8963E" },
+  { id: "abuela", name: "Abuela",  color: "#D4748C" },
+  { id: "tia1",   name: "Tere",    color: "#FF6B9D" },
+  { id: "papa1",  name: "Poncho",  color: "#4A90D9" },
+  { id: "mama1",  name: "Ale",     color: "#7B68EE" },
+  { id: "hija1",  name: "Natalia", color: "#F7A200" },
+  { id: "hija2",  name: "Emilia",  color: "#E07A5F" },
+  { id: "papa2",  name: "Pablo",   color: "#2EAE85" },
+  { id: "mama2",  name: "Lore",    color: "#3D9970" },
+  { id: "hija3",  name: "Alesia",  color: "#9B59B6" },
+  { id: "hijo4",  name: "Alonso",  color: "#27AE60" },
+];
+
+const EMOJI_OPTIONS = [
+  "😎","🤠","🥳","🤩","😄","😜","🤓","😏","🥸","😇",
+  "🦁","🐯","🦊","🐻","🐼","🐨","🦄","🐸","🦋","🐙",
+  "⭐","🔥","🌊","🏔️","🌺","🍀","🌙","☀️","⚡","🎯",
+  "🎸","⚽","🏄","🎨","🚀","🎭","🏆","💎","🎲","🎪",
+];
+
+const DIAS_T = [
+  { id:1,  fecha:"19/06", titulo:"Bienvenida a Asturias",    lugar:"Oviedo",             emoji:"✈️" },
+  { id:2,  fecha:"20/06", titulo:"Covadonga & el reino",     lugar:"Covadonga · Cangas", emoji:"⛪" },
+  { id:3,  fecha:"21/06", titulo:"Senda del Oso",            lugar:"Teverga · Bandujo",  emoji:"🚲" },
+  { id:4,  fecha:"22/06", titulo:"Avilés, Lastres & raíces", lugar:"Avilés · Lastres",   emoji:"🌊" },
+  { id:5,  fecha:"23/06", titulo:"Santiago de Compostela",   lugar:"Galicia",            emoji:"🏛️" },
+  { id:6,  fecha:"24/06", titulo:"Santiago & regreso",       lugar:"Santiago · Gijón",   emoji:"🛤️" },
+  { id:7,  fecha:"25/06", titulo:"Gijón & la sidra",         lugar:"Gijón",              emoji:"🍺" },
+  { id:8,  fecha:"26/06", titulo:"Descenso del Sella",       lugar:"Sella · Llanes",     emoji:"🛶" },
+  { id:9,  fecha:"27/06", titulo:"León",                     lugar:"León",               emoji:"🦁" },
+  { id:10, fecha:"28/06", titulo:"Hasta pronto",             lugar:"León · Madrid",      emoji:"🚂" },
+];
+
+const PREGUNTAS_T = {
+  1:[
+    {texto:"¿En qué aeropuerto aterrizamos hoy?",opciones:["Aeropuerto de Asturias (OVD)","Aeropuerto de Bilbao","Aeropuerto de Santander","Aeropuerto de Oviedo"],correcta:0,categoria:"cultura",puntos:100},
+    {texto:"¿Cuál es la catedral que visitamos en Oviedo con Cámara Santa?",opciones:["Catedral de San Salvador","Catedral de Santiago","Catedral de Santa María","Catedral de San Juan"],correcta:0,categoria:"cultura",puntos:150},
+    {texto:"¿En qué sidrería comimos al mediodía?",opciones:["La Pumarada","El Llar de Viri","Casa Gerardo","El Corral del Indianu"],correcta:0,categoria:"gastronomia",puntos:100},
+    {texto:"¿Oviedo fue capital de qué reino medieval?",opciones:["Reino de Asturias","Reino de León","Reino de Castilla","Reino de Galicia"],correcta:0,categoria:"cultura",puntos:200},
+    {texto:"¿Cómo se llama el hotel donde nos hospedamos en Oviedo?",opciones:["Silken Monumental Naranco","Hotel Asturias","Parador de Oviedo","Hotel Reconquista"],correcta:0,categoria:"aventura",puntos:100},
+  ],
+  2:[
+    {texto:"¿En qué parque nacional están los Lagos de Covadonga?",opciones:["Picos de Europa","Ordesa","Cabañeros","Sierra Nevada"],correcta:0,categoria:"naturaleza",puntos:150},
+    {texto:"¿Quién ganó la batalla de Covadonga?",opciones:["Don Pelayo","Alfonso II","Alfonso III","Fruela I"],correcta:0,categoria:"cultura",puntos:200},
+    {texto:"¿Cómo se llaman los dos lagos de Covadonga?",opciones:["Enol y Ercina","Enol y Sella","Ercina y Narcea","Nalón y Ercina"],correcta:0,categoria:"naturaleza",puntos:150},
+    {texto:"¿En qué restaurante comimos la fabada asturiana?",opciones:["La Casa de la Fabada","El Corral del Indianu","Casa Fermín","La Pumarada"],correcta:0,categoria:"gastronomia",puntos:100},
+    {texto:"¿En qué parador histórico dormimos esta noche?",opciones:["Parador de Cangas de Onís","Parador de Gijón","Parador de Oviedo","Parador de Covadonga"],correcta:0,categoria:"cultura",puntos:100},
+  ],
+  3:[
+    {texto:"¿Cómo se llama el recorrido donde fuimos en e-bike?",opciones:["Senda del Oso","Senda del Lobo","Ruta del Cares","Camino del Norte"],correcta:0,categoria:"aventura",puntos:100},
+    {texto:"¿En qué localidad está la Taberna Narciso donde comimos?",opciones:["Teverga","Tuñón","Bandujo","Quirós"],correcta:0,categoria:"gastronomia",puntos:150},
+    {texto:"¿Por qué se llama Senda del Oso?",opciones:["Por el oso pardo asturiano, símbolo de la región","Por la forma del valle","Por un cuento popular","Por un castillo medieval"],correcta:0,categoria:"cultura",puntos:200},
+    {texto:"¿Cuántos siglos tiene el pueblo medieval de Bandujo?",opciones:["Más de 10 siglos","5 siglos","3 siglos","2 siglos"],correcta:0,categoria:"cultura",puntos:150},
+    {texto:"¿A qué hora comenzamos la actividad de e-bikes?",opciones:["10:00h","09:00h","11:00h","08:30h"],correcta:0,categoria:"aventura",puntos:100},
+  ],
+  4:[
+    {texto:"¿Qué villa histórica visitamos por la mañana?",opciones:["Avilés","Gijón","Llanes","Ribadesella"],correcta:0,categoria:"cultura",puntos:100},
+    {texto:"¿Cómo se llama el mirador donde fotografiamos Lastres?",opciones:["Mirador de San Roque","Mirador del Faro","Mirador Covadonga","Mirador del Cantábrico"],correcta:0,categoria:"aventura",puntos:150},
+    {texto:"¿Cómo se llama el pueblo vinculado al apellido familiar?",opciones:["Migoya","Vallobal","Infiesto","Piloña"],correcta:0,categoria:"cultura",puntos:200},
+    {texto:"¿Qué santuario visitamos en Infiesto?",opciones:["Virgen de la Cueva","Virgen de Covadonga","Virgen del Carmen","Virgen del Camino"],correcta:0,categoria:"cultura",puntos:150},
+    {texto:"¿En qué restaurante cenamos esta noche en Oviedo?",opciones:["Casa Fermín","La Pumarada","La Corte de Pelayo","ABARIKE"],correcta:0,categoria:"gastronomia",puntos:100},
+  ],
+  5:[
+    {texto:"¿Cómo se llama la gran plaza frente a la Catedral de Santiago?",opciones:["Plaza del Obradoiro","Plaza Mayor","Plaza de España","Plaza de la Quintana"],correcta:0,categoria:"cultura",puntos:150},
+    {texto:"¿Qué apóstol está enterrado en la Catedral de Santiago?",opciones:["Santiago el Mayor","San Pedro","San Juan","San Pablo"],correcta:0,categoria:"cultura",puntos:100},
+    {texto:"¿Cómo se llama el incensario gigante de la catedral?",opciones:["Botafumeiro","Turibulum","El Gran Incensario","Incensarium"],correcta:0,categoria:"cultura",puntos:200},
+    {texto:"¿En qué restaurante comimos al llegar a Santiago?",opciones:["Taberna Montes","Casa Marcelo","Casa Gerardo","Racimo de Oro"],correcta:0,categoria:"gastronomia",puntos:100},
+    {texto:"¿Cuántos km tiene el Camino Francés hasta Santiago?",opciones:["800 km","500 km","1,200 km","300 km"],correcta:0,categoria:"aventura",puntos:150},
+  ],
+  6:[
+    {texto:"¿En qué hotel hicimos check-in en Gijón?",opciones:["Hotel Príncipe de Asturias","Hotel Compostela","Hotel Silken Naranco","Hotel Barceló León"],correcta:0,categoria:"cultura",puntos:100},
+    {texto:"¿En qué restaurante comimos en Santiago hoy?",opciones:["Casa Marcelo","Taberna Montes","Casa Gerardo","El Mirador de San Roque"],correcta:0,categoria:"gastronomia",puntos:150},
+    {texto:"¿A qué comunidad autónoma pertenece Santiago?",opciones:["Galicia","Asturias","Castilla y León","País Vasco"],correcta:0,categoria:"cultura",puntos:100},
+    {texto:"¿Cuánto duró el traslado de Santiago a Gijón?",opciones:["Unas 3 horas","1 hora","5 horas","30 minutos"],correcta:0,categoria:"aventura",puntos:150},
+    {texto:"¿Cuántas estrellas tiene el Hotel Príncipe de Asturias?",opciones:["5 estrellas","4 estrellas","3 estrellas","Gran Lujo"],correcta:0,categoria:"cultura",puntos:200},
+  ],
+  7:[
+    {texto:"¿Cómo se llama el edificio monumental que visitamos en Gijón?",opciones:["Universidad Laboral","Palacio de Revillagigedo","Museo del Pueblo","Teatro Jovellanos"],correcta:0,categoria:"cultura",puntos:150},
+    {texto:"¿Cómo se llama el llagar donde aprendimos de sidra?",opciones:["Llagar Castañón","Llagar El Gaitero","Llagar Valdés","Llagar Trabanco"],correcta:0,categoria:"gastronomia",puntos:150},
+    {texto:"¿Cómo se escancia correctamente la sidra?",opciones:["Desde altura con el brazo extendido para airearla","Directamente de la botella sin mover","Agitando la botella antes de servir","Con una jarra intermedia"],correcta:0,categoria:"gastronomia",puntos:200},
+    {texto:"¿Cómo se llama el barrio histórico de pescadores en Gijón?",opciones:["Cimavilla","La Calzada","El Llano","Somió"],correcta:0,categoria:"cultura",puntos:150},
+    {texto:"¿En qué restaurante comimos hoy?",opciones:["Casa Gerardo","ABARIKE","El Corral del Indianu","La Pumarada"],correcta:0,categoria:"gastronomia",puntos:100},
+  ],
+  8:[
+    {texto:"¿En qué río bajamos en canoa hoy?",opciones:["Río Sella","Río Nalón","Río Narcea","Río Cares"],correcta:0,categoria:"aventura",puntos:100},
+    {texto:"¿A qué hora comenzó el descenso del río?",opciones:["11:00h","09:00h","13:00h","10:30h"],correcta:0,categoria:"aventura",puntos:100},
+    {texto:"¿En qué restaurante comimos cerca del Sella?",opciones:["El Corral del Indianu","Casa Gerardo","La Casa de la Fabada","Taberna Narciso"],correcta:0,categoria:"gastronomia",puntos:150},
+    {texto:"¿Qué significa 'Indianu' en Asturias?",opciones:["Asturiano que emigró a América y regresó rico","Un tipo de arquitectura local","Un plato típico asturiano","Un viento del norte"],correcta:0,categoria:"cultura",puntos:200},
+    {texto:"¿Llanes está en el oriente o el occidente de Asturias?",opciones:["Oriente asturiano","Occidente asturiano","Centro de Asturias","Costa cantábrica occidental"],correcta:0,categoria:"cultura",puntos:150},
+  ],
+  9:[
+    {texto:"¿Cómo viajamos de Gijón a León hoy?",opciones:["AVE (tren de alta velocidad)","Avión","Autobus","Minibús privado"],correcta:0,categoria:"aventura",puntos:100},
+    {texto:"¿Cuánto duró el trayecto en AVE?",opciones:["1h 35 minutos","30 minutos","3 horas","2 horas 15 minutos"],correcta:0,categoria:"aventura",puntos:150},
+    {texto:"¿Qué espectáculo vimos esta tarde en León?",opciones:["Corrida de toros","Flamenco","Procesión religiosa","Festival de jazz"],correcta:0,categoria:"cultura",puntos:100},
+    {texto:"¿En qué restaurante comimos al llegar a León?",opciones:["Racimo de Oro","Bodega Regia","Casa Fermín","Taberna Montes"],correcta:0,categoria:"gastronomia",puntos:100},
+    {texto:"¿Por qué es famosa la Catedral de León?",opciones:["Por sus vidrieras góticas medievales","Por ser la más grande de España","Por su cripta romana","Por tener la torre más alta de Europa"],correcta:0,categoria:"cultura",puntos:200},
+  ],
+  10:[
+    {texto:"¿Cómo viajamos de León a Madrid?",opciones:["Tren AVE","Avión","Autobus","Coche privado"],correcta:0,categoria:"aventura",puntos:100},
+    {texto:"¿Cuántos días duró el viaje en total?",opciones:["10 días","7 días","14 días","12 días"],correcta:0,categoria:"cultura",puntos:100},
+    {texto:"¿Cuántas regiones distintas visitamos?",opciones:["3 (Asturias, Galicia y Castilla y León)","2","4","5"],correcta:0,categoria:"cultura",puntos:150},
+    {texto:"¿Cuántos viajeros formamos este grupo?",opciones:["11 personas","9 personas","12 personas","10 personas"],correcta:0,categoria:"cultura",puntos:100},
+    {texto:"¿Cómo se llama el río que descendimos en canoa?",opciones:["Sella","Nalón","Narcea","Navia"],correcta:0,categoria:"aventura",puntos:150},
+  ],
+};
+
+const CATEGORIAS_T = {
+  cultura:     {label:"Cultura",      color:"#4A90D9", emoji:"🏛️"},
+  gastronomia: {label:"Gastronomía",  color:"#E07A5F", emoji:"🍽️"},
+  aventura:    {label:"Aventura",     color:"#2EAE85", emoji:"🧭"},
+  naturaleza:  {label:"Naturaleza",   color:"#27AE60", emoji:"🌿"},
+};
+
+const CLOUDINARY_CLOUD  = "dlc3aof3h";
+const CLOUDINARY_PRESET = "gkz1obty";
+const CLOUDINARY_FOLDER = "asturias2026";
+
+async function uploadToCloudinary(file, dia, userId) {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", CLOUDINARY_PRESET);
+  formData.append("folder", `${CLOUDINARY_FOLDER}/dia${dia}`);
+  formData.append("public_id", `dia${dia}_${userId}_${Date.now()}`);
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`,
+    { method: "POST", body: formData }
+  );
+  if (!res.ok) throw new Error("Upload failed");
+  const data = await res.json();
+  return data.secure_url;
+}
+
+const PREDICCIONES_T = {
+  1:"¿Cuántos escalones tiene la Catedral de Oviedo?",
+  2:"¿A qué altitud están los Lagos de Covadonga? (metros)",
+  3:"¿Cuántos km tiene la Senda del Oso completa?",
+  4:"¿En qué año nació la primera persona de la familia en Asturias? (aprox)",
+  5:"¿Cuántos peregrinos llegan a Santiago al año? (miles)",
+  6:"¿A cuántos km está Gijón de Santiago de Compostela?",
+  7:"¿Cuántos litros de sidra produce Asturias al año? (millones)",
+  8:"¿Cuántos km baja el río Sella en el descenso?",
+  9:"¿En qué año se terminó la Catedral de León?",
+  10:"¿Cuántos km recorrió el grupo en total durante estos 10 días?",
+};
+
+function loadState() {
+  try { const r = localStorage.getItem("asturias_v2"); return r ? JSON.parse(r) : null; }
+  catch { return null; }
+}
+function saveState(s) {
+  try { localStorage.setItem("asturias_v2", JSON.stringify(s)); } catch(e) { console.error(e); }
+}
+function initState() {
+  const scores = {};
+  VIAJEROS.forEach(v => { scores[v.id] = {total:0,cultura:0,gastronomia:0,aventura:0,naturaleza:0,foto:0,prediccion:0,curiosidad:0,correctas:0,respondidas:0}; });
+  const avatars = {};
+  VIAJEROS.forEach(v => { avatars[v.id] = null; });
+  return {scores, avatars, diaActual:1, respuestasDia:{}, fotoVotos:{}, historial:[], initialized:true};
+}
+
+function App() {
+  const [gs, setGs] = useState(null);
+  const [screen, setScreen] = useState("loading");
+  const [user, setUser] = useState(null);
+  const [adminCode, setAdminCode] = useState("");
+  const [pendingUser, setPendingUser] = useState(null);
+  const [fotoUploading, setFotoUploading] = useState(false);
+  const [fotoUploadError, setFotoUploadError] = useState(null);
+  const [fotosDia, setFotosDia] = useState({});
+  const [qIdx, setQIdx] = useState(0);
+  const [sel, setSel] = useState(null);
+  const [showResult, setShowResult] = useState(false);
+  const [done, setDone] = useState(false);
+  const [timer, setTimer] = useState(20);
+  const timerRef = useRef(null);
+  const [predVal, setPredVal] = useState("");
+  const [curVal, setCurVal] = useState("");
+  const [bonusV, setBonusV] = useState(VIAJEROS[0].id);
+  const [bonusPts, setBonusPts] = useState(100);
+  const [bonusCat, setBonusCat] = useState("cultura");
+
+  useEffect(() => {
+    const stored = loadState();
+    const state = (stored && stored.initialized) ? stored : initState();
+    if (!stored) saveState(state);
+    setGs(state);
+    try {
+      const fr = localStorage.getItem("asturias_fotos");
+      if (fr) setFotosDia(JSON.parse(fr));
+    } catch {}
+    setScreen("login");
+  }, []);
+
+  const update = (next) => { setGs(next); saveState(next); };
+
+  useEffect(() => {
+    if (screen !== "trivia" || showResult || done) return;
+    setTimer(20);
+    timerRef.current = setInterval(() => {
+      setTimer(v => { if (v <= 1) { clearInterval(timerRef.current); answer(null); return 0; } return v-1; });
+    }, 1000);
+    return () => clearInterval(timerRef.current);
+  }, [screen, qIdx, showResult, done]);
+
+  const preguntas = PREGUNTAS_T[gs?.diaActual] || [];
+
+  const answer = (idx) => {
+    clearInterval(timerRef.current);
+    const q = preguntas[qIdx];
+    const correct = idx === q.correcta;
+    const pts = correct ? q.puntos : 0;
+    setSel(idx); setShowResult(true);
+    setTimeout(() => {
+      const next = JSON.parse(JSON.stringify(gs));
+      if (correct) { next.scores[user.id].total += pts; next.scores[user.id][q.categoria] = (next.scores[user.id][q.categoria]||0)+pts; next.scores[user.id].correctas += 1; }
+      next.scores[user.id].respondidas += 1;
+      if (qIdx+1 >= preguntas.length) { next.respuestasDia[`trivia_${user.id}_d${gs.diaActual}`]=true; setDone(true); setShowResult(false); }
+      else { setQIdx(i=>i+1); setSel(null); setShowResult(false); }
+      update(next);
+    }, 2200);
+  };
+
+  const votoFoto = (vid) => {
+    const key = `foto_${user.id}_d${gs.diaActual}`;
+    if (gs.fotoVotos[key]) return;
+    const next = JSON.parse(JSON.stringify(gs));
+    next.fotoVotos[key]=vid; next.scores[vid].foto=(next.scores[vid].foto||0)+50; next.scores[vid].total+=50;
+    update(next); setScreen("menu");
+  };
+
+  const enviarPred = () => {
+    if (!predVal.trim()) return;
+    const next = JSON.parse(JSON.stringify(gs));
+    next.respuestasDia[`pred_${user.id}_d${gs.diaActual}`]={valor:predVal,usuario:user.id};
+    update(next); setPredVal(""); setScreen("menu");
+  };
+
+  const enviarCur = () => {
+    if (!curVal.trim()) return;
+    const next = JSON.parse(JSON.stringify(gs));
+    next.respuestasDia[`cur_${user.id}_d${gs.diaActual}`]={texto:curVal,usuario:user.id};
+    update(next); setCurVal(""); setScreen("menu");
+  };
+
+  const adminBonus = () => {
+    const next = JSON.parse(JSON.stringify(gs));
+    next.scores[bonusV].total+=bonusPts; next.scores[bonusV][bonusCat]=(next.scores[bonusV][bonusCat]||0)+bonusPts;
+    update(next);
+  };
+
+  const adminAvanzar = () => {
+    if (gs.diaActual>=10) return;
+    const next = JSON.parse(JSON.stringify(gs));
+    const lb = leaderboard(next);
+    next.historial.push({dia:next.diaActual, ganador:lb[0]?.id, scores:JSON.parse(JSON.stringify(next.scores))});
+    next.diaActual+=1; update(next);
+  };
+
+  const leaderboard = (state=gs) => {
+    if (!state) return [];
+    return [...VIAJEROS].map(v=>({...v,pts:state.scores[v.id].total})).sort((a,b)=>b.pts-a.pts);
+  };
+
+  const catLeader = (cat) => {
+    if (!gs) return null;
+    return [...VIAJEROS].map(v=>({...v,pts:gs.scores[v.id][cat]||0})).sort((a,b)=>b.pts-a.pts)[0];
+  };
+
+  if (screen==="loading") return (
+    <div style={P.page}><div style={P.loadBox}><div style={P.spinner}/><p style={P.loadTxt}>Cargando...</p></div></div>
+  );
+
+  if (screen==="emoji_picker" && pendingUser) {
+    const already = gs.avatars?.[pendingUser.id];
+    const takenEmojis = Object.entries(gs.avatars || {})
+      .filter(([id, e]) => id !== pendingUser.id && e)
+      .map(([, e]) => e);
+    return (
+      <div style={P.page}><div style={P.card}>
+        <h2 style={{...P.cardTitle, color: pendingUser.color}}>Hola, {pendingUser.name}</h2>
+        <p style={P.cardSub}>{already ? "Tu avatar actual es " + already + ". ¿Quieres cambiarlo?" : "Elige tu avatar para el viaje"}</p>
+        <div style={P.emojiGrid}>
+          {EMOJI_OPTIONS.map(e => {
+            const taken = takenEmojis.includes(e) && e !== already;
+            return (
+              <button key={e}
+                style={{...P.emojiBtn, opacity: taken ? 0.2 : 1,
+                  background: e === already ? `rgba(${pendingUser.color},0.2)` : "rgba(255,255,255,0.05)",
+                  border: e === already ? `2px solid ${pendingUser.color}` : "1.5px solid rgba(255,255,255,0.1)"
+                }}
+                disabled={taken}
+                onClick={() => {
+                  const next = JSON.parse(JSON.stringify(gs));
+                  if (!next.avatars) next.avatars = {};
+                  next.avatars[pendingUser.id] = e;
+                  update(next);
+                  const v = pendingUser;
+                  setUser(v); setQIdx(0); setSel(null); setShowResult(false); setDone(false);
+                  setPendingUser(null);
+                  setScreen(next.respuestasDia[`trivia_${v.id}_d${next.diaActual}`] ? "ya_jugaste" : "menu");
+                }}>
+                {e}
+              </button>
+            );
+          })}
+        </div>
+        {already && (
+          <button style={P.btnGold} onClick={() => {
+            setUser(pendingUser); setQIdx(0); setSel(null); setShowResult(false); setDone(false);
+            setPendingUser(null);
+            setScreen(gs.respuestasDia[`trivia_${pendingUser.id}_d${gs.diaActual}`] ? "ya_jugaste" : "menu");
+          }}>Continuar con {already}</button>
+        )}
+        <button style={P.btnGray} onClick={() => { setPendingUser(null); setScreen("login"); }}>Cancelar</button>
+      </div></div>
+    );
+  }
+
+  if (screen==="login") {
+    const dia = DIAS_T[gs.diaActual-1];
+    return (
+      <div style={P.page}>
+        <div style={P.loginWrap}>
+          <div style={P.loginHead}>
+            <div style={P.bigEmoji}>{dia.emoji}</div>
+            <h1 style={P.brand}>Familia González</h1>
+            <p style={P.brandSub}>Asturias · Galicia · León · 2026</p>
+            <div style={P.diaTag}>
+              <span style={P.diaTagNum}>DÍA {gs.diaActual}</span>
+              <span style={P.diaTagTxt}>{dia.titulo}</span>
+              <span style={P.diaTagLug}>{dia.lugar}</span>
+            </div>
+          </div>
+          <p style={P.loginQ}>Toca tu nombre para entrar</p>
+          <div style={P.playerGrid}>
+            {VIAJEROS.map(v=>(
+              <button key={v.id} style={{...P.playerBtn, borderColor:v.color}}
+                onClick={()=>{
+                  setPendingUser(v);
+                  setScreen("emoji_picker");
+                }}>
+                <span style={{...P.playerEmoji, color:v.color, fontSize:32, fontWeight:800}}>
+                  {gs.avatars?.[v.id] || v.name[0]}
+                </span>
+                <span style={{...P.playerName,color:v.color}}>{v.name}</span>
+              </button>
+            ))}
+          </div>
+          <div style={P.adminRow}>
+            <input style={P.adminInput} type="password" placeholder="Código admin" value={adminCode} onChange={e=>setAdminCode(e.target.value)}/>
+            <button style={P.adminGo} onClick={()=>{
+              if(adminCode==="asturias2026"){setUser({id:"admin",name:"Admin",emoji:"⚙️",color:"#888"});setScreen("admin");}
+              else alert("Código incorrecto");
+            }}>Admin</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (screen==="ya_jugaste") {
+    const lb=leaderboard();
+    return (
+      <div style={P.page}><div style={P.card}>
+        <div style={P.cardEmoji}>✅</div>
+        <h2 style={P.cardTitle}>¡Ya jugaste hoy, {user.name}!</h2>
+        <p style={P.cardSub}>Tus respuestas están guardadas. Puedes ver el leaderboard o volver mañana.</p>
+        <div style={P.miniLb}>
+          {lb.slice(0,5).map((v,i)=>(
+            <div key={v.id} style={P.miniLbRow}>
+              <span style={P.rank}>{["🥇","🥈","🥉","4.","5."][i]}</span>
+              <span style={{fontSize:24}}>{(gs?.avatars?.[v.id]) || v.name[0]}</span>
+              <span style={{...P.rankName,color:v.color}}>{v.name}</span>
+              <span style={P.rankPts}>{v.pts} pts</span>
+            </div>
+          ))}
+        </div>
+        <button style={P.btnGold} onClick={()=>setScreen("menu")}>Ver mis actividades</button>
+        <button style={P.btnGray} onClick={()=>{setUser(null);setScreen("login");}}>Cambiar jugador</button>
+      </div></div>
+    );
+  }
+
+  if (screen==="menu") {
+    const dia=DIAS_T[gs.diaActual-1];
+    const trivDone=!!gs.respuestasDia[`trivia_${user.id}_d${gs.diaActual}`];
+    const fotoDone=!!gs.fotoVotos[`foto_${user.id}_d${gs.diaActual}`];
+    const predDone=!!gs.respuestasDia[`pred_${user.id}_d${gs.diaActual}`];
+    const curDone=!!gs.respuestasDia[`cur_${user.id}_d${gs.diaActual}`];
+    const acts=[
+      {emoji:"🎯",label:"Trivia del día",    sub:"5 preguntas · 20 seg c/u",       pts:"hasta 750 pts",      done:trivDone, go:()=>{setQIdx(0);setSel(null);setShowResult(false);setDone(false);setScreen("trivia");}},
+      {emoji:"📸",label:"Foto del día",      sub:"Vota la mejor foto del grupo",    pts:"50 pts al ganador",  done:fotoDone, go:()=>setScreen("foto")},
+      {emoji:"🔮",label:"Predicción",        sub:"Adivina el número del día",       pts:"100 pts si aciertas",done:predDone, go:()=>setScreen("prediccion")},
+      {emoji:"💡",label:"Dato curioso",      sub:"Comparte algo que descubriste",   pts:"voto → 150 pts",     done:curDone,  go:()=>setScreen("curiosidad")},
+    ];
+    return (
+      <div style={P.page}><div style={P.menuWrap}>
+        <div style={{...P.userHead,borderColor:user.color}}>
+          <span style={{fontSize:44}}>{(gs?.avatars?.[user.id]) || user.name[0]}</span>
+          <div style={{flex:1}}>
+            <div style={{...P.userName,color:user.color}}>{user.name}</div>
+            <div style={P.userPts}>{gs.scores[user.id].total} puntos acumulados</div>
+          </div>
+          <button style={P.lbBtn} onClick={()=>setScreen("leaderboard")}>🏆</button>
+        </div>
+        <div style={P.diaBar}>
+          <span style={{fontSize:36,lineHeight:1}}>{dia.emoji}</span>
+          <div>
+            <div style={P.diaBarNum}>DÍA {gs.diaActual} · {dia.fecha}</div>
+            <div style={P.diaBarTit}>{dia.titulo}</div>
+            <div style={P.diaBarLug}>{dia.lugar}</div>
+          </div>
+        </div>
+        <p style={P.secLabel}>ACTIVIDADES DE HOY</p>
+        {acts.map((a,i)=>(
+          <button key={i} style={{...P.actRow,opacity:a.done?0.5:1}} onClick={a.done?undefined:a.go} disabled={a.done}>
+            <div style={P.actIcon}>{a.emoji}</div>
+            <div style={P.actBody}>
+              <div style={P.actLabel}>{a.label}</div>
+              <div style={P.actSub}>{a.done?"Completada ✓":a.sub}</div>
+            </div>
+            {!a.done&&<div style={P.actPts}>{a.pts}</div>}
+            <div style={P.actArrow}>{a.done?"✓":"›"}</div>
+          </button>
+        ))}
+        <button style={{...P.btnGray,marginTop:8}} onClick={()=>{setUser(null);setScreen("login");}}>Salir</button>
+      </div></div>
+    );
+  }
+
+  if (screen==="trivia") {
+    if (done) return (
+      <div style={P.page}><div style={P.card}>
+        <div style={P.cardEmoji}>🎉</div>
+        <h2 style={P.cardTitle}>¡Trivia completada!</h2>
+        <div style={{...P.bigScore,color:user.color}}>{gs.scores[user.id].total}</div>
+        <p style={P.cardSub}>puntos acumulados en el viaje</p>
+        <button style={P.btnGold} onClick={()=>setScreen("menu")}>Volver al menú</button>
+        <button style={P.btnGray} onClick={()=>setScreen("leaderboard")}>Ver leaderboard 🏆</button>
+      </div></div>
+    );
+    const q=preguntas[qIdx];
+    const cat=CATEGORIAS_T[q.categoria];
+    const pct=(timer/20)*100;
+    const tc=timer>12?"#2EAE85":timer>6?"#F7A200":"#E74C3C";
+    return (
+      <div style={P.page}><div style={P.triviaWrap}>
+        <div style={P.triviaTop}>
+          <div style={P.triviaTopRow}>
+            <span style={{...P.catPill,background:cat.color}}>{cat.emoji} {cat.label}</span>
+            <span style={P.triviaCount}>{qIdx+1}/{preguntas.length}</span>
+          </div>
+          <div style={P.timerTrack}><div style={{...P.timerBar,width:`${pct}%`,background:tc}}/></div>
+          <div style={{...P.timerNum,color:tc}}>{timer}s</div>
+        </div>
+        <div style={P.qBox}>
+          <p style={P.qText}>{q.texto}</p>
+          <div style={P.ptsBadge}>+{q.puntos} pts si aciertas</div>
+        </div>
+        <div style={P.optsGrid}>
+          {q.opciones.map((op,i)=>{
+            const L=["A","B","C","D"];
+            let bg="rgba(255,255,255,0.06)",border="1.5px solid rgba(255,255,255,0.12)";
+            if(showResult){
+              if(i===q.correcta){bg="rgba(46,174,133,0.25)";border="2px solid #2EAE85";}
+              else if(i===sel&&i!==q.correcta){bg="rgba(231,76,60,0.25)";border="2px solid #E74C3C";}
+            }
+            return (
+              <button key={i} style={{...P.optBtn,background:bg,border}} onClick={()=>{if(!showResult)answer(i);}} disabled={showResult}>
+                <span style={P.optLetter}>{L[i]}</span>
+                <span style={P.optText}>{op}</span>
+                {showResult&&i===q.correcta&&<span style={{color:"#2EAE85",fontSize:22}}>✓</span>}
+                {showResult&&i===sel&&i!==q.correcta&&<span style={{color:"#E74C3C",fontSize:22}}>✗</span>}
+              </button>
+            );
+          })}
+        </div>
+        {showResult&&(
+          <div style={{...P.feedback,background:sel===q.correcta?"rgba(46,174,133,0.18)":"rgba(231,76,60,0.18)",borderColor:sel===q.correcta?"#2EAE85":"#E74C3C"}}>
+            {sel===q.correcta?`¡Correcto! +${q.puntos} puntos`:sel===null?"Se acabó el tiempo.":"No era esa. Sigue adelante."}
+          </div>
+        )}
+      </div></div>
+    );
+  }
+
+  if (screen==="foto") {
+    const diaKey      = `d${gs.diaActual}`;
+    const fotoKey     = `foto_${user.id}_${diaKey}`;
+    const yaSubio     = !!(fotosDia[diaKey] || []).find(f => f.userId === user.id);
+    const yaVoto      = !!gs.fotoVotos[fotoKey];
+    const fotosDelDia = fotosDia[diaKey] || [];
+    const votosEmitidos = VIAJEROS.filter(v => gs.fotoVotos[`foto_${v.id}_${diaKey}`]).length;
+    const todosVotaron = votosEmitidos === VIAJEROS.length;
+    const votosPorFoto = {};
+    Object.entries(gs.fotoVotos).forEach(([k, val]) => {
+      if (!k.startsWith(`foto_`) || !k.endsWith(`_${diaKey}`)) return;
+      if (typeof val === "number") { votosPorFoto[val] = (votosPorFoto[val] || 0) + 1; }
+    });
+    const maxVotos = Math.max(0, ...Object.values(votosPorFoto));
+    const ganadorIdx = Object.entries(votosPorFoto).find(([,v]) => v === maxVotos)?.[0];
+
+    const handleFileChange = async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      setFotoUploading(true);
+      setFotoUploadError(null);
+      try {
+        const url = await uploadToCloudinary(file, gs.diaActual, user.id);
+        const nuevaFoto = { url, userId: user.id, userName: user.name, ts: Date.now() };
+        const nextFotos = { ...fotosDia };
+        if (!nextFotos[diaKey]) nextFotos[diaKey] = [];
+        nextFotos[diaKey] = [...nextFotos[diaKey], nuevaFoto];
+        setFotosDia(nextFotos);
+        localStorage.setItem("asturias_fotos", JSON.stringify(nextFotos));
+      } catch {
+        setFotoUploadError("Error al subir. Intenta de nuevo.");
+      } finally {
+        setFotoUploading(false);
+      }
+    };
+
+    const handleVotoFotoBlind = (photoIdx) => {
+      if (yaVoto) return;
+      if (fotosDelDia[photoIdx]?.userId === user.id) return;
+      const next = JSON.parse(JSON.stringify(gs));
+      next.fotoVotos[fotoKey] = photoIdx;
+      update(next);
+    };
+
+    return (
+      <div style={P.page}><div style={P.card}>
+        <div style={P.cardEmoji}>📸</div>
+        <h2 style={P.cardTitle}>Foto del día</h2>
+        <div style={P.fotoUploadBox}>
+          <p style={{...P.cardSub, marginBottom: 6}}>Sube tu mejor foto del día</p>
+          {yaSubio && (
+            <div style={{...P.feedback, background:"rgba(46,174,133,0.12)", borderColor:"#2EAE85", fontSize:13}}>
+              ✓ Tu foto está subida
+            </div>
+          )}
+          <label style={{...P.btnGold, display:"flex", alignItems:"center", justifyContent:"center", gap:8,
+            cursor: fotoUploading ? "default" : "pointer", opacity: fotoUploading ? 0.6 : 1}}>
+            {fotoUploading ? "Subiendo..." : yaSubio ? "Cambiar mi foto" : "📷  Subir mi foto"}
+            <input type="file" accept="image/*" capture="environment"
+              style={{display:"none"}} onChange={handleFileChange} disabled={fotoUploading} />
+          </label>
+          {fotoUploadError && (
+            <p style={{color:"#E74C3C", fontSize:13, textAlign:"center", margin:0}}>{fotoUploadError}</p>
+          )}
+        </div>
+        {fotosDelDia.length > 0 && (
+          <div style={P.galeria}>
+            <div style={P.galeriaHeader}>
+              <p style={P.secLabel}>
+                {fotosDelDia.length} FOTO{fotosDelDia.length > 1 ? "S" : ""} · {votosEmitidos}/{VIAJEROS.length} VOTOS
+              </p>
+              {todosVotaron
+                ? <span style={P.revealBadge}>¡Reveladas!</span>
+                : <span style={P.blindBadge}>Votación anónima</span>
+              }
+            </div>
+            <div style={P.galeriaGrid}>
+              {fotosDelDia.map((f, i) => {
+                const esLaMia    = f.userId === user.id;
+                const yaVoteEsta = gs.fotoVotos[fotoKey] === i;
+                const votosEsta  = votosPorFoto[i] || 0;
+                const esGanadora = todosVotaron && String(i) === String(ganadorIdx);
+                return (
+                  <div key={i} style={{...P.galeriaItem, border: esGanadora ? `2px solid #C8963E` : "2px solid transparent", borderRadius:14}}>
+                    <div style={{position:"relative"}}>
+                      <img src={f.url} alt={`Foto ${i+1}`} style={P.galeriaImg} />
+                      <div style={P.fotoOverlay}>
+                        {todosVotaron
+                          ? <span style={{...P.fotoLabel, color: VIAJEROS.find(v=>v.id===f.userId)?.color || "#fff"}}>
+                              {(gs?.avatars?.[f.userId]) || ""} {f.userName}
+                            </span>
+                          : <span style={P.fotoLabel}>Foto {i + 1}</span>
+                        }
+                        {esGanadora && <span style={P.coronaBadge}>🏆</span>}
+                      </div>
+                    </div>
+                    {!todosVotaron && (
+                      esLaMia
+                        ? <span style={P.esLaMia}>Es la tuya</span>
+                        : yaVoto
+                          ? <span style={{...P.esLaMia, color: yaVoteEsta ? "#C8963E" : "#555"}}>
+                              {yaVoteEsta ? "✓ Tu voto" : ""}
+                            </span>
+                          : <button style={P.voteFotoBtn} onClick={() => handleVotoFotoBlind(i)}>
+                              Votar esta
+                            </button>
+                    )}
+                    {todosVotaron && (
+                      <span style={{...P.esLaMia, color:"#C8963E"}}>
+                        {votosEsta} voto{votosEsta !== 1 ? "s" : ""}
+                        {esGanadora ? " 🏆" : ""}
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            {!todosVotaron && !yaVoto && fotosDelDia.length > 0 && !fotosDelDia.every(f => f.userId === user.id) && (
+              <p style={{...P.cardSub, fontSize:12}}>
+                Vota la mejor foto — no sabrás de quién es hasta que todos voten.
+              </p>
+            )}
+            {!todosVotaron && yaVoto && (
+              <div style={{...P.feedback, background:"rgba(46,174,133,0.12)", borderColor:"#2EAE85", fontSize:13}}>
+                ✓ Voto registrado. Se revela cuando los {VIAJEROS.length} hayan votado ({votosEmitidos} de {VIAJEROS.length}).
+              </div>
+            )}
+            {todosVotaron && (
+              <div style={{...P.feedback, background:"rgba(200,150,62,0.15)", borderColor:"#C8963E", fontSize:14}}>
+                🎉 ¡Todos votaron! Ganador: {fotosDelDia[ganadorIdx]?.userName}
+              </div>
+            )}
+          </div>
+        )}
+        <button style={P.btnGray} onClick={() => setScreen("menu")}>Volver al menú</button>
+      </div></div>
+    );
+  }
+
+  if (screen==="prediccion") return (
+    <div style={P.page}><div style={P.card}>
+      <div style={P.cardEmoji}>🔮</div>
+      <h2 style={P.cardTitle}>Predicción del día</h2>
+      <p style={P.cardSub}>{PREDICCIONES_T[gs.diaActual]}</p>
+      <input style={P.textInput} placeholder="Tu respuesta..." value={predVal} onChange={e=>setPredVal(e.target.value)} onKeyDown={e=>e.key==="Enter"&&enviarPred()}/>
+      <p style={{...P.cardSub,fontSize:12}}>El admin revela la respuesta al final del día. El más cercano gana 100 pts.</p>
+      <button style={P.btnGold} onClick={enviarPred}>Enviar predicción</button>
+      <button style={P.btnGray} onClick={()=>setScreen("menu")}>Cancelar</button>
+    </div></div>
+  );
+
+  if (screen==="curiosidad") return (
+    <div style={P.page}><div style={P.card}>
+      <div style={P.cardEmoji}>💡</div>
+      <h2 style={P.cardTitle}>Dato curioso</h2>
+      <p style={P.cardSub}>Algo interesante que descubriste hoy. Esta noche el grupo vota el mejor — el ganador recibe 150 pts.</p>
+      <textarea style={P.textarea} placeholder="Escribe aquí..." value={curVal} onChange={e=>setCurVal(e.target.value)} rows={4}/>
+      <button style={P.btnGold} onClick={enviarCur}>Enviar dato</button>
+      <button style={P.btnGray} onClick={()=>setScreen("menu")}>Cancelar</button>
+    </div></div>
+  );
+
+  if (screen==="leaderboard") {
+    const lb=leaderboard();
+    return (
+      <div style={P.page}><div style={P.lbWrap}>
+        <h2 style={P.lbTitle}>🏆 Leaderboard</h2>
+        <p style={P.lbSub}>Día {gs.diaActual} · Puntajes acumulados</p>
+        {lb.length>=3&&(
+          <div style={P.podio}>
+            {[lb[1],lb[0],lb[2]].map((v,i)=>{
+              const h=["80px","100px","70px"],medals=["🥈","🥇","🥉"];
+              return (
+                <div key={v.id} style={{...P.podioCol,height:h[i]}}>
+                  <span style={{fontSize:30}}>{(gs?.avatars?.[v.id]) || v.name[0]}</span>
+                  <span style={{...P.podioName,color:v.color}}>{v.name}</span>
+                  <span style={P.podioPts}>{v.pts} pts</span>
+                  <span style={{fontSize:24}}>{medals[i]}</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+        {lb.map((v,i)=>(
+          <div key={v.id} style={{...P.lbRow,background:i===0?"rgba(200,150,62,0.15)":"rgba(255,255,255,0.03)"}}>
+            <span style={P.lbRank}>{i+1}</span>
+            <span style={{fontSize:26}}>{(gs?.avatars?.[v.id]) || v.name[0]}</span>
+            <span style={{...P.lbName,color:v.color}}>{v.name}</span>
+            <span style={P.lbPts}>{v.pts} pts</span>
+          </div>
+        ))}
+        <p style={{...P.secLabel,marginTop:20}}>LÍDERES POR CATEGORÍA</p>
+        {Object.entries(CATEGORIAS_T).map(([key,cat])=>{
+          const leader=catLeader(key), pts=leader?gs.scores[leader.id][key]||0:0;
+          return (
+            <div key={key} style={P.catRow}>
+              <span style={{...P.catPill,background:cat.color,fontSize:12}}>{cat.emoji} {cat.label}</span>
+              {leader&&pts>0?<span style={{color:leader.color,fontWeight:700}}>{(gs?.avatars?.[leader.id]) || ""} {leader.name} · {pts} pts</span>:<span style={{color:"#555"}}>Sin puntos aún</span>}
+            </div>
+          );
+        })}
+        {gs.historial.length>0&&(
+          <>
+            <p style={{...P.secLabel,marginTop:20}}>GANADORES DIARIOS</p>
+            {gs.historial.map(h=>{
+              const gv=VIAJEROS.find(v=>v.id===h.ganador);
+              return <div key={h.dia} style={P.histRow}><span style={P.histDia}>Día {h.dia}</span>{gv?<span style={{color:gv.color}}>{(gs?.avatars?.[gv.id]) || ""} {gv.name}</span>:<span style={{color:"#555"}}>—</span>}</div>;
+            })}
+          </>
+        )}
+        <button style={{...P.btnGray,marginTop:16}} onClick={()=>setScreen(user?"menu":"login")}>Volver</button>
+      </div></div>
+    );
+  }
+
+  if (screen==="admin") {
+    const lb=leaderboard();
+    return (
+      <div style={P.page}><div style={P.adminWrap}>
+        <h2 style={P.lbTitle}>⚙️ Panel Admin</h2>
+        <p style={P.lbSub}>Día {gs.diaActual} — {DIAS_T[gs.diaActual-1]?.titulo}</p>
+        <div style={P.adminSec}>
+          <p style={P.adminSecTit}>Avanzar al siguiente día</p>
+          <p style={P.adminSecSub}>Registra el ganador del día y abre el siguiente.</p>
+          <button style={{...P.btnGold,background:"#c0392b"}} onClick={adminAvanzar} disabled={gs.diaActual>=10}>
+            Cerrar Día {gs.diaActual} → Abrir Día {gs.diaActual+1}
+          </button>
+        </div>
+        <div style={P.adminSec}>
+          <p style={P.adminSecTit}>Asignar puntos bonus</p>
+          <select style={P.sel} value={bonusV} onChange={e=>setBonusV(e.target.value)}>
+            {VIAJEROS.map(v=><option key={v.id} value={v.id}>{v.name}</option>)}
+          </select>
+          <select style={P.sel} value={bonusCat} onChange={e=>setBonusCat(e.target.value)}>
+            <option value="cultura">🏛️ Cultura</option>
+            <option value="gastronomia">🍽️ Gastronomía</option>
+            <option value="aventura">🧭 Aventura</option>
+            <option value="prediccion">🔮 Predicción</option>
+            <option value="curiosidad">💡 Curiosidad</option>
+            <option value="foto">📸 Foto</option>
+          </select>
+          <input style={P.textInput} type="number" value={bonusPts} onChange={e=>setBonusPts(Number(e.target.value))}/>
+          <button style={P.btnGold} onClick={adminBonus}>Asignar {bonusPts} pts</button>
+        </div>
+        <div style={P.adminSec}>
+          <p style={P.adminSecTit}>Predicciones enviadas hoy</p>
+          {VIAJEROS.map(v=>{const e=gs.respuestasDia[`pred_${v.id}_d${gs.diaActual}`];return e?(<div key={v.id} style={P.adminEntry}><span style={{color:v.color,fontWeight:700}}>{v.name}:</span> {e.valor}</div>):null;})}
+        </div>
+        <div style={P.adminSec}>
+          <p style={P.adminSecTit}>Datos curiosos de hoy</p>
+          {VIAJEROS.map(v=>{const e=gs.respuestasDia[`cur_${v.id}_d${gs.diaActual}`];return e?(<div key={v.id} style={P.adminEntry}><span style={{color:v.color,fontWeight:700}}>{v.name}:</span> {e.texto}</div>):null;})}
+        </div>
+        <div style={P.adminSec}>
+          <p style={P.adminSecTit}>Puntajes actuales</p>
+          {lb.map((v,i)=>(
+            <div key={v.id} style={{...P.lbRow,padding:"10px 0"}}>
+              <span style={P.lbRank}>{i+1}</span>
+              <span style={{...P.lbName,color:v.color}}>{v.name}</span><span style={P.lbPts}>{v.pts} pts</span>
+            </div>
+          ))}
+        </div>
+        <button style={P.btnGray} onClick={()=>{setUser(null);setScreen("login");}}>Cerrar sesión admin</button>
+      </div></div>
+    );
+  }
+
+  return null;
+}
+
+const P = {
+  page:{minHeight:"100vh",background:"linear-gradient(160deg,#0a0f1e 0%,#111827 60%,#0a0f1e 100%)",display:"flex",justifyContent:"center",alignItems:"flex-start",padding:"20px 14px 60px",fontFamily:"'Georgia',serif",color:"#e8e8e8",boxSizing:"border-box"},
+  loadBox:{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",minHeight:"100vh",gap:16},
+  spinner:{width:44,height:44,border:"3px solid rgba(255,255,255,0.08)",borderTop:"3px solid #C8963E",borderRadius:"50%",animation:"spin 1s linear infinite"},
+  loadTxt:{color:"#888",fontSize:15},
+  loginWrap:{width:"100%",maxWidth:480,display:"flex",flexDirection:"column",gap:0},
+  loginHead:{textAlign:"center",padding:"28px 0 24px",borderBottom:"1px solid rgba(255,255,255,0.07)",marginBottom:20},
+  bigEmoji:{fontSize:64,lineHeight:1,marginBottom:10},
+  brand:{fontSize:26,fontWeight:700,color:"#C8963E",margin:"0 0 4px",letterSpacing:"-0.5px"},
+  brandSub:{color:"#555",fontSize:13,margin:"0 0 20px"},
+  diaTag:{display:"inline-flex",flexDirection:"column",gap:3,background:"rgba(200,150,62,0.1)",border:"1px solid rgba(200,150,62,0.25)",borderRadius:14,padding:"12px 24px"},
+  diaTagNum:{fontSize:10,fontWeight:700,letterSpacing:2,color:"#C8963E"},
+  diaTagTxt:{fontSize:16,fontWeight:700,color:"#e8e8e8"},
+  diaTagLug:{fontSize:12,color:"#666"},
+  loginQ:{textAlign:"center",fontSize:16,color:"#888",margin:"20px 0 12px"},
+  playerGrid:{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:12,marginBottom:14},
+  playerBtn:{display:"flex",flexDirection:"column",alignItems:"center",gap:8,padding:"22px 8px",background:"rgba(255,255,255,0.04)",border:"2px solid",borderRadius:18,cursor:"pointer"},
+  playerEmoji:{fontSize:44},
+  playerName:{fontSize:17,fontWeight:700},
+  adminRow:{display:"flex",gap:8,marginTop:4},
+  adminInput:{flex:1,padding:"14px 16px",background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:12,color:"#fff",fontSize:15,fontFamily:"Georgia,serif"},
+  adminGo:{padding:"14px 18px",background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:12,color:"#aaa",cursor:"pointer",fontSize:14,fontFamily:"Georgia,serif"},
+  card:{width:"100%",maxWidth:440,background:"rgba(18,24,38,0.97)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:22,padding:"32px 22px",display:"flex",flexDirection:"column",gap:14,alignItems:"stretch"},
+  cardEmoji:{fontSize:64,textAlign:"center"},
+  cardTitle:{fontSize:22,fontWeight:700,textAlign:"center",margin:0},
+  cardSub:{fontSize:14,color:"#888",textAlign:"center",margin:0,lineHeight:1.6,whiteSpace:"pre-line"},
+  bigScore:{fontSize:84,fontWeight:900,textAlign:"center",lineHeight:1},
+  miniLb:{display:"flex",flexDirection:"column",gap:6},
+  miniLbRow:{display:"flex",alignItems:"center",gap:12,padding:"12px 16px",background:"rgba(255,255,255,0.04)",borderRadius:12},
+  rank:{fontSize:22,width:32,textAlign:"center"},
+  rankName:{flex:1,fontSize:16,fontWeight:700},
+  rankPts:{fontSize:15,color:"#C8963E",fontWeight:700},
+  btnGold:{padding:"18px 24px",background:"linear-gradient(135deg,#C8963E,#F7A200)",border:"none",borderRadius:14,color:"#0a0f1e",fontWeight:800,fontSize:17,cursor:"pointer",fontFamily:"Georgia,serif",width:"100%"},
+  btnGray:{padding:"15px 24px",background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:14,color:"#ccc",fontWeight:600,fontSize:15,cursor:"pointer",fontFamily:"Georgia,serif",width:"100%"},
+  menuWrap:{width:"100%",maxWidth:480,display:"flex",flexDirection:"column",gap:10},
+  userHead:{display:"flex",alignItems:"center",gap:14,padding:"18px 20px",background:"rgba(18,24,38,0.97)",border:"2px solid",borderRadius:20},
+  userName:{fontSize:22,fontWeight:700},
+  userPts:{fontSize:13,color:"#777"},
+  lbBtn:{marginLeft:"auto",fontSize:30,background:"none",border:"none",cursor:"pointer",padding:4},
+  diaBar:{display:"flex",alignItems:"flex-start",gap:14,padding:"16px 20px",background:"rgba(200,150,62,0.07)",border:"1px solid rgba(200,150,62,0.18)",borderRadius:18},
+  diaBarNum:{fontSize:11,fontWeight:700,letterSpacing:2,color:"#C8963E"},
+  diaBarTit:{fontSize:17,fontWeight:700,color:"#e8e8e8",marginTop:3},
+  diaBarLug:{fontSize:12,color:"#666",marginTop:2},
+  secLabel:{fontSize:11,letterSpacing:2,color:"#444",margin:"6px 0 2px",paddingLeft:2},
+  actRow:{display:"flex",alignItems:"center",gap:14,padding:"18px 18px",background:"rgba(18,24,38,0.97)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:18,cursor:"pointer",width:"100%",textAlign:"left",color:"#e8e8e8"},
+  actIcon:{fontSize:34,width:46,textAlign:"center",flexShrink:0},
+  actBody:{flex:1},
+  actLabel:{fontSize:17,fontWeight:700},
+  actSub:{fontSize:13,color:"#555",marginTop:3},
+  actPts:{fontSize:11,color:"#C8963E",fontWeight:600,textAlign:"right",maxWidth:80,flexShrink:0},
+  actArrow:{fontSize:26,color:"#444",flexShrink:0},
+  triviaWrap:{width:"100%",maxWidth:480,display:"flex",flexDirection:"column",gap:14},
+  triviaTop:{background:"rgba(18,24,38,0.97)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:18,padding:"16px 18px",display:"flex",flexDirection:"column",gap:10},
+  triviaTopRow:{display:"flex",justifyContent:"space-between",alignItems:"center"},
+  catPill:{fontSize:13,fontWeight:700,padding:"5px 14px",borderRadius:20,color:"#fff"},
+  triviaCount:{color:"#555",fontSize:14},
+  timerTrack:{height:10,background:"rgba(255,255,255,0.07)",borderRadius:5,overflow:"hidden"},
+  timerBar:{height:"100%",borderRadius:5,transition:"width 1s linear,background 0.4s"},
+  timerNum:{fontSize:13,fontWeight:700,textAlign:"right"},
+  qBox:{background:"rgba(18,24,38,0.97)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:18,padding:"26px 22px",textAlign:"center"},
+  qText:{fontSize:20,lineHeight:1.55,fontWeight:600,margin:"0 0 14px",color:"#f0f0f0"},
+  ptsBadge:{display:"inline-block",background:"rgba(200,150,62,0.12)",border:"1px solid rgba(200,150,62,0.25)",borderRadius:20,padding:"5px 16px",fontSize:12,color:"#C8963E",fontWeight:700},
+  optsGrid:{display:"flex",flexDirection:"column",gap:10},
+  optBtn:{display:"flex",alignItems:"center",gap:14,padding:"18px 18px",borderRadius:16,cursor:"pointer",textAlign:"left",fontFamily:"Georgia,serif",color:"#e8e8e8"},
+  optLetter:{width:36,height:36,background:"rgba(255,255,255,0.08)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:800,fontSize:14,flexShrink:0,color:"#aaa"},
+  optText:{flex:1,fontSize:16,lineHeight:1.4},
+  feedback:{borderRadius:14,padding:"17px 20px",textAlign:"center",fontWeight:700,fontSize:17,border:"1px solid"},
+  voteGrid:{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:10},
+  voteBtn:{display:"flex",flexDirection:"column",alignItems:"center",gap:8,padding:"22px 8px",background:"rgba(255,255,255,0.04)",border:"2px solid",borderRadius:18,cursor:"pointer"},
+  voteName:{fontSize:16,fontWeight:700},
+  textInput:{padding:"16px 18px",background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:14,color:"#fff",fontSize:17,fontFamily:"Georgia,serif",width:"100%",boxSizing:"border-box"},
+  textarea:{padding:"16px 18px",background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:14,color:"#fff",fontSize:16,fontFamily:"Georgia,serif",resize:"vertical",width:"100%",boxSizing:"border-box"},
+  lbWrap:{width:"100%",maxWidth:480,display:"flex",flexDirection:"column",gap:8},
+  lbTitle:{fontSize:24,fontWeight:700,textAlign:"center",margin:0,color:"#C8963E"},
+  lbSub:{color:"#555",fontSize:13,textAlign:"center",marginBottom:4},
+  podio:{display:"flex",justifyContent:"center",alignItems:"flex-end",gap:10,margin:"16px 0 8px"},
+  podioCol:{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-end",background:"rgba(200,150,62,0.08)",border:"1px solid rgba(200,150,62,0.15)",borderRadius:14,padding:"12px 14px",minWidth:92,gap:3},
+  podioName:{fontSize:13,fontWeight:700,textAlign:"center"},
+  podioPts:{fontSize:11,color:"#C8963E",fontWeight:700},
+  lbRow:{display:"flex",alignItems:"center",gap:12,padding:"13px 16px",borderRadius:12,marginBottom:2},
+  lbRank:{fontSize:15,width:28,textAlign:"center",color:"#444"},
+  lbName:{flex:1,fontSize:16,fontWeight:700},
+  lbPts:{fontSize:15,fontWeight:700,color:"#C8963E"},
+  catRow:{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 14px",background:"rgba(255,255,255,0.03)",borderRadius:10,fontSize:13,gap:10},
+  histRow:{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"9px 14px",background:"rgba(255,255,255,0.03)",borderRadius:8,fontSize:13},
+  histDia:{color:"#444",fontSize:12,letterSpacing:1},
+  adminWrap:{width:"100%",maxWidth:480,display:"flex",flexDirection:"column",gap:10},
+  adminSec:{background:"rgba(18,24,38,0.95)",border:"1px solid rgba(255,255,255,0.07)",borderRadius:16,padding:"18px 16px",display:"flex",flexDirection:"column",gap:8},
+  adminSecTit:{fontSize:14,fontWeight:700,color:"#C8963E",margin:0},
+  adminSecSub:{fontSize:12,color:"#555",margin:0},
+  adminEntry:{fontSize:13,color:"#ccc",padding:"8px 10px",background:"rgba(255,255,255,0.04)",borderRadius:8,lineHeight:1.5},
+  emojiGrid:{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:8,margin:"8px 0"},
+  emojiBtn:{fontSize:28,padding:"10px 4px",background:"rgba(255,255,255,0.05)",border:"1.5px solid rgba(255,255,255,0.1)",borderRadius:10,cursor:"pointer",lineHeight:1,transition:"transform 0.1s"},
+  fotoUploadBox:{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:14,padding:"16px 14px",display:"flex",flexDirection:"column",gap:10},
+  galeria:{display:"flex",flexDirection:"column",gap:10},
+  galeriaHeader:{display:"flex",alignItems:"center",justifyContent:"space-between"},
+  galeriaGrid:{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:10},
+  galeriaItem:{display:"flex",flexDirection:"column",gap:6,alignItems:"center"},
+  galeriaImg:{width:"100%",aspectRatio:"1",objectFit:"cover",borderRadius:12,display:"block"},
+  fotoOverlay:{position:"absolute",bottom:0,left:0,right:0,background:"linear-gradient(transparent,rgba(0,0,0,0.7))",borderBottomLeftRadius:12,borderBottomRightRadius:12,padding:"8px 6px 6px",display:"flex",alignItems:"center",justifyContent:"space-between"},
+  fotoLabel:{fontSize:11,fontWeight:700,color:"#fff"},
+  coronaBadge:{fontSize:16},
+  blindBadge:{fontSize:10,fontWeight:700,letterSpacing:1,color:"#888",background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:20,padding:"3px 8px"},
+  revealBadge:{fontSize:10,fontWeight:700,letterSpacing:1,color:"#C8963E",background:"rgba(200,150,62,0.12)",border:"1px solid rgba(200,150,62,0.3)",borderRadius:20,padding:"3px 8px"},
+  esLaMia:{fontSize:12,color:"#555",textAlign:"center",fontStyle:"italic"},
+  voteFotoBtn:{padding:"8px 0",background:"rgba(200,150,62,0.12)",border:"1px solid rgba(200,150,62,0.3)",borderRadius:10,color:"#C8963E",fontWeight:700,fontSize:13,cursor:"pointer",width:"100%",fontFamily:"Georgia,serif"},
+  sel:{padding:"13px 14px",background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:10,color:"#fff",fontSize:14,fontFamily:"Georgia,serif"},
+};
+
+ReactDOM.createRoot(document.getElementById('trivia-root')).render(React.createElement(App));
 </script>
 </body>
 </html>
