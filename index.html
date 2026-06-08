@@ -1740,6 +1740,14 @@ function App() {
     next.diaActual+=1; update(next);
   };
 
+  const adminReset = () => {
+    if (!window.confirm("¿Resetear TODO el juego a cero? Esto borra scores, respuestas e historial. Úsalo antes del 19 de junio.")) return;
+    const fresh = initState();
+    db.ref("game").set(fresh);
+    db.ref("fotos").remove();
+    setFotosDia({});
+  };
+
   const leaderboard = (state=gs) => {
     if (!state) return [];
     return [...VIAJEROS].map(v=>({...v,pts:state.scores[v.id].total})).sort((a,b)=>b.pts-a.pts);
@@ -2228,6 +2236,13 @@ function App() {
               <span style={{...P.lbName,color:v.color}}>{v.name}</span><span style={P.lbPts}>{v.pts} pts</span>
             </div>
           ))}
+        </div>
+        <div style={{...P.adminSec, borderTop:"1px solid #c0392b", marginTop:8}}>
+          <p style={{...P.adminSecTit, color:"#c0392b"}}>⚠️ Zona de peligro</p>
+          <p style={P.adminSecSub}>Resetea todos los scores a cero. Úsalo la mañana del 19 de junio antes de que arranque el viaje.</p>
+          <button style={{...P.btnGold, background:"#7b1a1a", border:"1px solid #c0392b"}} onClick={adminReset}>
+            🗑️ Resetear juego completo
+          </button>
         </div>
         <button style={P.btnGray} onClick={()=>{setUser(null);setScreen("login");}}>Cerrar sesión admin</button>
       </div></div>
