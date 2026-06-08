@@ -383,6 +383,43 @@
     align-items: center;
   }
 
+  .chat-minimize {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    line-height: 1;
+    padding: 4px 6px;
+    color: rgba(107,101,96,0.5);
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    transition: color 0.15s;
+  }
+  .chat-minimize:hover { color: var(--verde); }
+
+  .chat-container.hidden { display: none; }
+
+  .chat-fab {
+    display: none;
+    position: fixed;
+    bottom: 18px;
+    right: 18px;
+    z-index: 210;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: none;
+    background: var(--verde);
+    color: white;
+    font-size: 1.4rem;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(26,74,58,0.35);
+    transition: transform 0.15s;
+  }
+  .chat-fab.visible { display: flex; align-items: center; justify-content: center; }
+  .chat-fab:hover { transform: scale(1.08); }
+
   #chat-input {
     flex: 1;
     border: none;
@@ -549,7 +586,7 @@
 
 <main id="contenido-dia"></main>
 
-<div class="chat-container">
+<div class="chat-container" id="chat-container">
   <div class="chat-box">
     <div class="chat-messages" id="chat-messages"></div>
     <div class="chips" id="chips-container"></div>
@@ -557,9 +594,11 @@
       <button class="chat-toggle" id="toggle-chat">💬</button>
       <input type="text" id="chat-input" placeholder="Pregunta algo sobre el viaje…" />
       <button class="send-btn" id="send-btn">➤</button>
+      <button class="chat-minimize" id="minimize-chat" title="Minimizar chat">−</button>
     </div>
   </div>
 </div>
+<button class="chat-fab" id="chat-fab" title="Abrir concierge">💬</button>
 
 <script>
 const ITINERARIO = [
@@ -1332,6 +1371,15 @@ function enviarChip(texto) {
 document.getElementById('send-btn').addEventListener('click', () => enviarMensaje(document.getElementById('chat-input').value));
 document.getElementById('chat-input').addEventListener('keydown', e => { if (e.key === 'Enter') enviarMensaje(e.target.value); });
 document.getElementById('toggle-chat').addEventListener('click', toggleChat);
+
+document.getElementById('minimize-chat').addEventListener('click', () => {
+  document.getElementById('chat-container').classList.add('hidden');
+  document.getElementById('chat-fab').classList.add('visible');
+});
+document.getElementById('chat-fab').addEventListener('click', () => {
+  document.getElementById('chat-container').classList.remove('hidden');
+  document.getElementById('chat-fab').classList.remove('visible');
+});
 
 // Fecha
 const now = new Date();
