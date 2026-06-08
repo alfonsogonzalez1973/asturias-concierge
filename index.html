@@ -1041,19 +1041,222 @@ let cargando = false;
 
 function renderNav() {
   const nav = document.getElementById('nav-dias');
-  const triviaBtn = `<button class="nav-btn ${diaActivo === -3 ? 'active' : ''}" onclick="cambiarDia(-3)">🎯 Trivia</button>`;
-  const climaBtn  = `<button class="nav-btn ${diaActivo === -2 ? 'active' : ''}" onclick="cambiarDia(-2)">🌤️ Clima</button>`;
-  const vuelosBtn = `<button class="nav-btn ${diaActivo === -1 ? 'active' : ''}" onclick="cambiarDia(-1)">✈️ Vuelos</button>`;
+  const triviaBtn  = `<button class="nav-btn ${diaActivo === -3 ? 'active' : ''}" onclick="cambiarDia(-3)">🎯 Trivia</button>`;
+  const premiosBtn = `<button class="nav-btn ${diaActivo === -4 ? 'active' : ''}" onclick="cambiarDia(-4)">🏆 Premios</button>`;
+  const galeriaBtn = `<button class="nav-btn ${diaActivo === -5 ? 'active' : ''}" onclick="cambiarDia(-5)">📸 Galería</button>`;
+  const climaBtn   = `<button class="nav-btn ${diaActivo === -2 ? 'active' : ''}" onclick="cambiarDia(-2)">🌤️ Clima</button>`;
+  const vuelosBtn  = `<button class="nav-btn ${diaActivo === -1 ? 'active' : ''}" onclick="cambiarDia(-1)">✈️ Vuelos</button>`;
   const diasBtns = ITINERARIO.map((d, i) =>
     `<button class="nav-btn ${i === diaActivo ? 'active' : ''}" onclick="cambiarDia(${i})">Día ${d.dia} · ${d.fecha}</button>`
   ).join('');
-  nav.innerHTML = triviaBtn + climaBtn + vuelosBtn + diasBtns;
+  nav.innerHTML = triviaBtn + premiosBtn + galeriaBtn + climaBtn + vuelosBtn + diasBtns;
   setTimeout(() => {
-    // triviaBtn=0, climaBtn=1, vuelosBtn=2, dias start at 3
-    const idx = diaActivo === -3 ? 0 : diaActivo === -2 ? 1 : diaActivo === -1 ? 2 : diaActivo + 3;
+    const idx = diaActivo === -3 ? 0 : diaActivo === -4 ? 1 : diaActivo === -5 ? 2 : diaActivo === -2 ? 3 : diaActivo === -1 ? 4 : diaActivo + 5;
     const btn = nav.children[idx];
     if (btn) btn.scrollIntoView({ inline: 'center', block: 'nearest' });
   }, 50);
+}
+
+// ── PREMIOS ──────────────────────────────────────────────────────────
+function renderPremios() {
+  const contenedor = document.getElementById('contenido-dia');
+
+  const VIAJEROS_IDS = ['abuelo','abuela','tia1','papa1','mama1','hija1','hija2','papa2','mama2','hija3','hijo4'];
+
+  // Lee estado de Firebase en tiempo real para premios
+  db.ref('game').once('value', snapshot => {
+    const gs = snapshot.val();
+    if (!gs) {
+      contenedor.innerHTML = `<div style="padding:40px;text-align:center;color:#888">Sin datos aún. Juega primero en la Trivia.</div>`;
+      return;
+    }
+
+    const scores = gs.scores || {};
+    const historial = gs.historial || [];
+
+    // Helper: top scorer en una categoría
+    const topCat = (cat) => {
+      let best = null, bestPts = -1;
+      Object.entries(scores).forEach(([id, s]) => {
+        const pts = cat === 'foto' ? (s.foto||0) : (s[cat]||0);
+        if (pts > bestPts) { bestPts = pts; best = id; }
+      });
+      return { id: best, pts: bestPts };
+    };
+
+    // Top general
+    const ranked = Object.entries(scores)
+      .map(([id, s]) => ({ id, pts: s.total || 0 }))
+      .sort((a,b) => b.pts - a.pts);
+
+    const trofeos = [
+      { emoji:'🏆', nombre:'Trofeo Pelayo',       sub:'Mayor puntaje total',               winner: ranked[0] },
+      { emoji:'🏛️', nombre:'Mente de Oviedo',     sub:'Cultura · más preguntas correctas',  winner: topCat('cultura') },
+      { emoji:'🍽️', nombre:'Cuchara de Oro',      sub:'Gastronomía · paladar de oro',       winner: topCat('gastronomia') },
+      { emoji:'🧭', nombre:'Espíritu del Camino', sub:'Aventura · el más intrépido',        winner: topCat('aventura') },
+      { emoji:'🌿', nombre:'Alma de los Picos',   sub:'Naturaleza · guardián del norte',    winner: topCat('naturaleza') },
+      { emoji:'📸', nombre:'Ojo del Cantábrico',  sub:'Fotografía · mejor mirada',          winner: topCat('foto') },
+    ];
+
+    // Nombres de viajeros (del React component — los leemos del DOM si están disponibles)
+    const NOMBRES = {
+      abuelo:'Momo', abuela:'Abuela', tia1:'Tere', papa1:'Poncho', mama1:'Ale',
+      hija1:'Natalia', hija2:'Emilia', papa2:'Pablo', mama2:'Lore', hija3:'Alesia', hijo4:'Alonso'
+    };
+    const COLORES = {
+      abuelo:'#C8963E', abuela:'#D4748C', tia1:'#FF6B9D', papa1:'#4A90D9', mama1:'#7B68EE',
+      hija1:'#F7A200', hija2:'#E07A5F', papa2:'#2EAE85', mama2:'#3D9970', hija3:'#9B59B6', hijo4:'#27AE60'
+    };
+
+    const nombre = (id) => NOMBRES[id] || id || '—';
+    const color  = (id) => COLORES[id] || '#C8963E';
+
+    // Estrella del día
+    const estrellas = historial.map((h,i) => ({
+      dia: h.dia,
+      nombre: nombre(h.ganador),
+      color: color(h.ganador),
+    }));
+
+    // Render
+    let html = `
+      <div class="dia-hero">
+        <div class="dia-numero">Clasificaciones</div>
+        <div class="dia-titulo">🏆 Premios del Viaje</div>
+        <div class="dia-meta"><span class="dia-fecha">📍 Día ${gs.diaActual} de 10</span></div>
+      </div>
+      <div style="padding:16px 14px 40px">
+
+        <!-- TROFEOS POR CATEGORÍA -->
+        <div style="font-size:11px;letter-spacing:.12em;color:#888;font-weight:600;margin-bottom:12px">TROFEOS</div>
+        ${trofeos.map(t => `
+          <div style="background:#1a1f2e;border-radius:14px;padding:16px 18px;margin-bottom:10px;display:flex;align-items:center;gap:14px;border-left:4px solid ${color(t.winner?.id)}">
+            <div style="font-size:32px;min-width:40px;text-align:center">${t.emoji}</div>
+            <div style="flex:1">
+              <div style="font-weight:700;font-size:15px;color:#e8e8e8">${t.nombre}</div>
+              <div style="font-size:12px;color:#666;margin-top:2px">${t.sub}</div>
+            </div>
+            <div style="text-align:right">
+              <div style="color:${color(t.winner?.id)};font-weight:700;font-size:16px">${nombre(t.winner?.id)}</div>
+              <div style="color:#555;font-size:12px">${t.winner?.pts || 0} pts</div>
+            </div>
+          </div>
+        `).join('')}
+
+        <!-- LEADERBOARD GENERAL -->
+        <div style="font-size:11px;letter-spacing:.12em;color:#888;font-weight:600;margin:24px 0 12px">CLASIFICACIÓN GENERAL</div>
+        ${ranked.map((v,i) => `
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+            <div style="font-size:20px;min-width:32px;text-align:center">${['🥇','🥈','🥉','4.','5.','6.','7.','8.','9.','10.','11.'][i]}</div>
+            <div style="flex:1;font-weight:600;color:${color(v.id)}">${nombre(v.id)}</div>
+            <div style="color:#C8963E;font-weight:700">${v.pts} pts</div>
+          </div>
+        `).join('')}
+
+        <!-- ESTRELLA DEL DÍA HISTORIAL -->
+        ${estrellas.length > 0 ? `
+          <div style="font-size:11px;letter-spacing:.12em;color:#888;font-weight:600;margin:24px 0 12px">⭐ ESTRELLA DEL DÍA</div>
+          ${estrellas.map(e => `
+            <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+              <div style="font-size:13px;color:#555;min-width:48px">Día ${e.dia}</div>
+              <div style="font-weight:600;color:${e.color}">${e.nombre}</div>
+              <div style="font-size:18px;margin-left:auto">⭐</div>
+            </div>
+          `).join('')}
+        ` : ''}
+
+      </div>`;
+
+    contenedor.innerHTML = html;
+  });
+}
+
+// ── GALERÍA ───────────────────────────────────────────────────────────
+function renderGaleria() {
+  const contenedor = document.getElementById('contenido-dia');
+
+  const TOTAL_VIAJEROS = 11;
+  const NOMBRES_DIA = ['Oviedo llegada','Covadonga','Senda del Oso','Lastres & Piloña','Santiago','Gijón llegada','Gijón ciudad','Llanes & Sella','León llegada','León despedida'];
+
+  db.ref('fotos').once('value', snapshot => {
+    const fotos = snapshot.val() || {};
+    db.ref('game').once('value', snap2 => {
+      const gs = snap2.val() || {};
+      const fotoVotos = gs.fotoVotos || {};
+
+      let html = `
+        <div class="dia-hero">
+          <div class="dia-numero">Momentos del viaje</div>
+          <div class="dia-titulo">📸 Galería</div>
+          <div class="dia-meta"><span class="dia-fecha">📍 Asturias · Galicia · León 2026</span></div>
+        </div>
+        <div style="padding:16px 14px 60px">`;
+
+      let hayFotos = false;
+
+      for (let d = 1; d <= 10; d++) {
+        const key = `d${d}`;
+        const fotosDelDia = fotos[key];
+        if (!fotosDelDia || Object.keys(fotosDelDia).length === 0) continue;
+        hayFotos = true;
+
+        const fotosArr = Object.values(fotosDelDia);
+
+        // Contar votos por foto
+        const votosPorFoto = {};
+        fotosArr.forEach((f, i) => { votosPorFoto[i] = 0; });
+        Object.entries(fotoVotos).forEach(([k, val]) => {
+          if (k.startsWith('foto_') && k.endsWith(`_d${d}`)) {
+            // val es el índice numérico de la foto votada
+            const idx = Number(val);
+            if (!isNaN(idx) && idx >= 0 && idx < fotosArr.length) {
+              votosPorFoto[idx] = (votosPorFoto[idx] || 0) + 1;
+            }
+          }
+        });
+
+        const totalVotos = Object.values(votosPorFoto).reduce((a,b)=>a+b,0);
+        const votosCompletos = totalVotos >= TOTAL_VIAJEROS;
+        const maxVotos = Math.max(...Object.values(votosPorFoto));
+
+        html += `
+          <div style="margin-bottom:28px">
+            <div style="font-size:11px;letter-spacing:.1em;color:#888;font-weight:600;margin-bottom:10px">
+              DÍA ${d} · ${NOMBRES_DIA[d-1].toUpperCase()}
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">`;
+
+        fotosArr.forEach((foto, i) => {
+          const votos = votosPorFoto[i] || 0;
+          const esGanadora = votosCompletos && votos === maxVotos && maxVotos > 0;
+          html += `
+            <div style="position:relative;border-radius:12px;overflow:hidden;border:2px solid ${esGanadora ? '#C8963E' : 'rgba(255,255,255,0.08)'}">
+              <img src="${foto.url}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block"/>
+              ${esGanadora ? `<div style="position:absolute;top:6px;right:6px;background:#C8963E;border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700;color:#000">👑 Ganadora</div>` : ''}
+              <div style="padding:8px;background:#111827">
+                <div style="font-size:12px;color:#888">${foto.userName || 'Viajero'}</div>
+                ${votosCompletos
+                  ? `<div style="font-size:13px;color:${esGanadora ? '#C8963E' : '#e8e8e8'};font-weight:600">${votos} voto${votos!==1?'s':''}</div>`
+                  : `<div style="font-size:11px;color:#555">Votos ocultos (${totalVotos}/${TOTAL_VIAJEROS})</div>`
+                }
+              </div>
+            </div>`;
+        });
+
+        html += `</div></div>`;
+      }
+
+      if (!hayFotos) {
+        html += `<div style="text-align:center;padding:60px 20px;color:#555">
+          <div style="font-size:48px;margin-bottom:16px">📸</div>
+          <div>Las fotos del viaje aparecerán aquí.<br>¡Súbelas desde la sección Trivia cada día!</div>
+        </div>`;
+      }
+
+      html += `</div>`;
+      contenedor.innerHTML = html;
+    });
+  });
 }
 
 function renderClima() {
@@ -1306,12 +1509,15 @@ function cambiarDia(idx) {
   if (idx === -3) {
     triviaRoot.style.display = 'block';
     document.body.classList.add('trivia-mode');
-    // scroll trivia to top
     triviaRoot.scrollTop = 0;
   } else {
     triviaRoot.style.display = 'none';
     document.body.classList.remove('trivia-mode');
-    if (idx === -2) {
+    if (idx === -4) {
+      renderPremios();
+    } else if (idx === -5) {
+      renderGaleria();
+    } else if (idx === -2) {
       renderClima();
     } else if (idx === -1) {
       renderVuelos();
@@ -1733,11 +1939,18 @@ function App() {
   };
 
   const adminAvanzar = () => {
-    if (gs.diaActual>=10) return;
     const next = JSON.parse(JSON.stringify(gs));
     const lb = leaderboard(next);
     next.historial.push({dia:next.diaActual, ganador:lb[0]?.id, scores:JSON.parse(JSON.stringify(next.scores))});
-    next.diaActual+=1; update(next);
+    if (gs.diaActual >= 10) {
+      // Viaje terminado — activa ceremonia
+      next.ceremoniaActiva = true;
+      update(next);
+      setScreen("ceremonia");
+    } else {
+      next.diaActual += 1;
+      update(next);
+    }
   };
 
   const adminReset = () => {
@@ -1750,12 +1963,12 @@ function App() {
 
   const leaderboard = (state=gs) => {
     if (!state) return [];
-    return [...VIAJEROS].map(v=>({...v,pts:state.scores[v.id].total})).sort((a,b)=>b.pts-a.pts);
+    return [...VIAJEROS].map(v=>({...v,pts:state.scores?.[v.id]?.total||0})).sort((a,b)=>b.pts-a.pts);
   };
 
   const catLeader = (cat) => {
     if (!gs) return null;
-    return [...VIAJEROS].map(v=>({...v,pts:gs.scores[v.id][cat]||0})).sort((a,b)=>b.pts-a.pts)[0];
+    return [...VIAJEROS].map(v=>({...v,pts:gs.scores?.[v.id]?.[cat]||0})).sort((a,b)=>b.pts-a.pts)[0];
   };
 
   if (screen==="loading") return (
@@ -1891,7 +2104,7 @@ function App() {
           <span style={{fontSize:44}}>{(gs?.avatars?.[user.id]) || user.name[0]}</span>
           <div style={{flex:1}}>
             <div style={{...P.userName,color:user.color}}>{user.name}</div>
-            <div style={P.userPts}>{gs.scores[user.id].total} puntos acumulados</div>
+            <div style={P.userPts}>{gs.scores?.[user.id]?.total||0} puntos acumulados</div>
           </div>
           <button style={P.lbBtn} onClick={()=>setScreen("leaderboard")}>🏆</button>
         </div>
@@ -1915,7 +2128,13 @@ function App() {
             <div style={P.actArrow}>{a.done?"✓":"›"}</div>
           </button>
         ))}
-        <button style={{...P.btnGray,marginTop:8}} onClick={()=>{setUser(null);setScreen("login");}}>Salir</button>
+        <div style={{marginTop:20, padding:'14px 16px', background:'rgba(255,255,255,0.04)', borderRadius:14, border:'1px solid rgba(255,255,255,0.08)'}}>
+          <div style={{fontSize:12, color:'#555', marginBottom:8, textAlign:'center'}}>¿Otro jugador quiere participar desde este teléfono?</div>
+          <button style={{...P.btnGold, background:'transparent', border:'1.5px solid #C8963E', color:'#C8963E', width:'100%', fontSize:15}}
+            onClick={()=>{setUser(null);setScreen("login");}}>
+            🔄 Cambiar jugador
+          </button>
+        </div>
       </div></div>
     );
   }
@@ -1925,7 +2144,7 @@ function App() {
       <div style={P.page}><div style={P.card}>
         <div style={P.cardEmoji}>🎉</div>
         <h2 style={P.cardTitle}>¡Trivia completada!</h2>
-        <div style={{...P.bigScore,color:user.color}}>{gs.scores[user.id].total}</div>
+        <div style={{...P.bigScore,color:user.color}}>{gs.scores?.[user.id]?.total||0}</div>
         <p style={P.cardSub}>puntos acumulados en el viaje</p>
         <button style={P.btnGold} onClick={()=>setScreen("menu")}>Volver al menú</button>
         <button style={P.btnGray} onClick={()=>setScreen("leaderboard")}>Ver leaderboard 🏆</button>
@@ -2169,7 +2388,7 @@ function App() {
         ))}
         <p style={{...P.secLabel,marginTop:20}}>LÍDERES POR CATEGORÍA</p>
         {Object.entries(CATEGORIAS_T).map(([key,cat])=>{
-          const leader=catLeader(key), pts=leader?gs.scores[leader.id][key]||0:0;
+          const leader=catLeader(key), pts=leader?gs.scores?.[leader.id]?.[key]||0:0;
           return (
             <div key={key} style={P.catRow}>
               <span style={{...P.catPill,background:cat.color,fontSize:12}}>{cat.emoji} {cat.label}</span>
@@ -2200,8 +2419,8 @@ function App() {
         <div style={P.adminSec}>
           <p style={P.adminSecTit}>Avanzar al siguiente día</p>
           <p style={P.adminSecSub}>Registra el ganador del día y abre el siguiente.</p>
-          <button style={{...P.btnGold,background:"#c0392b"}} onClick={adminAvanzar} disabled={gs.diaActual>=10}>
-            Cerrar Día {gs.diaActual} → Abrir Día {gs.diaActual+1}
+          <button style={{...P.btnGold, background: gs.diaActual>=10 ? "#7b1a1a" : "#c0392b"}} onClick={adminAvanzar}>
+            {gs.diaActual >= 10 ? "🏆 Cerrar viaje y abrir ceremonia" : `Cerrar Día ${gs.diaActual} → Abrir Día ${gs.diaActual+1}`}
           </button>
         </div>
         <div style={P.adminSec}>
@@ -2245,6 +2464,75 @@ function App() {
           </button>
         </div>
         <button style={P.btnGray} onClick={()=>{setUser(null);setScreen("login");}}>Cerrar sesión admin</button>
+      </div></div>
+    );
+  }
+
+  if (screen==="ceremonia") {
+    const lb = leaderboard();
+    const topCat = (cat) => {
+      if (!gs) return null;
+      return [...VIAJEROS].map(v=>({...v, pts: gs.scores?.[v.id]?.[cat]||0})).sort((a,b)=>b.pts-a.pts)[0];
+    };
+    const trofeos = [
+      { emoji:'🏆', nombre:'Trofeo Pelayo',       sub:'Mayor puntaje total del viaje',      winner: lb[0] },
+      { emoji:'🏛️', nombre:'Mente de Oviedo',     sub:'Cultura',                            winner: topCat('cultura') },
+      { emoji:'🍽️', nombre:'Cuchara de Oro',      sub:'Gastronomía',                        winner: topCat('gastronomia') },
+      { emoji:'🧭', nombre:'Espíritu del Camino', sub:'Aventura',                           winner: topCat('aventura') },
+      { emoji:'🌿', nombre:'Alma de los Picos',   sub:'Naturaleza',                         winner: topCat('naturaleza') },
+      { emoji:'📸', nombre:'Ojo del Cantábrico',  sub:'Fotografía',                         winner: topCat('foto') },
+    ];
+    return (
+      <div style={{...P.page, background:'linear-gradient(160deg,#0a0800 0%,#1a1200 60%,#0a0800 100%)', flexDirection:'column', alignItems:'center', paddingTop:40}}>
+        <div style={{textAlign:'center', marginBottom:32}}>
+          <div style={{fontSize:64, marginBottom:8}}>🏆</div>
+          <div style={{fontFamily:"'Playfair Display',serif", fontSize:32, color:'#C8963E', fontWeight:700}}>El Camino de los González</div>
+          <div style={{color:'#888', fontSize:14, marginTop:4, letterSpacing:'0.1em'}}>CEREMONIA DE PREMIACIÓN · ASTURIAS 2026</div>
+        </div>
+
+        {trofeos.map((t,i) => (
+          <div key={i} style={{width:'100%', maxWidth:460, background:'rgba(200,150,62,0.08)', border:`1px solid ${t.winner?.color||'#C8963E'}44`, borderRadius:16, padding:'18px 20px', marginBottom:12, display:'flex', alignItems:'center', gap:14}}>
+            <div style={{fontSize:36, minWidth:44, textAlign:'center'}}>{t.emoji}</div>
+            <div style={{flex:1}}>
+              <div style={{color:'#C8963E', fontSize:13, fontWeight:700, letterSpacing:'0.05em'}}>{t.nombre}</div>
+              <div style={{color:'#555', fontSize:11, marginTop:1}}>{t.sub}</div>
+            </div>
+            <div style={{textAlign:'right'}}>
+              <div style={{color: t.winner?.color||'#e8e8e8', fontWeight:700, fontSize:18}}>{t.winner ? (gs?.avatars?.[t.winner.id]||'') + ' ' + t.winner.name : '—'}</div>
+              <div style={{color:'#C8963E', fontSize:13}}>{t.winner?.pts||0} pts</div>
+            </div>
+          </div>
+        ))}
+
+        <div style={{marginTop:24, textAlign:'center'}}>
+          <div style={{color:'#555', fontSize:13, marginBottom:8}}>⭐ Estrellas del Día</div>
+          {(gs?.historial||[]).map((h,i)=>{
+            const v = VIAJEROS.find(x=>x.id===h.ganador);
+            return v ? (
+              <div key={i} style={{color:'#888', fontSize:13, marginBottom:4}}>
+                Día {h.dia} — <span style={{color:v.color, fontWeight:600}}>{v.name}</span>
+              </div>
+            ) : null;
+          })}
+        </div>
+
+        <div style={{marginTop:32, fontSize:13, color:'#444', textAlign:'center', fontStyle:'italic'}}>
+          "El camino siempre continúa."
+        </div>
+        <button style={{...P.btnGray, marginTop:24}} onClick={()=>setScreen("leaderboard")}>Ver leaderboard completo</button>
+      </div>
+    );
+  }
+
+  // Auto-mostrar ceremonia si el juego terminó y el usuario entra
+  if (gs?.ceremoniaActiva && screen === "menu") {
+    return (
+      <div style={P.page}><div style={P.card}>
+        <div style={{fontSize:48, textAlign:'center'}}>🏆</div>
+        <h2 style={{...P.cardTitle, color:'#C8963E', textAlign:'center'}}>¡El viaje terminó!</h2>
+        <p style={{...P.cardSub, textAlign:'center'}}>La ceremonia de premiación está lista.</p>
+        <button style={P.btnGold} onClick={()=>setScreen("ceremonia")}>Ver premios 🏆</button>
+        <button style={P.btnGray} onClick={()=>setScreen("leaderboard")}>Solo el leaderboard</button>
       </div></div>
     );
   }
