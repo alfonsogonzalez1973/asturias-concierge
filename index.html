@@ -584,6 +584,22 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js" crossorigin></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js" crossorigin></script>
+<!-- Firebase Compat SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCYn2LXXn6EBPhoygMX1qxDEFu7g8_rnLc",
+    authDomain: "asturias-concierge.firebaseapp.com",
+    databaseURL: "https://asturias-concierge-default-rtdb.firebaseio.com",
+    projectId: "asturias-concierge",
+    storageBucket: "asturias-concierge.firebasestorage.app",
+    messagingSenderId: "772422875634",
+    appId: "1:772422875634:web:362c9df84824e6882ad36b"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+</script>
 </head>
 <body>
 
@@ -1602,11 +1618,12 @@ const PREDICCIONES_T = {
 };
 
 function loadState() {
-  try { const r = localStorage.getItem("asturias_v2"); return r ? JSON.parse(r) : null; }
-  catch { return null; }
+  // Legacy: unused — Firebase listener handles state now
+  return null;
 }
 function saveState(s) {
-  try { localStorage.setItem("asturias_v2", JSON.stringify(s)); } catch(e) { console.error(e); }
+  // Write full game state to Firebase (shared across all devices)
+  try { db.ref("game").set(s); } catch(e) { console.error(e); }
 }
 function initState() {
   const scores = {};
@@ -1638,15 +1655,24 @@ function App() {
   const [bonusCat, setBonusCat] = useState("cultura");
 
   useEffect(() => {
-    const stored = loadState();
-    const state = (stored && stored.initialized) ? stored : initState();
-    if (!stored) saveState(state);
-    setGs(state);
-    try {
-      const fr = localStorage.getItem("asturias_fotos");
-      if (fr) setFotosDia(JSON.parse(fr));
-    } catch {}
-    setScreen("login");
+    // Real-time Firebase listener — fires on every change from any device
+    const ref = db.ref("game");
+    ref.on("value", (snapshot) => {
+      const data = snapshot.val();
+      const state = (data && data.initialized) ? data : initState();
+      if (!data) db.ref("game").set(state); // first-time init
+      setGs(state);
+      setScreen(prev => prev === "loading" ? "login" : prev);
+    });
+
+    // Fotos also synced via Firebase
+    const fotosRef = db.ref("fotos");
+    fotosRef.on("value", (snapshot) => {
+      const data = snapshot.val();
+      if (data) setFotosDia(data);
+    });
+
+    return () => { ref.off(); fotosRef.off(); };
   }, []);
 
   const update = (next) => { setGs(next); saveState(next); };
@@ -1970,7 +1996,7 @@ function App() {
         if (!nextFotos[diaKey]) nextFotos[diaKey] = [];
         nextFotos[diaKey] = [...nextFotos[diaKey], nuevaFoto];
         setFotosDia(nextFotos);
-        localStorage.setItem("asturias_fotos", JSON.stringify(nextFotos));
+        db.ref("fotos").set(nextFotos);
       } catch {
         setFotoUploadError("Error al subir. Intenta de nuevo.");
       } finally {
