@@ -1921,6 +1921,9 @@ function App() {
     setSel(idx); setShowResult(true);
     setTimeout(() => {
       const next = JSON.parse(JSON.stringify(gs));
+      if (!next.scores) next.scores = {};
+      if (!next.scores[user.id]) next.scores[user.id] = {total:0,correctas:0,respondidas:0};
+      if (!next.respuestasDia) next.respuestasDia = {};
       if (correct) { next.scores[user.id].total += pts; next.scores[user.id][q.categoria] = (next.scores[user.id][q.categoria]||0)+pts; next.scores[user.id].correctas += 1; }
       next.scores[user.id].respondidas += 1;
       if (qIdx+1 >= preguntas.length) { next.respuestasDia[`trivia_${user.id}_d${gs.diaActual}`]=true; setDone(true); setShowResult(false); }
@@ -1940,6 +1943,7 @@ function App() {
   const enviarPred = () => {
     if (!predVal.trim()) return;
     const next = JSON.parse(JSON.stringify(gs));
+    if (!next.respuestasDia) next.respuestasDia = {};
     next.respuestasDia[`pred_${user.id}_d${gs.diaActual}`]={valor:predVal,usuario:user.id};
     update(next); setPredVal(""); setScreen("menu");
   };
@@ -1947,6 +1951,7 @@ function App() {
   const enviarCur = () => {
     if (!curVal.trim()) return;
     const next = JSON.parse(JSON.stringify(gs));
+    if (!next.respuestasDia) next.respuestasDia = {};
     next.respuestasDia[`cur_${user.id}_d${gs.diaActual}`]={texto:curVal,usuario:user.id};
     update(next); setCurVal(""); setScreen("menu");
   };
@@ -2021,7 +2026,7 @@ function App() {
                   const v = pendingUser;
                   setUser(v); setQIdx(0); setSel(null); setShowResult(false); setDone(false);
                   setPendingUser(null);
-                  setScreen(next.respuestasDia[`trivia_${v.id}_d${next.diaActual}`] ? "ya_jugaste" : "menu");
+                  setScreen((next.respuestasDia||{})[`trivia_${v.id}_d${next.diaActual}`] ? "ya_jugaste" : "menu");
                 }}>
                 {e}
               </button>
@@ -2032,7 +2037,7 @@ function App() {
           <button style={P.btnGold} onClick={() => {
             setUser(pendingUser); setQIdx(0); setSel(null); setShowResult(false); setDone(false);
             setPendingUser(null);
-            setScreen(gs.respuestasDia[`trivia_${pendingUser.id}_d${gs.diaActual}`] ? "ya_jugaste" : "menu");
+            setScreen((gs.respuestasDia||{})[`trivia_${pendingUser.id}_d${gs.diaActual}`] ? "ya_jugaste" : "menu");
           }}>Continuar con {already}</button>
         )}
         <button style={P.btnGray} onClick={() => { setPendingUser(null); setScreen("login"); }}>Cancelar</button>
@@ -2108,10 +2113,10 @@ function App() {
   if (screen==="menu") {
     if (!user) { setScreen("login"); return null; }
     const dia=DIAS_T[(gs.diaActual||1)-1] || DIAS_T[0];
-    const trivDone=!!gs.respuestasDia[`trivia_${user.id}_d${gs.diaActual}`];
-    const fotoDone=!!gs.fotoVotos[`foto_${user.id}_d${gs.diaActual}`];
-    const predDone=!!gs.respuestasDia[`pred_${user.id}_d${gs.diaActual}`];
-    const curDone=!!gs.respuestasDia[`cur_${user.id}_d${gs.diaActual}`];
+    const trivDone=!!(gs.respuestasDia||{})[`trivia_${user.id}_d${gs.diaActual}`];
+    const fotoDone=!!(gs.fotoVotos||{})[`foto_${user.id}_d${gs.diaActual}`];
+    const predDone=!!(gs.respuestasDia||{})[`pred_${user.id}_d${gs.diaActual}`];
+    const curDone=!!(gs.respuestasDia||{})[`cur_${user.id}_d${gs.diaActual}`];
     const acts=[
       {emoji:"🎯",label:"Trivia del día",    sub:"5 preguntas · 20 seg c/u",       pts:"hasta 750 pts",      done:trivDone, go:()=>{setQIdx(0);setSel(null);setShowResult(false);setDone(false);setScreen("trivia");}},
       {emoji:"📸",label:"Foto del día",      sub:"Vota la mejor foto del grupo",    pts:"50 pts al ganador",  done:fotoDone, go:()=>setScreen("foto")},
@@ -2461,11 +2466,11 @@ function App() {
         </div>
         <div style={P.adminSec}>
           <p style={P.adminSecTit}>Predicciones enviadas hoy</p>
-          {VIAJEROS.map(v=>{const e=gs.respuestasDia[`pred_${v.id}_d${gs.diaActual}`];return e?(<div key={v.id} style={P.adminEntry}><span style={{color:v.color,fontWeight:700}}>{v.name}:</span> {e.valor}</div>):null;})}
+          {VIAJEROS.map(v=>{const e=(gs.respuestasDia||{})[`pred_${v.id}_d${gs.diaActual}`];return e?(<div key={v.id} style={P.adminEntry}><span style={{color:v.color,fontWeight:700}}>{v.name}:</span> {e.valor}</div>):null;})}
         </div>
         <div style={P.adminSec}>
           <p style={P.adminSecTit}>Datos curiosos de hoy</p>
-          {VIAJEROS.map(v=>{const e=gs.respuestasDia[`cur_${v.id}_d${gs.diaActual}`];return e?(<div key={v.id} style={P.adminEntry}><span style={{color:v.color,fontWeight:700}}>{v.name}:</span> {e.texto}</div>):null;})}
+          {VIAJEROS.map(v=>{const e=(gs.respuestasDia||{})[`cur_${v.id}_d${gs.diaActual}`];return e?(<div key={v.id} style={P.adminEntry}><span style={{color:v.color,fontWeight:700}}>{v.name}:</span> {e.texto}</div>):null;})}
         </div>
         <div style={P.adminSec}>
           <p style={P.adminSecTit}>Puntajes actuales</p>
