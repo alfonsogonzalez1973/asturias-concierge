@@ -1867,6 +1867,27 @@ function App() {
   const [bonusPts, setBonusPts] = useState(100);
   const [bonusCat, setBonusCat] = useState("cultura");
 
+  // Back button: intercept browser history to navegar dentro del app
+  const screenRef = useRef(screen);
+  const userRef   = useRef(user);
+  useEffect(() => { screenRef.current = screen; }, [screen]);
+  useEffect(() => { userRef.current = user; }, [user]);
+  useEffect(() => {
+    history.pushState({ triviaApp: true }, '');
+    const handlePop = () => {
+      const cur = screenRef.current;
+      const SUB = ["trivia","foto","prediccion","curiosidad","ya_jugaste","trivia_done","admin","emoji_picker","ceremonia"];
+      if (SUB.includes(cur)) {
+        setScreen("menu");
+      } else if (cur === "menu") {
+        setUser(null); setPendingUser(null); setScreen("login");
+      }
+      history.pushState({ triviaApp: true }, '');
+    };
+    window.addEventListener('popstate', handlePop);
+    return () => window.removeEventListener('popstate', handlePop);
+  }, []);
+
   useEffect(() => {
     // Real-time Firebase listener — fires on every change from any device
     const ref = db.ref("game");
