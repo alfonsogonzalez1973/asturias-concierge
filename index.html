@@ -1934,8 +1934,11 @@ function App() {
 
   const votoFoto = (vid) => {
     const key = `foto_${user.id}_d${gs.diaActual}`;
-    if (gs.fotoVotos[key]) return;
+    if ((gs.fotoVotos||{})[key]) return;
     const next = JSON.parse(JSON.stringify(gs));
+    if (!next.fotoVotos) next.fotoVotos = {};
+    if (!next.scores) next.scores = {};
+    if (!next.scores[vid]) next.scores[vid] = {total:0,foto:0};
     next.fotoVotos[key]=vid; next.scores[vid].foto=(next.scores[vid].foto||0)+50; next.scores[vid].total+=50;
     update(next); setScreen("menu");
   };
@@ -2224,12 +2227,12 @@ function App() {
     const diaKey      = `d${gs.diaActual}`;
     const fotoKey     = `foto_${user.id}_${diaKey}`;
     const yaSubio     = !!(fotosDia[diaKey] || []).find(f => f.userId === user.id);
-    const yaVoto      = !!gs.fotoVotos[fotoKey];
+    const yaVoto      = !!(gs.fotoVotos||{})[fotoKey];
     const fotosDelDia = fotosDia[diaKey] || [];
-    const votosEmitidos = VIAJEROS.filter(v => gs.fotoVotos[`foto_${v.id}_${diaKey}`]).length;
+    const votosEmitidos = VIAJEROS.filter(v => (gs.fotoVotos||{})[`foto_${v.id}_${diaKey}`]).length;
     const todosVotaron = votosEmitidos === VIAJEROS.length;
     const votosPorFoto = {};
-    Object.entries(gs.fotoVotos).forEach(([k, val]) => {
+    Object.entries(gs.fotoVotos||{}).forEach(([k, val]) => {
       if (!k.startsWith(`foto_`) || !k.endsWith(`_${diaKey}`)) return;
       if (typeof val === "number") { votosPorFoto[val] = (votosPorFoto[val] || 0) + 1; }
     });
@@ -2260,6 +2263,7 @@ function App() {
       if (yaVoto) return;
       if (fotosDelDia[photoIdx]?.userId === user.id) return;
       const next = JSON.parse(JSON.stringify(gs));
+      if (!next.fotoVotos) next.fotoVotos = {};
       next.fotoVotos[fotoKey] = photoIdx;
       update(next);
     };
@@ -2299,7 +2303,7 @@ function App() {
             <div style={P.galeriaGrid}>
               {fotosDelDia.map((f, i) => {
                 const esLaMia    = f.userId === user.id;
-                const yaVoteEsta = gs.fotoVotos[fotoKey] === i;
+                const yaVoteEsta = (gs.fotoVotos||{})[fotoKey] === i;
                 const votosEsta  = votosPorFoto[i] || 0;
                 const esGanadora = todosVotaron && String(i) === String(ganadorIdx);
                 return (
