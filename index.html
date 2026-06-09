@@ -2282,7 +2282,7 @@ function App() {
           <label style={{...P.btnGold, display:"flex", alignItems:"center", justifyContent:"center", gap:8,
             cursor: fotoUploading ? "default" : "pointer", opacity: fotoUploading ? 0.6 : 1}}>
             {fotoUploading ? "Subiendo..." : yaSubio ? "Cambiar mi foto" : "📷  Subir mi foto"}
-            <input type="file" accept="image/*" capture="environment"
+            <input type="file" accept="image/*"
               style={{display:"none"}} onChange={handleFileChange} disabled={fotoUploading} />
           </label>
           {fotoUploadError && (
