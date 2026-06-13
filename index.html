@@ -657,13 +657,13 @@ const ITINERARIO = [
     titulo: "Bienvenida a Asturias", subtitulo: "Llegada · Oviedo", horario: "Mañana/Tarde",
     hotel: { nombre: "Hotel Silken Monumental Naranco", estrellas: "4★", detalle: "4 noches · Zona Centro · Oviedo" },
     manana: [
-      { tipo: "traslado", emoji: "✈️", texto: "Transfer privado Aeropuerto OVD → Oviedo", detalle: "Minibús Mercedes-Benz con guía AsturiaMe", incluido: true },
-      { tipo: "actividad", emoji: "🏨", texto: "Check-in Hotel Silken Monumental Naranco", detalle: "Asistencia durante el check-in", incluido: true },
-      { tipo: "gastro", emoji: "🍽️", servicio: "Almuerzo", nombre: "Sidrería La Pumarada", subtipo: "Sidrería tradicional · Calle Gascona, Oviedo", precio: "€25–40", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=Sidrería+La+Pumarada+Oviedo+Calle+Gascona", incluido: false },
+      { tipo: "traslado", emoji: "✈️", texto: "10:00 · Llegada Aeropuerto de Asturias", detalle: "10:30 Salida en minibús Mercedes-Benz con guía AsturiaMe", incluido: true },
+      { tipo: "actividad", emoji: "🏨", texto: "11:00 · Check-in Hotel Silken Monumental Naranco", detalle: "Asistencia durante el check-in · 12:30 Transfer al Casco Histórico", incluido: true },
+      { tipo: "gastro", emoji: "🍽️", servicio: "Almuerzo · 14:00 h", nombre: "Sidrería La Pumarada", subtipo: "Sidrería tradicional · Calle Gascona, Oviedo", precio: "€25–40", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=Sidrería+La+Pumarada+Oviedo+Calle+Gascona", incluido: false },
     ],
     tarde: [
-      { tipo: "actividad", emoji: "🏛️", texto: "Visita guiada Casco Antiguo de Oviedo", detalle: "Antigua capital del Reino de Asturias · Plazas históricas y sidrerías", incluido: true },
-      { tipo: "actividad", emoji: "⛪", texto: "Visita guiada Catedral con Cámara Santa (UNESCO)", detalle: "Patrimonio de la Humanidad", incluido: true },
+      { tipo: "actividad", emoji: "🏛️", texto: "12:45 · Visita guiada Casco Antiguo de Oviedo", detalle: "Antigua capital del Reino de Asturias · Plazas históricas y sidrerías", incluido: true },
+      { tipo: "actividad", emoji: "⛪", texto: "17:00 · Visita guiada Catedral con Cámara Santa (UNESCO)", detalle: "Patrimonio de la Humanidad · 18:30 Tiempo libre en Oviedo", incluido: true },
       { tipo: "gastro", emoji: "🦪", servicio: "Cena", nombre: "Restaurante El Monumental", subtipo: "Hotel Silken Monumental Naranco 4★ · Sin traslado", precio: "€30–50", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=Hotel+Silken+Monumental+Naranco+Oviedo", incluido: false },
     ],
     gastronomia: [
@@ -677,13 +677,13 @@ const ITINERARIO = [
     titulo: "Covadonga & el Nacimiento de un Reino", subtitulo: "Lagos · Santuario · Cangas de Onís", horario: "10:00 – 19:00",
     hotel: { nombre: "Hotel Silken Monumental Naranco", estrellas: "4★", detalle: "2ª noche · Oviedo" },
     manana: [
-      { tipo: "traslado", emoji: "🚌", texto: "Salida de Oviedo rumbo al oriente asturiano", detalle: "Paisajes rurales, praderas y hórreos tradicionales", incluido: true },
-      { tipo: "actividad", emoji: "🏔️", texto: "Visita Lagos de Covadonga (empresa autorizada)", detalle: "Parque Nacional Picos de Europa · Sujeto a climatología", incluido: true },
-      { tipo: "actividad", emoji: "⛪", texto: "Visita Basílica y Santa Cueva de Covadonga", detalle: "Lugar fundacional del Reino de Asturias", incluido: true },
+      { tipo: "traslado", emoji: "🚌", texto: "08:30 · Salida de Oviedo rumbo a Covadonga", detalle: "10:15 Llegada a Covadonga · Paisajes rurales, praderas y hórreos", incluido: true },
+      { tipo: "actividad", emoji: "🏔️", texto: "10:30 · Subida a Lagos de Covadonga con Taxitur", detalle: "Parque Nacional Picos de Europa · Sujeto a climatología", incluido: true },
+      { tipo: "actividad", emoji: "⛪", texto: "13:00 · Visita guiada Santuario de Covadonga", detalle: "Lugar fundacional del Reino de Asturias", incluido: true },
       { tipo: "gastro", emoji: "🍲", servicio: "Almuerzo · 14:00 h", nombre: "La Casa de la Fabada", subtipo: "Cocina tradicional asturiana · Soto de Cangas", precio: "€20–35", ninos: "Media", distincion: null, maps: "https://maps.google.com/?q=La+Casa+de+la+Fabada+Soto+de+Cangas", incluido: false },
     ],
     tarde: [
-      { tipo: "actividad", emoji: "🌉", texto: "Visita guiada Cangas de Onís", detalle: "Puente romano medieval · Primera capital del Reino", incluido: true },
+      { tipo: "actividad", emoji: "🌉", texto: "17:00 · Visita guiada Cangas de Onís", detalle: "Puente romano medieval · Primera capital del Reino · 18:00 Regreso a Oviedo", incluido: true },
       { tipo: "gastro", emoji: "🍽️", servicio: "Cena", nombre: "La Corte de Pelayo", subtipo: "Cocina asturiana · Frente al Teatro Campoamor · Oviedo", precio: "€35–55", ninos: "Media", distincion: "Cachopo Campeón de Asturias", maps: "https://maps.google.com/?q=La+Corte+de+Pelayo+Oviedo", incluido: false },
     ],
     gastronomia: [
@@ -697,15 +697,12 @@ const ITINERARIO = [
     titulo: "Senda del Oso & Pueblo Medieval", subtitulo: "Bicicleta · Teverga · Bandujo", horario: "09:00 – 19:00",
     hotel: { nombre: "Hotel Silken Monumental Naranco", estrellas: "4★", detalle: "3ª noche · Oviedo" },
     manana: [
-      { tipo: "actividad", emoji: "🚲", texto: "Paseo familiar en bicicletas por la Senda del Oso", detalle: "Recorrido suave entre montañas, túneles y paisajes verdes. Apto para todas las edades", incluido: true },
-      { tipo: "gastro", emoji: "🍽️", servicio: "Almuerzo", nombre: "Taberna Narciso", subtipo: "Fundada en 1830 · Con música en directo · Teverga", precio: "€15–25", ninos: "Alta", distincion: "★ 4.7 · La mejor valorada del viaje", maps: "https://maps.google.com/?q=Taberna+Narciso+San+Martín+de+Teverga+Asturias", incluido: false },
+      { tipo: "actividad", emoji: "🚲", texto: "10:30 · Senda del Oso en e-bikes con guía especializado", detalle: "09:00 Salida · 10:00 Llegada Tuñón · Recorrido suave entre montañas, túneles y bosques. Apto para todas las edades", incluido: true },
+      { tipo: "gastro", emoji: "🍽️", servicio: "Almuerzo · 14:00 h", nombre: "Taberna Narciso", subtipo: "Fundada en 1830 · Con música en directo · Teverga", precio: "€15–25", ninos: "Alta", distincion: "★ 4.7 · La mejor valorada del viaje", maps: "https://maps.google.com/?q=Taberna+Narciso+San+Martín+de+Teverga+Asturias", incluido: false },
     ],
     tarde: [
-      { tipo: "actividad", emoji: "🏰", texto: "Paseo por el pueblo medieval de Bandujo", detalle: "Uno de los conjuntos rurales mejor conservados de Asturias", incluido: true },
-      { tipo: "gastro", emoji: "🥘", servicio: "Cena", nombre: "Casa Fermín", subtipo: "Alta cocina asturiana · Oviedo · Desde 1924", precio: "€70–100", ninos: "Baja", distincion: "Plato Michelin · 2 Soles Repsol", maps: "https://maps.google.com/?q=Casa+Fermín+Oviedo", incluido: false, kidsAlt: [
-        { nombre: "El Raitán", subtipo: "Sidrería tradicional · Plaza del Fontán · Ambiente familiar", precio: "€20–35", maps: "https://maps.google.com/?q=El+Raitán+Oviedo+Plaza+Fontan" },
-        { nombre: "Casa Conrado", subtipo: "Restaurante tradicional familiar desde 1985 · Argüelles 1, Oviedo", precio: "€25–40", maps: "https://maps.google.com/?q=Casa+Conrado+Oviedo" },
-      ]},
+      { tipo: "actividad", emoji: "🏰", texto: "16:30 · Paseo por el pueblo medieval de Bandujo", detalle: "Uno de los conjuntos rurales mejor conservados de Asturias · 18:00 Regreso a Oviedo", incluido: true },
+      { tipo: "gastro", emoji: "🍽️", servicio: "Cena · 20:30 h", nombre: "Restaurante Hotel Silken Monumental", subtipo: "Hotel Silken Monumental Naranco 4★ · Sin traslado · Mesa reservada", precio: "€30–50", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=Hotel+Silken+Monumental+Naranco+Oviedo", incluido: false },
     ],
     gastronomia: [
       { tipo: "Zona Teverga", nombre: "Cocina de montaña — Valles del Oso", desc: "Caza, truchas de río y potajes contundentes. Ideal para probar el pote asturiano: berza, patata y carne de cerdo." },
@@ -718,32 +715,32 @@ const ITINERARIO = [
     titulo: "Avilés, Lastres & Raíces Familiares", subtitulo: "Avilés · Lastres · Vallobal · Migoya", horario: "09:00 – 19:00",
     hotel: { nombre: "Hotel Silken Monumental Naranco", estrellas: "4★", detalle: "4ª noche · Oviedo" },
     manana: [
-      { tipo: "actividad", emoji: "🏘️", texto: "Visita guiada a Avilés", detalle: "Casco histórico mejor conservado del norte · Soportales, plazas y palacios medievales", incluido: true },
-      { tipo: "actividad", emoji: "📸", texto: "Parada fotográfica en Lastres", detalle: "Uno de los pueblos marineros más bellos de Asturias · Vista panorámica sobre el Cantábrico", incluido: true },
+      { tipo: "actividad", emoji: "🏘️", texto: "09:30 · Visita guiada a Avilés", detalle: "Casco histórico mejor conservado del norte · Soportales, plazas y palacios medievales · 11:30 Tiempo libre", incluido: true },
+      { tipo: "traslado", emoji: "🚌", texto: "12:15 · Salida en minibús rumbo a Lastres", detalle: "Parada en Lastres — uno de los pueblos marineros más bellos del Cantábrico", incluido: true },
       { tipo: "gastro", emoji: "🦐", servicio: "Almuerzo · 13:30 h", nombre: "Restaurante El Mirador de San Roque", subtipo: "Vistas al Cantábrico · Pescados y arroces · Lastres", precio: "€35–55", ninos: "Media", distincion: null, maps: "https://maps.google.com/?q=Restaurante+El+Mirador+Lastres+Colunga", incluido: false },
     ],
     tarde: [
-      { tipo: "actividad", emoji: "⛪", texto: "Visita Santuario Virgen de la Cueva · Infiesto", detalle: "Lugar de mayor devoción popular de la comarca", incluido: true },
-      { tipo: "actividad", emoji: "🏘️", texto: "Migoya y Vallobal — Raíces familiares González", detalle: "Núcleos rurales vinculados a los antepasados emigrantes a América", incluido: true },
-      { tipo: "gastro", emoji: "🍽️", servicio: "Cena", nombre: "Restaurante El Monumental", subtipo: "Hotel Silken Monumental Naranco 4★ · Sin traslado", precio: "€30–50", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=Hotel+Silken+Monumental+Naranco+Oviedo", incluido: false },
+      { tipo: "actividad", emoji: "⛪", texto: "17:30 · Visita Santuario Virgen de la Cueva · Infiesto", detalle: "Lugar de mayor devoción popular de la comarca · 15:00 Salida hacia Piloña · 16:00 Paseo Vallobal", incluido: true },
+      { tipo: "actividad", emoji: "🏘️", texto: "18:15 · Parada emotiva en Migoya (apellido familiar)", detalle: "Núcleos rurales vinculados a los antepasados emigrantes a América · 19:00 Fin de jornada", incluido: true },
+      { tipo: "gastro", emoji: "🍺", servicio: "Cena · 20:30 h", nombre: "Sidrería Tierra Astur", subtipo: "Sidrería asturiana · Oviedo · Mesa reservada · Consumo propio", precio: "€25–40", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=Tierra+Astur+Oviedo", incluido: false },
     ],
     gastronomia: [
       { tipo: "Avilés", nombre: "La Ferrería y calle La Cámara", desc: "Las calles del casco histórico de Avilés tienen sidrerías excelentes. Pide pixin (rape) o centollo si está en carta.", maps: "https://maps.google.com/?q=Calle+La+Camara+Aviles+Asturias" },
       { tipo: "Almuerzo en Lastres", nombre: "Mariscos y pescado del Cantábrico", desc: "Lastres es conocida por su flota pesquera. Oricios, nécoras, merluza a la sidra y percebes cuando hay temporada.", maps: "https://maps.google.com/?q=Puerto+de+Lastres+Asturias" },
     ],
-    nota: "Jornada emocionalmente significativa. Vallobal y Migoya están en la comarca de Piloña — tierra de emigrantes asturianos a América en los siglos XIX-XX."
+    nota: "Jornada emocionalmente significativa. Vallobal y Migoya están en la comarca de Piloña — tierra de emigrantes asturianos a América en los siglos XIX-XX. La cena en Tierra Astur es perfecta para cerrar el día con sidra escanciada."
   },
   {
     dia: 5, fecha: "23 Jun", diaSemana: "Martes",
     titulo: "Santiago de Compostela", subtitulo: "Galicia · Catedral · Casco Histórico", horario: "09:00 – 19:00",
     hotel: { nombre: "Hotel Compostela", estrellas: "4★", detalle: "1 noche · Santiago de Compostela" },
     manana: [
-      { tipo: "traslado", emoji: "🚌", texto: "Check-out Oviedo · Salida hacia Galicia", detalle: "Recorrido por la costa cantábrica rumbo a Santiago", incluido: true },
-      { tipo: "gastro", emoji: "🍽️", servicio: "Almuerzo", nombre: "Taberna Montes", subtipo: "Cocina gallega · Casco antiguo · Junto a la Catedral", precio: "€25–40", ninos: "Alta", distincion: "★ 4.8 · 800+ reseñas", maps: "https://maps.google.com/?q=Taberna+Montes+Santiago+de+Compostela", incluido: false },
+      { tipo: "traslado", emoji: "🚌", texto: "08:30 · Check-out y salida hacia Santiago de Compostela", detalle: "10:30 Parada técnica en ruta · 11:30 Continuación a Santiago", incluido: true },
+      { tipo: "gastro", emoji: "🍽️", servicio: "Almuerzo · 14:00 h", nombre: "Taberna Montes", subtipo: "Cocina gallega · Casco antiguo · Junto a la Catedral", precio: "€25–40", ninos: "Alta", distincion: "★ 4.8 · 800+ reseñas", maps: "https://maps.google.com/?q=Taberna+Montes+Santiago+de+Compostela", incluido: false },
     ],
     tarde: [
-      { tipo: "actividad", emoji: "🏨", texto: "Check-in Hotel Compostela", detalle: "Zona histórica de Santiago de Compostela", incluido: true },
-      { tipo: "actividad", emoji: "⛪", texto: "Visita guiada Catedral de Santiago de Compostela", detalle: "Entrada incluida · Gran centro de peregrinación de Europa", incluido: true },
+      { tipo: "actividad", emoji: "🏨", texto: "16:00 · Check-in Hotel Compostela", detalle: "Zona histórica de Santiago de Compostela", incluido: true },
+      { tipo: "actividad", emoji: "⛪", texto: "17:00 · Visita guiada Catedral de Santiago con Pórtico de la Gloria y Museo", detalle: "Entrada incluida · Gran centro de peregrinación de Europa", incluido: true },
       { tipo: "actividad", emoji: "🚶", texto: "Tiempo libre · Paseo por el casco histórico", detalle: "Rúa do Franco, Praza do Obradoiro, Mercado de Abastos", incluido: true },
       { tipo: "gastro", emoji: "🍽️", servicio: "Cena", nombre: "Restaurante del Hotel Compostela", subtipo: "Hotel Compostela 4★ · Santiago de Compostela · Sin traslado", precio: "€30–50", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=Hotel+Compostela+Santiago+de+Compostela", incluido: false },
     ],
@@ -756,40 +753,40 @@ const ITINERARIO = [
   {
     dia: 6, fecha: "24 Jun", diaSemana: "Miércoles",
     titulo: "Santiago → Regreso a Asturias", subtitulo: "Casco antiguo · Gijón", horario: "09:00 – 19:00",
-    hotel: { nombre: "Artiem Asturias", estrellas: "5★", detalle: "3 noches · Villaviciosa · Zona Oriente" },
+    hotel: { nombre: "Hotel Príncipe de Asturias", estrellas: "5★", detalle: "3 noches · Gijón · Frente al mar Cantábrico" },
     manana: [
-      { tipo: "actividad", emoji: "🏛️", texto: "Visita guiada casco antiguo de Santiago", detalle: "Recorrido final por la ciudad antes de partir", incluido: true },
-      { tipo: "traslado", emoji: "🚌", texto: "Check-out y salida hacia Asturias", detalle: "Retorno por la costa cantábrica", incluido: true },
+      { tipo: "actividad", emoji: "🏛️", texto: "10:00 · Visita guiada Casco Antiguo de Santiago de Compostela", detalle: "09:30 Check-out e inicio de jornada · Recorrido final por la ciudad", incluido: true },
+      { tipo: "traslado", emoji: "🚌", texto: "16:00 · Regreso en minibús a Asturias · Destino: Gijón", detalle: "18:00 Parada técnica · 18:30 Continuamos ruta hacia Gijón", incluido: true },
       { tipo: "gastro", emoji: "🐙", servicio: "Almuerzo · 13:30 h", nombre: "Casa Marcelo", subtipo: "1 Estrella Michelin · Mesa común · Cocina abierta · Santiago de Compostela", precio: "€90–130", ninos: "Baja", distincion: "★ Estrella Michelin", maps: "https://maps.google.com/?q=Casa+Marcelo+Santiago+de+Compostela", incluido: false, kidsAlt: [
         { nombre: "O Gato Negro", subtipo: "Tasca gallega tradicional · Rúa do Franco · Familiar y animado", precio: "€20–35", maps: "https://maps.google.com/?q=O+Gato+Negro+Santiago+de+Compostela+Rua+Franco" },
         { nombre: "Casa Manolo", subtipo: "Cocina gallega informal · Rúa de Fonseca · Ideal para familias", precio: "€25–40", maps: "https://maps.google.com/?q=Casa+Manolo+Santiago+de+Compostela" },
       ]},
     ],
     tarde: [
-      { tipo: "actividad", emoji: "🏨", texto: "Check-in Artiem Asturias · Villaviciosa", detalle: "Hotel 5 estrellas · Concejo de Villaviciosa · Zona oriente de Asturias", incluido: true },
-      { tipo: "actividad", emoji: "♨️", texto: "Tiempo libre · Opción acceso Spa (bajo petición a AsturiaMe)", detalle: "Circuito wellness disponible", incluido: false },
-      { tipo: "gastro", emoji: "🍷", servicio: "Cena", nombre: "Restaurante del hotel", subtipo: "Artiem Asturias 5★ · Villaviciosa · Sin traslado", precio: "€30–50", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=Artiem+Asturias+Villaviciosa", incluido: false },
+      { tipo: "actividad", emoji: "🏨", texto: "19:30 · Check-in Hotel Príncipe de Asturias · Gijón", detalle: "Hotel 5 estrellas · Frente a la playa de San Lorenzo · Gijón", incluido: true },
+      { tipo: "actividad", emoji: "🌊", texto: "Tiempo libre · Descanso en hotel", detalle: "Playa de San Lorenzo a pocos pasos", incluido: false },
+      { tipo: "gastro", emoji: "🍷", servicio: "Cena · 20:30 h", nombre: "Kausa Taberna", subtipo: "Cocina fusión · Recomendación del hotel · Gijón", precio: "€25–40", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=Kausa+Taberna+Gijón", incluido: false },
     ],
     gastronomia: [
-      { tipo: "Villaviciosa", nombre: "Capital de la manzana y la sidra", desc: "Villaviciosa es la 'villa de la sidra' por excelencia. Sus llagares y bares tradicionales son ideales para una copa antes de cenar.", maps: "https://maps.google.com/?q=Villaviciosa+Asturias" },
+      { tipo: "Gijón nocturno", nombre: "Zona Cimadevilla y El Muro", desc: "Cimadevilla, el casco histórico marinero de Gijón, tiene sidrerías y tabernas con ambiente inmejorable para una primera noche en la ciudad.", maps: "https://maps.google.com/?q=Cimadevilla+Gijon+Asturias" },
     ],
-    nota: "Cambio de base: de Santiago al oriente costero de Asturias. El Artiem Asturias en Villaviciosa tiene spa — buena oportunidad para reponer energías."
+    nota: "Cambio de base: de Santiago al centro costero de Asturias. El Hotel Príncipe de Asturias está frente a la playa de San Lorenzo — una de las más bonitas del Cantábrico."
   },
   {
     dia: 7, fecha: "25 Jun", diaSemana: "Jueves",
     titulo: "Gijón, Cultura Sidrera & el Mar", subtitulo: "Universidad Laboral · Llagar · Gijón", horario: "09:30 – 19:00",
-    hotel: { nombre: "Artiem Asturias", estrellas: "5★", detalle: "2ª noche · Villaviciosa · Zona Oriente" },
+    hotel: { nombre: "Hotel Príncipe de Asturias", estrellas: "5★", detalle: "2ª noche · Gijón · Frente al mar Cantábrico" },
     manana: [
-      { tipo: "actividad", emoji: "🏛️", texto: "Visita fotográfica Universidad Laboral de Gijón", detalle: "Edificio más grande de España · Patrimonio industrial asturiano", incluido: true },
-      { tipo: "actividad", emoji: "🍎", texto: "Visita Llagar Castañón con degustación · 11:00 h", detalle: "Cultura sidrera asturiana (UNESCO) · Sidra y quesos locales incluidos", incluido: true },
+      { tipo: "actividad", emoji: "🏛️", texto: "10:00 · Parada fotográfica La Laboral, Ciudad de la Cultura", detalle: "09:30 Salida del hotel · Edificio más grande de España · Patrimonio industrial asturiano", incluido: true },
+      { tipo: "actividad", emoji: "🍎", texto: "11:00 · Visita con degustación a Llagar Castañón", detalle: "Cultura sidrera asturiana (UNESCO) · Sidra y quesos locales incluidos", incluido: true },
       { tipo: "gastro", emoji: "🍽️", servicio: "Almuerzo · 13:30 h", nombre: "Casa Gerardo", subtipo: "★ Michelin · 3 Soles Repsol · Prendes, Carreño · Fundado 1882", precio: "€80–120", ninos: "Baja", distincion: "★ Estrella Michelin · 3 Soles Repsol", maps: "https://maps.google.com/?q=Casa+Gerardo+Prendes+Carreño+Asturias", incluido: false, kidsAlt: [
         { nombre: "Casa Trabanco", subtipo: "Sidrería icónica y familiar · Poago, Gijón · La más auténtica de Asturias", precio: "€20–35", maps: "https://maps.google.com/?q=Casa+Trabanco+Poago+Gijón+Asturias" },
         { nombre: "Tierra Astur Gijón", subtipo: "Sidrería amplia y familiar · Múltiples opciones para niños", precio: "€20–35", maps: "https://maps.google.com/?q=Tierra+Astur+Gijón" },
       ]},
     ],
     tarde: [
-      { tipo: "actividad", emoji: "🌊", texto: "Visita casco antiguo de Gijón · Cimadevilla", detalle: "Playa de San Lorenzo · Puerto deportivo · Ambiente urbano costero", incluido: true },
-      { tipo: "actividad", emoji: "🛍️", texto: "Tiempo libre · Compras y paseo", detalle: "Zona comercial centro de Gijón", incluido: true },
+      { tipo: "actividad", emoji: "🌊", texto: "16:00 · Visita guiada a Gijón · Cimadevilla", detalle: "15:30 Traslado a Gijón · Playa de San Lorenzo · Puerto deportivo · Ambiente urbano costero", incluido: true },
+      { tipo: "actividad", emoji: "🛍️", texto: "18:00 · Tiempo libre para compras", detalle: "Zona comercial centro de Gijón", incluido: true },
       { tipo: "gastro", emoji: "🍺", servicio: "Cena · 20:30 h", nombre: "Abarike", subtipo: "Chef Lara Roguez · Recomendado Guía Michelin · Gijón", precio: "€45–70", ninos: "Media", distincion: "Recomendado Michelin", maps: "https://maps.google.com/?q=Abarike+restaurante+Gijón", incluido: false },
     ],
     gastronomia: [
@@ -801,36 +798,36 @@ const ITINERARIO = [
   {
     dia: 8, fecha: "26 Jun", diaSemana: "Viernes",
     titulo: "Descenso del Río Sella & Llanes", subtitulo: "Canoas · Llanes · Costa Oriental", horario: "10:00 – 19:00",
-    hotel: { nombre: "Artiem Asturias", estrellas: "5★", detalle: "3ª noche · Villaviciosa · Zona Oriente" },
+    hotel: { nombre: "Hotel Príncipe de Asturias", estrellas: "5★", detalle: "3ª noche · Gijón · Frente al mar Cantábrico" },
     manana: [
-      { tipo: "actividad", emoji: "🛶", texto: "Descenso del Río Sella en canoas", detalle: "Actividad emblemática del norte · Paisajes verdes, bosques y montañas · Apto para familias", incluido: true },
-      { tipo: "actividad", emoji: "🏘️", texto: "Alternativa: Visita guiada Ribadesella", detalle: "Para quien prefiera no hacer el descenso en canoa", incluido: true },
-      { tipo: "gastro", emoji: "🍽️", servicio: "Almuerzo · 15:00 h", nombre: "El Corral del Indianu", subtipo: "Alta cocina asturiana · Llanes · ★ Estrella Michelin", precio: "€60–90", ninos: "Media", distincion: "★ Estrella Michelin", maps: "https://maps.google.com/?q=El+Corral+del+Indianu+Llanes+Asturias", incluido: false },
+      { tipo: "traslado", emoji: "🚌", texto: "09:00 · Salida con destino Arriondas", detalle: "10:30 Llegada a Los Cauces · Preparación para el descenso", incluido: true },
+      { tipo: "actividad", emoji: "🛶", texto: "11:00 · Descenso del Río Sella en canoas y picnic", detalle: "Actividad emblemática del norte · Paisajes verdes, bosques y montañas · 14:00 Fin de actividad", incluido: true },
+      { tipo: "gastro", emoji: "🍺", servicio: "Almuerzo · 15:00 h", nombre: "Sidrería El Cuera", subtipo: "Sidrería tradicional · Llanes · Mesa reservada · Consumo propio", precio: "€20–35", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=Sidrería+El+Cuera+Llanes+Asturias", incluido: false },
     ],
     tarde: [
-      { tipo: "actividad", emoji: "⛵", texto: "Visita guiada a Llanes y tiempo libre", detalle: "Puerto, casco histórico, paseo marítimo · Huella de emigrantes indianos asturianos", incluido: true },
-      { tipo: "gastro", emoji: "🍽️", servicio: "Cena", nombre: "Por confirmar · Llanes", subtipo: "Mesa reservada · AsturiaMe gestiona", precio: "—", ninos: "Media", distincion: null, maps: null, incluido: false },
+      { tipo: "actividad", emoji: "⛵", texto: "17:00 · Paseo por Llanes", detalle: "Puerto, casco histórico, paseo marítimo · Huella de emigrantes indianos asturianos · 18:30 Salida hacia Gijón", incluido: true },
+      { tipo: "gastro", emoji: "🍽️", servicio: "Cena · 20:30 h", nombre: "Restaurante UME", subtipo: "Cocina creativa · Gijón · Mesa reservada · Consumo propio", precio: "€35–55", ninos: "Media", distincion: null, maps: "https://maps.google.com/?q=Restaurante+UME+Gijón", incluido: false },
     ],
     gastronomia: [
       { tipo: "Llanes en el plato", nombre: "Oricios, bonito del norte y pixin", desc: "Junio es temporada de bonito del norte (atún del Cantábrico) — uno de los mejores del mundo. El pixin al horno con verduras es espectacular." },
       { tipo: "Postres", nombre: "Arroz con leche y frixuelos", desc: "El arroz con leche asturiano se toma frío con costra de azúcar quemado. Los frixuelos son crepas finas con azúcar." },
     ],
-    nota: "El Descenso del Sella cubre el tramo Arriondas-Ribadesella (~18 km). Duración aproximada 2-3 horas en canoa. Se ofrece alternativa con Canoas de Mar en Llanes."
+    nota: "El Descenso del Sella cubre el tramo Arriondas (~18 km). Duración aprox. 2-3 horas en canoa. Se ofrece alternativa con Canoas de Mar en Llanes. Cena en Gijón — el UME está cerca del hotel."
   },
   {
     dia: 9, fecha: "27 Jun", diaSemana: "Sábado",
     titulo: "León & Última Noche en el Norte", subtitulo: "AVE Gijón → León · Corrida de Toros", horario: "09:00 – 19:00",
     hotel: { nombre: "Hotel Barceló León Conde de Luna", estrellas: "4★", detalle: "1 noche · León" },
     manana: [
-      { tipo: "traslado", emoji: "🏨", texto: "Check-out Gijón · Traslado estación de trenes", detalle: "Salida hacia León", incluido: true },
-      { tipo: "traslado", emoji: "🚄", texto: "AVE Gijón → León · 11:09 h (1h 35')", detalle: "Categoría Confort · 11 pasajeros", incluido: true },
-      { tipo: "gastro", emoji: "🍽️", servicio: "Almuerzo", nombre: "El Racimo de Oro", subtipo: "Fundado 1949 · Sobre bodega s. XII · Barrio Húmedo, León", precio: "€25–40", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=El+Racimo+de+Oro+León+Barrio+Húmedo", incluido: false },
+      { tipo: "traslado", emoji: "🏨", texto: "09:00 · Check-out · 09:45 Transfer hotel → Estación Gijón", detalle: "Salida hacia León", incluido: true },
+      { tipo: "traslado", emoji: "🚄", texto: "AVE Gijón → León · 11:09 h (1h 35') · Llega 12:44", detalle: "Categoría Confort · 11 pasajeros · 12:45 Traslado a hotel para dejar maletas", incluido: true },
+      { tipo: "gastro", emoji: "🍽️", servicio: "Almuerzo · 14:00 h", nombre: "El Racimo de Oro", subtipo: "Fundado 1949 · Sobre bodega s. XII · Barrio Húmedo, León", precio: "€25–40", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=El+Racimo+de+Oro+León+Barrio+Húmedo", incluido: false },
     ],
     tarde: [
-      { tipo: "actividad", emoji: "🏨", texto: "Check-in Hotel Barceló León Conde de Luna", detalle: "Hotel 4★ en el centro histórico de León", incluido: true },
+      { tipo: "actividad", emoji: "🏨", texto: "16:00 · Check-in Hotel Barceló León Conde de Luna", detalle: "Hotel 4★ en el centro histórico de León", incluido: true },
       { tipo: "actividad", emoji: "🐂", texto: "Corrida de Toros · 19:00 h", detalle: "Experiencia cultural española · Consultar programa con guía AsturiaMe", incluido: false },
       { tipo: "actividad", emoji: "🌙", texto: "Tiempo libre · Barrio Húmedo de León", detalle: "Tapas y ambiente nocturno leonés", incluido: false },
-      { tipo: "gastro", emoji: "🍷", servicio: "Cena", nombre: "Bodega Regia", subtipo: "Edificio s. XIV · Casco histórico · León", precio: "€35–60", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=Bodega+Regia+León+casco+histórico", incluido: false },
+      { tipo: "gastro", emoji: "🍷", servicio: "Cena · Libre tras la corrida", nombre: "Barrio Húmedo de León", subtipo: "Cena libre · Sin reserva · Tapas y ambiente leonés nocturno", precio: "€15–35", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=Barrio+Humedo+Leon+España", incluido: false },
     ],
     gastronomia: [
       { tipo: "León en la mesa", nombre: "Barrio Húmedo — tapas gratis con cada caña", desc: "León tiene tradición única en España: cada cerveza o copa incluye una tapa gratis. Calles Ancha, Plegarias y Misericordia son el epicentro.", maps: "https://maps.google.com/?q=Barrio+Humedo+Leon+España" },
@@ -843,11 +840,11 @@ const ITINERARIO = [
     titulo: "Hasta Pronto, Familia", subtitulo: "León libre · Tren a Madrid", horario: "Mañana libre",
     hotel: { nombre: "Regreso · Tren León → Madrid", estrellas: "", detalle: "Salida 18:53 h · Llegada Madrid ~21:07 h" },
     manana: [
-      { tipo: "actividad", emoji: "🚶", texto: "Mañana libre en León", detalle: "Catedral de León, Basílica de San Isidoro, Museo Romano — todo a pie desde el hotel", incluido: true },
-      { tipo: "gastro", emoji: "🍻", servicio: "Almuerzo · Último del viaje", nombre: "Barceló León Conde Luna", subtipo: "Hotel 4★ · Sin traslado · Cierre del viaje", precio: "€30–50", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=Barceló+León+Conde+Luna", incluido: false },
+      { tipo: "actividad", emoji: "🚶", texto: "09:00 · Mañana libre en León", detalle: "Catedral de León, Basílica de San Isidoro, Museo Romano — todo a pie desde el hotel", incluido: true },
+      { tipo: "gastro", emoji: "🍻", servicio: "Almuerzo · 14:00 h · Último del viaje", nombre: "Barrio Húmedo de León o hotel", subtipo: "Hotel 4★ · Sin traslado · Cierre del viaje", precio: "€30–50", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=Barceló+León+Conde+Luna", incluido: false },
     ],
     tarde: [
-      { tipo: "traslado", emoji: "🏨", texto: "Late Check-out hotel · 17:00 h", detalle: "Tiempo extra en el hotel antes de partir", incluido: true },
+      { tipo: "traslado", emoji: "🏨", texto: "17:00 · Late Check-out hotel", detalle: "17:15 Salida a Estación de Trenes de León", incluido: true },
       { tipo: "traslado", emoji: "🚄", texto: "Tren León → Madrid · 18:53 h (2h 14')", detalle: "Categoría Confort · 11 pasajeros", incluido: true },
     ],
     gastronomia: [
@@ -983,7 +980,7 @@ async function fetchWeather() {
 const HOTEL_MAPS = {
   "Hotel Silken Monumental Naranco": "https://maps.google.com/?q=Hotel+Silken+Monumental+Naranco+Oviedo",
   "Hotel Compostela": "https://maps.google.com/?q=Hotel+Compostela+Santiago+de+Compostela",
-  "Artiem Asturias": "https://maps.google.com/?q=Artiem+Asturias+Villaviciosa",
+  "Hotel Príncipe de Asturias": "https://maps.google.com/?q=Hotel+Principe+de+Asturias+Gijon",
   "Hotel Barceló León Conde de Luna": "https://maps.google.com/?q=Hotel+Barcelo+Leon+Conde+de+Luna",
 };
 
