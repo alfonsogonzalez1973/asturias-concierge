@@ -683,8 +683,9 @@ const ITINERARIO = [
       { tipo: "gastro", emoji: "🍲", servicio: "Almuerzo · 14:00 h", nombre: "La Casa de la Fabada", subtipo: "Cocina tradicional asturiana · Soto de Cangas", precio: "€20–35", ninos: "Media", distincion: null, maps: "https://maps.google.com/?q=La+Casa+de+la+Fabada+Soto+de+Cangas", incluido: false },
     ],
     tarde: [
+      { tipo: "actividad", emoji: "🧀", texto: "16:00 · Visita Quesería Vega de Ario", detalle: "Quesería artesanal del oriente asturiano · Degustación de quesos tradicionales", incluido: true },
       { tipo: "actividad", emoji: "🌉", texto: "17:00 · Visita guiada Cangas de Onís", detalle: "Puente romano medieval · Primera capital del Reino · 18:00 Regreso a Oviedo", incluido: true },
-      { tipo: "gastro", emoji: "🍽️", servicio: "Cena", nombre: "La Corte de Pelayo", subtipo: "Cocina asturiana · Frente al Teatro Campoamor · Oviedo", precio: "€35–55", ninos: "Media", distincion: "Cachopo Campeón de Asturias", maps: "https://maps.google.com/?q=La+Corte+de+Pelayo+Oviedo", incluido: false },
+      { tipo: "gastro", emoji: "🍽️", servicio: "Cena · 20:00 h", nombre: "La Corte de Pelayo", subtipo: "Cocina asturiana · Frente al Teatro Campoamor · Oviedo · Mesa reservada", precio: "€35–55", ninos: "Media", distincion: "Cachopo Campeón de Asturias", maps: "https://maps.google.com/?q=La+Corte+de+Pelayo+Oviedo", incluido: false },
     ],
     gastronomia: [
       { tipo: "Almuerzo estrella", nombre: "La Casa de la Fabada · Arriondas", desc: "Referente indiscutible de la fabada asturiana. Faba asturiana con morcilla, chorizo y lacón curados. Ambiente rural auténtico.", maps: "https://maps.google.com/?q=La+Casa+de+la+Fabada+Arriondas+Asturias" },
@@ -825,7 +826,7 @@ const ITINERARIO = [
     ],
     tarde: [
       { tipo: "actividad", emoji: "🏨", texto: "16:00 · Check-in Hotel Barceló León Conde de Luna", detalle: "Hotel 4★ en el centro histórico de León", incluido: true },
-      { tipo: "actividad", emoji: "🐂", texto: "Corrida de Toros · 19:00 h", detalle: "Experiencia cultural española · Consultar programa con guía AsturiaMe", incluido: false },
+      { tipo: "actividad", emoji: "🐂", texto: "Corrida de Toros · 19:00 h", detalle: "Experiencia cultural española · Entrada incluida", incluido: true },
       { tipo: "actividad", emoji: "🌙", texto: "Tiempo libre · Barrio Húmedo de León", detalle: "Tapas y ambiente nocturno leonés", incluido: false },
       { tipo: "gastro", emoji: "🍷", servicio: "Cena · Libre tras la corrida", nombre: "Barrio Húmedo de León", subtipo: "Cena libre · Sin reserva · Tapas y ambiente leonés nocturno", precio: "€15–35", ninos: "Alta", distincion: null, maps: "https://maps.google.com/?q=Barrio+Humedo+Leon+España", incluido: false },
     ],
@@ -1005,29 +1006,29 @@ HOTELES DEL VIAJE:
    Tel: <a href="tel:+34981559269">+34 981 559 269</a>
    <a href="https://maps.google.com/?q=Hotel+Compostela+Santiago+de+Compostela" target="_blank">📍 Ver en Maps</a>
 
-3. Artiem Asturias — Villaviciosa (5★, noches 6-8)
-   Dirección: Ctra. de la Playa, s/n, 33310 Villaviciosa, Asturias
-   Tel: <a href="tel:+34985890047">+34 985 890 047</a>
-   <a href="https://maps.google.com/?q=Artiem+Asturias+Villaviciosa" target="_blank">📍 Ver en Maps</a>
+3. Hotel Príncipe de Asturias — Gijón (5★, noches 6-8)
+   Dirección: Calle Manso, 2, 33202 Gijón, Asturias · Frente al mar Cantábrico
+   Tel: <a href="tel:+34985367111">+34 985 367 111</a>
+   <a href="https://maps.google.com/?q=Hotel+Principe+de+Asturias+Gijon" target="_blank">📍 Ver en Maps</a>
 
 4. Hotel Barceló León Conde de Luna — León (4★, noche 9)
    Dirección: Calle Los Condesa de Sagasta, 24, 24001 León
    Tel: <a href="tel:+34987875300">+34 987 875 300</a>
    <a href="https://maps.google.com/?q=Hotel+Barcelo+Leon+Conde+de+Luna" target="_blank">📍 Ver en Maps</a>
 
-ITINERARIO RESUMIDO (con restaurantes confirmados):
-Día 1 (19 Jun): Llegada OVD → Oviedo. Casco antiguo y Catedral UNESCO. Cena: Casa Fermín (★ Michelin, €60–90/persona).
-Día 2 (20 Jun): Lagos de Covadonga, Santuario, Cangas de Onís. Almuerzo: Casa de la Fabada (fabada tradicional, €25–40). Cena Oviedo.
-Día 3 (21 Jun): Senda del Oso en bici (Teverga). Pueblo medieval Bandujo. Almuerzo rural en Teverga.
-Día 4 (22 Jun): Visita guiada Avilés. Lastres. Santuario Infiesto. Raíces González: Migoya y Vallobal (Piloña). Almuerzo: El Mirador de Lastres o Bálamu (Llanes, pescado fresco). Cena Oviedo.
-Día 5 (23 Jun): Santiago de Compostela. Catedral. Cena: hotel o Casa Marcelo (pendiente confirmar).
-Día 6 (24 Jun): Casco antiguo Santiago → Almuerzo: Casa Marcelo (★ Michelin, €60–90, smart casual requerido) → retorno. Check-in Artiem Asturias, Villaviciosa 5★. Cena: Restaurante del hotel.
-Día 7 (25 Jun): Universidad Laboral Gijón. Llagar Castañón con degustación (11:00h). Almuerzo: Casa Gerardo (★ Estrella Michelin, 3 Soles Repsol, 13:30h, €80–120/persona, Prendes, Carreño — fundado 1882, smart casual requerido, baja compatibilidad con niños pequeños). Tarde: Cimadevilla. Cena: Abarike (Recomendado Michelin, chef Lara Roguez, €45–70, 20:30h, Gijón).
-Día 8 (26 Jun): Descenso Río Sella en canoas. Llanes. Almuerzo: El Corral del Indianu (★ Michelin, €60–90, Llanes). Cena: por confirmar en Llanes.
-Día 9 (27 Jun): AVE Gijón→León 11:09h. Almuerzo: El Racimo de Oro (Barrio Húmedo, fundado 1949, €25–40). Check-in Hotel Barceló León. Corrida de Toros 19:00h. Cena: Bodega Regia (edificio s. XIV, €35–60).
-Día 10 (28 Jun): León libre. Almuerzo: Hotel Barceló León. Tren León→Madrid 18:53h.
+ITINERARIO RESUMIDO (con restaurantes confirmados, mesa reservada):
+Día 1 (19 Jun · Vie): Llegada OVD 10:00 → Oviedo. Visita casco antiguo 12:45. Catedral UNESCO 17:00. Almuerzo 14:00: Sidrería La Pumarada (Calle Gascona). Cena 20:30: Hotel Silken Monumental Naranco.
+Día 2 (20 Jun · Sáb): Lagos de Covadonga 10:30 (Taxitur), Santuario 13:00, Quesería Vega de Ario 16:00, Cangas de Onís 17:00. Almuerzo 14:00: La Casa de la Fabada (Soto de Cangas). Cena 20:00: La Corte de Pelayo (Oviedo, Cachopo Campeón de Asturias).
+Día 3 (21 Jun · Dom): Senda del Oso en e-bikes 10:30 (Tuñón). Pueblo medieval Bandujo 16:30. Almuerzo 14:00: Taberna Narciso (Teverga, fundada 1830). Cena 20:30: Hotel Silken Monumental Naranco.
+Día 4 (22 Jun · Lun): Avilés guiado 09:30. Lastres 12:15. Piloña-Vallobal 16:00 (raíces González). Santuario Infiesto 17:30. Migoya 18:15. Almuerzo 13:30: El Mirador de San Roque (Lastres, vistas Cantábrico). Cena 20:30: Sidrería Tierra Astur El Vasco (Oviedo).
+Día 5 (23 Jun · Mar): Salida 08:30 → Santiago de Compostela. Catedral+Pórtico de la Gloria 17:00 (entrada incluida). Almuerzo 14:00: Taberna Montes (Santiago, ★4.8). Cena 20:30: Hotel Compostela.
+Día 6 (24 Jun · Mié): Casco antiguo Santiago 10:00. Regreso a Asturias 16:00. Check-in Hotel Príncipe de Asturias 19:30 (Gijón, 5★, frente al Cantábrico). Almuerzo 13:30: Casa Marcelo (★ Michelin, Santiago). Cena 20:30: Kausa Taberna (Gijón).
+Día 7 (25 Jun · Jue): La Laboral-Ciudad de la Cultura 10:00. Llagar Castañón 11:00 (sidra+quesos, incluido). Visita Gijón-Cimadevilla 16:00. Almuerzo 13:30: Casa Gerardo (★ Michelin, 3 Soles Repsol, Prendes — fundado 1882, smart casual). Cena 20:30: Abarike (Recomendado Michelin, chef Lara Roguez, Gijón).
+Día 8 (26 Jun · Vie): Descenso Río Sella en canoas 11:00 (Arriondas, incluido). Llanes guiado 17:00. Almuerzo 15:00: Sidrería El Cuera (Llanes). Cena 20:30: Restaurante UME (Gijón).
+Día 9 (27 Jun · Sáb): Check-out Gijón 09:00. AVE Gijón→León 11:09h (llega 12:44). Check-in Barceló León 16:00. Corrida de Toros 19:00 (entrada incluida). Noche libre Barrio Húmedo. Almuerzo 14:00: Racimo de Oro (Barrio Húmedo, fundado 1949). Cena libre.
+Día 10 (28 Jun · Dom): Mañana libre en León. Late check-out 17:00. AVE León→Madrid 18:53h (llega 21:07 Atocha). Almuerzo 14:00: Barrio Húmedo o hotel.
 
-INCLUIDO: minibús Mercedes privado + guía AsturiaMe (09:00-19:00), entradas UNESCO, Lagos Covadonga, bicicletas, llagar, descenso Sella, AVE y tren, seguros.
+INCLUIDO: minibús Mercedes privado + guía AsturiaMe (09:00-19:00), entradas UNESCO, Lagos Covadonga (Taxitur), e-bikes Senda del Oso, visita+degustación Llagar Castañón, descenso Río Sella en canoas, visita Quesería Vega de Ario, Corrida de Toros León 27/Jun, AVE Gijón→León y León→Madrid (confort, 11 pax), seguros de viaje en destino.
 NO INCLUIDO: comidas, bebidas, propinas, gastos personales.
 
 CONTACTOS CLAVE:
