@@ -625,7 +625,7 @@
   <div class="header-inner">
     <div class="logo-area">
       <h1>Asturias · Concierge</h1>
-      <p>Viaje privado · Jun 19–28, 2026</p>
+      <p>Viaje privado · Jun 19 – Jul 4, 2026</p>
     </div>
     <div class="fecha-hoy" id="fecha-display">—</div>
   </div>
@@ -846,12 +846,116 @@ const ITINERARIO = [
     ],
     tarde: [
       { tipo: "traslado", emoji: "🏨", texto: "17:00 · Late Check-out hotel", detalle: "17:15 Salida a Estación de Trenes de León", incluido: true },
-      { tipo: "traslado", emoji: "🚄", texto: "Tren León → Madrid · 18:53 h (2h 14')", detalle: "Categoría Confort · 11 pasajeros", incluido: true },
+      { tipo: "traslado", emoji: "🚄", texto: "Tren León → Madrid · 18:53 h (2h 14')", detalle: "Categoría Confort · 11 pasajeros · Llega Madrid Atocha ~21:07 h", incluido: true },
+      { tipo: "traslado", emoji: "🏨", texto: "~21:30 · Check-in Hotel Barceló Emperatriz · Madrid", detalle: "Calle de López de Hoyos 4 · 6 noches hasta el 4 de julio · Localizador: 24876B69730160", incluido: false },
     ],
     gastronomia: [
-      { tipo: "Última comida", nombre: "Barrio Húmedo — cecina de despedida", desc: "Pide la cecina con pimientos asados como despedida del norte. Las calles del Barrio Húmedo tienen opciones para todos los gustos.", maps: "https://maps.google.com/?q=Barrio+Humedo+Leon+España" },
+      { tipo: "Última comida León", nombre: "Barrio Húmedo — cecina de despedida", desc: "Pide la cecina con pimientos asados como despedida del norte. Las calles del Barrio Húmedo tienen opciones para todos los gustos.", maps: "https://maps.google.com/?q=Barrio+Humedo+Leon+España" },
     ],
-    nota: "Fin del viaje organizado con AsturiaMe. Guía y minibús hasta Gijón (ayer). A partir de León, gestión propia. El tren llega a Madrid Chamartín."
+    nota: "Fin del viaje organizado con AsturiaMe. A partir de León, gestión propia. El tren llega a Madrid Atocha ~21:07 h. De ahí, traslado al Barceló Emperatriz donde se inician 6 noches en Madrid."
+  },
+  {
+    dia: 11, fecha: "29 Jun", diaSemana: "Lunes",
+    titulo: "Madrid — Primer Día", subtitulo: "Me Casa Benigna · Explorar la ciudad", horario: "Libre",
+    hotel: { nombre: "Barceló Emperatriz", estrellas: "5★", detalle: "2ª noche · Madrid · Calle de López de Hoyos 4" },
+    manana: [
+      { tipo: "actividad", emoji: "🌅", texto: "Mañana libre en Madrid", detalle: "Descanso y exploración por cuenta propia", incluido: false },
+    ],
+    tarde: [
+      { tipo: "gastro", emoji: "🍽️", servicio: "Almuerzo · 14:30 h", nombre: "Me Casa Benigna", subtipo: "Mesa reservada · Cocina tradicional española · Madrid", precio: "€35–55", ninos: "Media", distincion: null, maps: "https://maps.google.com/?q=Me+Casa+Benigna+Madrid", incluido: false },
+      { tipo: "actividad", emoji: "🚶", texto: "Tarde libre · Barrio de Salamanca", detalle: "Paseo por el barrio del hotel · tiendas, cafeterías, ambiente madrileño", incluido: false },
+    ],
+    gastronomia: [
+      { tipo: "Madrid gastronómico", nombre: "Mercado de San Miguel o Platea", desc: "El Mercado de San Miguel (Plaza Mayor) es perfecto para tapas y pinchos variados. Platea, en la calle Goya, es un espacio gourmet enorme.", maps: "https://maps.google.com/?q=Mercado+de+San+Miguel+Madrid" },
+    ],
+    nota: "Primer día en Madrid tras 10 días de norte de España. Ritmo tranquilo para recuperarse y aclimatarse a la capital."
+  },
+  {
+    dia: 12, fecha: "30 Jun", diaSemana: "Martes",
+    titulo: "Day Trip a Toledo", subtitulo: "Catedral · El Greco · Ciudad Imperial", horario: "Todo el día",
+    hotel: { nombre: "Barceló Emperatriz", estrellas: "5★", detalle: "3ª noche · Madrid" },
+    manana: [
+      { tipo: "traslado", emoji: "🚄", texto: "Mañana · AVE Madrid Atocha → Toledo (33 min)", detalle: "Trenes frecuentes desde Atocha — sin reserva previa necesaria", incluido: false },
+      { tipo: "actividad", emoji: "⛪", texto: "Catedral Primada de Toledo", detalle: "Una de las catedrales más importantes de España · Interior espectacular", incluido: false },
+      { tipo: "actividad", emoji: "🎨", texto: "Museo del Greco", detalle: "El pintor más emblemático de Toledo · Obra original in situ", incluido: false },
+    ],
+    tarde: [
+      { tipo: "actividad", emoji: "🕍", texto: "Judería y Sinagoga del Tránsito", detalle: "El barrio judío mejor conservado de España · Patrimonio de la Humanidad", incluido: false },
+      { tipo: "actividad", emoji: "🏰", texto: "Alcázar de Toledo y mirador", detalle: "Vista panorámica sobre la ciudad y el río Tajo", incluido: false },
+      { tipo: "traslado", emoji: "🚄", texto: "Regreso en AVE a Madrid", detalle: "Trenes frecuentes · Últimos a las 22:30 aprox.", incluido: false },
+    ],
+    gastronomia: [
+      { tipo: "Toledo en la mesa", nombre: "Carcamusa y perdiz estofada", desc: "La carcamusa es el guiso típico toledano (cerdo, guisantes, verduras). La perdiz a la toledana es un clásico imprescindible.", maps: "https://maps.google.com/?q=Plaza+Zocodover+Toledo" },
+      { tipo: "Mazapán", nombre: "Santo Tomé — Mazapán original de Toledo", desc: "El mazapán de Toledo es denominación de origen. La confitería Santo Tomé frente a la catedral es la más antigua y famosa.", maps: "https://maps.google.com/?q=Santo+Tomas+Mazapan+Toledo" },
+    ],
+    nota: "Toledo es Patrimonio de la Humanidad por la UNESCO. La ciudad es compacta y todo se recorre a pie — llevar zapatos cómodos. El calor puede ser intenso en julio."
+  },
+  {
+    dia: 13, fecha: "1 Jul", diaSemana: "Miércoles",
+    titulo: "Madrid — Museos y Cultura", subtitulo: "Prado · Reina Sofía · Retiro", horario: "Libre",
+    hotel: { nombre: "Barceló Emperatriz", estrellas: "5★", detalle: "4ª noche · Madrid" },
+    manana: [
+      { tipo: "actividad", emoji: "🎨", texto: "Museo del Prado", detalle: "La colección más importante de pintura española y europea · Velázquez, Goya, El Bosco · Reservar entrada online", incluido: false },
+      { tipo: "actividad", emoji: "🎨", texto: "Museo Reina Sofía (alternativa)", detalle: "Arte moderno y contemporáneo · Guernica de Picasso · Frente a Atocha", incluido: false },
+    ],
+    tarde: [
+      { tipo: "actividad", emoji: "🌳", texto: "Parque del Retiro", detalle: "El pulmón verde de Madrid · Palacio de Cristal · Estanque grande para pasear en barca", incluido: false },
+      { tipo: "actividad", emoji: "🛍️", texto: "Barrio de Salamanca o Gran Vía", detalle: "Compras y paseo nocturno madrileño", incluido: false },
+    ],
+    gastronomia: [
+      { tipo: "Madrid de tapas", nombre: "Zona La Latina — mejores tabernas", desc: "El barrio de La Latina (metro La Latina) es el epicentro de las tapas en Madrid. Calle Cava Baja y Cava Alta llenas de tabernas históricas.", maps: "https://maps.google.com/?q=Calle+Cava+Baja+Madrid" },
+    ],
+    nota: "Día cultural por excelencia en Madrid. El Prado conviene reservar entrada con antelación para evitar colas en temporada de verano."
+  },
+  {
+    dia: 14, fecha: "2 Jul", diaSemana: "Jueves",
+    titulo: "Madrid — Día Libre", subtitulo: "A tu ritmo · Explorar Madrid", horario: "Libre",
+    hotel: { nombre: "Barceló Emperatriz", estrellas: "5★", detalle: "5ª noche · Madrid" },
+    manana: [
+      { tipo: "actividad", emoji: "🏛️", texto: "Palacio Real y Plaza de Oriente", detalle: "El palacio oficial de la Corona española · Visita interior o exterior · Jardines de Sabatini", incluido: false },
+      { tipo: "actividad", emoji: "⛪", texto: "Catedral de la Almudena", detalle: "Frente al Palacio Real · Interior de arquitectura neogótica", incluido: false },
+    ],
+    tarde: [
+      { tipo: "actividad", emoji: "☀️", texto: "Tarde libre · Madrid al gusto", detalle: "Malasaña, Chueca, Lavapiés — barrios con carácter propio", incluido: false },
+      { tipo: "actividad", emoji: "💃", texto: "Espectáculo de Flamenco (opcional)", detalle: "Tablao Cordobés, Las Tablas o Café de Chinitas — reservar con anticipación", incluido: false },
+    ],
+    gastronomia: [
+      { tipo: "Experiencia madrileña", nombre: "Bocadillo de calamares en La Latina o Sol", desc: "El bocadillo de calamares fritos es el símbolo gastronómico de Madrid. El Bar La Campana en La Latina es el referente histórico.", maps: "https://maps.google.com/?q=Bar+La+Campana+Madrid+La+Latina" },
+    ],
+    nota: "Madrid tiene muchísimo que ofrecer. El Rastro (mercado de pulgas) ocurre los domingos — si coincide con el itinerario, imperdible."
+  },
+  {
+    dia: 15, fecha: "3 Jul", diaSemana: "Viernes",
+    titulo: "Madrid — Último Día Completo", subtitulo: "Recuerdos · Cenas de despedida", horario: "Libre",
+    hotel: { nombre: "Barceló Emperatriz", estrellas: "5★", detalle: "6ª noche · Madrid" },
+    manana: [
+      { tipo: "actividad", emoji: "🛍️", texto: "Compras de último momento", detalle: "El Corte Inglés de Goya (a 5 min del hotel) · Souvenirs, moda, gourmet", incluido: false },
+      { tipo: "actividad", emoji: "🌳", texto: "Paseo por el Barrio de Salamanca", detalle: "El barrio más elegante de Madrid · Calle Serrano, Velázquez, Jorge Juan", incluido: false },
+    ],
+    tarde: [
+      { tipo: "actividad", emoji: "🌅", texto: "Atardecer desde el Templo de Debod", detalle: "Templo egipcio de 2200 años · Vistas espectaculares al atardecer · Gratis", incluido: false },
+      { tipo: "gastro", emoji: "🍷", servicio: "Cena libre · Última noche en España", nombre: "Restaurante a elegir", subtipo: "Sin reserva confirmada · Madrid", precio: "€40–80", ninos: "Media", distincion: null, maps: "https://maps.google.com/?q=Restaurantes+Madrid+Centro", incluido: false },
+    ],
+    gastronomia: [
+      { tipo: "Noche de despedida", nombre: "DiverXO, Coque o Santceloni (si hay presupuesto)", desc: "Para una última cena memorable, DiverXO del chef Dabiz Muñoz (3 estrellas Michelin) es referencia mundial. Requiere reserva con meses de anticipación.", maps: "https://maps.google.com/?q=DiverXO+Madrid" },
+    ],
+    nota: "Penúltima noche en España. El vuelo de regreso sale a las 09:00 del 4 de julio — conviene estar en el aeropuerto a las 06:00."
+  },
+  {
+    dia: 16, fecha: "4 Jul", diaSemana: "Sábado",
+    titulo: "Regreso a México", subtitulo: "MAD → MTY · Aeroméxico AM 0035", horario: "Salida 09:00 h",
+    hotel: { nombre: "Regreso a México", estrellas: "", detalle: "Vuelo AM 0035 · MAD T1 09:00 → MTY 12:10" },
+    manana: [
+      { tipo: "traslado", emoji: "🏨", texto: "Check-out Hotel Barceló Emperatriz", detalle: "Salida hacia Aeropuerto Adolfo Suárez Madrid-Barajas · Terminal 1", incluido: false },
+      { tipo: "traslado", emoji: "✈️", texto: "09:00 · Vuelo AM 0035 · MAD → MTY", detalle: "⏰ Estar en Terminal 1 MAD a las 06:00 (3h antes) · Boeing 787-9 · 11h 10min · Asientos 23A-23D", incluido: false },
+    ],
+    tarde: [
+      { tipo: "traslado", emoji: "🏠", texto: "12:10 · Llegada Monterrey Terminal B", detalle: "¡Bienvenidos a casa! Fin del viaje Asturias · Galicia · León · Madrid 2026", incluido: false },
+    ],
+    gastronomia: [
+      { tipo: "En el vuelo", nombre: "Aeroméxico AM 0035 — comida caliente incluida", desc: "El vuelo AM 0035 incluye comida caliente y bebidas alcohólicas. Duración 11h 10min.", maps: null },
+    ],
+    nota: "El Aeropuerto de Barajas está a ~30 min del hotel en taxi (€25-35) o en metro Línea 8 desde Nuevos Ministerios. Recomendado taxi o Cabify para no cargar maletas en metro."
   },
 ];
 
@@ -914,9 +1018,11 @@ const WEATHER_LOCS = {
   'Santiago de Compostela': { lat: 42.8782, lon: -8.5448 },
   'Gijón':                  { lat: 43.5453, lon: -5.6615 },
   'León':                   { lat: 42.5987, lon: -5.5671 },
+  'Madrid':                 { lat: 40.4168, lon: -3.7038 },
+  'Toledo':                 { lat: 39.8628, lon: -4.0273 },
 };
 // Índice = día-1 (0=Día1)
-const DIA_CIUDAD = ['Oviedo','Oviedo','Oviedo','Oviedo','Santiago de Compostela','Gijón','Gijón','Gijón','León','León'];
+const DIA_CIUDAD = ['Oviedo','Oviedo','Oviedo','Oviedo','Santiago de Compostela','Gijón','Gijón','Gijón','León','León','Madrid','Madrid','Toledo','Madrid','Madrid','Madrid'];
 
 let wxCache = {}; // { 'Oviedo': { time:[...], max:[...], min:[...], precip:[...], code:[...] } }
 
@@ -944,6 +1050,8 @@ const CLIMA_HISTORICO = {
   'Santiago de Compostela': { max: 22, min: 13, precip: 50, code: 3 },
   'Gijón':                  { max: 20, min: 14, precip: 40, code: 2 },
   'León':                   { max: 26, min: 13, precip: 25, code: 1 },
+  'Madrid':                 { max: 32, min: 18, precip: 15, code: 1 },
+  'Toledo':                 { max: 34, min: 19, precip: 10, code: 0 },
 };
 
 let wxLoaded = false;
@@ -983,9 +1091,10 @@ const HOTEL_MAPS = {
   "Hotel Compostela": "https://maps.google.com/?q=Hotel+Compostela+Santiago+de+Compostela",
   "Hotel Príncipe de Asturias": "https://maps.google.com/?q=Hotel+Principe+de+Asturias+Gijon",
   "Hotel Barceló León Conde de Luna": "https://maps.google.com/?q=Hotel+Barcelo+Leon+Conde+de+Luna",
+  "Barceló Emperatriz": "https://maps.google.com/?q=Barcelo+Emperatriz+Calle+Lopez+de+Hoyos+4+Madrid",
 };
 
-const CONTEXTO_CONCIERGE = `Eres el concierge privado de Alfonso (Poncho) González durante su viaje familiar a Asturias, España (19-28 junio 2026), organizado por AsturiaMe.
+const CONTEXTO_CONCIERGE = `Eres el concierge privado de Alfonso (Poncho) González durante su viaje familiar a Asturias, España (19 junio – 4 julio 2026). El viaje organizado es con AsturiaMe (19-28 Jun) y la extensión en Madrid es por gestión propia (28 Jun – 4 Jul).
 
 Puedes responder sobre CUALQUIER tema que surja durante el viaje: hoteles, restaurantes, transporte, frases en español/gallego, clima, propinas, cambio de dinero, farmacias, emergencias, atracciones, historia, cultura, gastronomía, o cualquier duda práctica de viajero. No te limites solo al itinerario.
 
@@ -1015,6 +1124,21 @@ HOTELES DEL VIAJE:
    Dirección: Calle Los Condesa de Sagasta, 24, 24001 León
    Tel: <a href="tel:+34987875300">+34 987 875 300</a>
    <a href="https://maps.google.com/?q=Hotel+Barcelo+Leon+Conde+de+Luna" target="_blank">📍 Ver en Maps</a>
+
+5. Hotel Barceló Emperatriz — Madrid (5★, noches 10-15, 28 Jun – 4 Jul)
+   Dirección: Calle de López de Hoyos 4, 28006 Madrid
+   Localizador: 24876B69730160 · 4 habitaciones (2 Tranquility Deluxe + 2 Premium)
+   Tel: <a href="tel:+34913422490">+34 91 342 2490</a> | emperatriz@barcelo.com
+   <a href="https://maps.google.com/?q=Barcelo+Emperatriz+Calle+Lopez+de+Hoyos+4+Madrid" target="_blank">📍 Ver en Maps</a>
+
+RESTAURANTES MADRID CON RESERVA:
+- 29 Jun (Lun) 14:30h: Me Casa Benigna (mesa reservada)
+
+EXTENSIÓN MADRID (28 Jun – 4 Jul, gestión propia):
+Día 11 (29 Jun): Mañana libre · Almuerzo 14:30 Me Casa Benigna (mesa reservada)
+Día 12 (30 Jun): Day trip a Toledo (AVE 33 min desde Atocha) · Catedral, El Greco, Judería
+Días 13-15 (1-3 Jul): Madrid libre · Prado, Retiro, Palacio Real, barrios
+Día 16 (4 Jul): Check-out · Vuelo AM 0035 MAD→MTY 09:00 T1 (estar a las 06:00)
 
 ITINERARIO RESUMIDO (con restaurantes confirmados, mesa reservada):
 Día 1 (19 Jun · Vie): Llegada OVD 10:00 → Oviedo. Visita casco antiguo 12:45. Catedral UNESCO 17:00. Almuerzo 14:00: Sidrería La Pumarada (Calle Gascona). Cena 20:30: Hotel Silken Monumental Naranco.
@@ -1132,7 +1256,7 @@ function renderPremios() {
       <div class="dia-hero">
         <div class="dia-numero">Clasificaciones</div>
         <div class="dia-titulo">🏆 Premios del Viaje</div>
-        <div class="dia-meta"><span class="dia-fecha">📍 Día ${gs.diaActual} de 10</span></div>
+        <div class="dia-meta"><span class="dia-fecha">📍 Día ${gs.diaActual} de 16</span></div>
       </div>
       <div style="padding:16px 14px 40px">
 
@@ -1274,9 +1398,9 @@ function renderClima() {
   let html = `
     <div class="dia-hero">
       <div class="dia-numero">Pronóstico del viaje</div>
-      <div class="dia-titulo">🌤️ Clima · Asturias · Galicia · León</div>
+      <div class="dia-titulo">🌤️ Clima · Asturias · Galicia · León · Madrid</div>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px">
-        <span class="dia-fecha">📍 Jun 19 – Jun 28, 2026</span>
+        <span class="dia-fecha">📍 Jun 19 – Jul 4, 2026</span>
         <span class="horario-pill">${wxLoaded ? 'Open-Meteo' : 'Cargando…'}</span>
       </div>
     </div>
