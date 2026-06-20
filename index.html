@@ -1857,7 +1857,7 @@ const PREGUNTAS_T = {
     {texto:"¿Quién ganó la batalla de Covadonga?",opciones:["Don Pelayo","Alfonso II","Alfonso III","Fruela I"],correcta:0,categoria:"cultura",puntos:200},
     {texto:"¿Cómo se llaman los dos lagos de Covadonga?",opciones:["Enol y Ercina","Enol y Sella","Ercina y Narcea","Nalón y Ercina"],correcta:0,categoria:"naturaleza",puntos:150},
     {texto:"¿En qué restaurante comimos la fabada asturiana?",opciones:["La Casa de la Fabada","El Corral del Indianu","Casa Fermín","La Pumarada"],correcta:0,categoria:"gastronomia",puntos:100},
-    {texto:"¿En qué parador histórico dormimos esta noche?",opciones:["Parador de Cangas de Onís","Parador de Gijón","Parador de Oviedo","Parador de Covadonga"],correcta:0,categoria:"cultura",puntos:100},
+    {texto:"¿En qué hotel seguimos hospedados esta noche?",opciones:["Silken Monumental Naranco, Oviedo","Hotel Covadonga, Cangas de Onís","Parador de Cangas de Onís","Hotel Reconquista, Oviedo"],correcta:0,categoria:"cultura",puntos:100},
   ],
   3:[
     {texto:"¿Cómo se llama el recorrido donde fuimos en e-bike?",opciones:["Senda del Oso","Senda del Lobo","Ruta del Cares","Camino del Norte"],correcta:0,categoria:"aventura",puntos:100},
@@ -2019,8 +2019,28 @@ function App() {
     const ref = db.ref("game");
     ref.on("value", (snapshot) => {
       const data = snapshot.val();
-      const state = (data && data.initialized) ? data : initState();
+      let state = (data && data.initialized) ? data : initState();
       if (!data) db.ref("game").set(state); // first-time init
+
+      // Auto-avanzar día según la fecha real del calendario
+      // El viaje comienza el 19/06/2026 (Día 1)
+      if (!state.ceremoniaActiva) {
+        const inicio = new Date('2026-06-19T00:00:00');
+        const hoy = new Date();
+        hoy.setHours(0,0,0,0);
+        const diffDias = Math.floor((hoy - inicio) / (1000 * 60 * 60 * 24));
+        const diaReal = Math.min(Math.max(1, diffDias + 1), 10);
+        if (diaReal > state.diaActual) {
+          // Rellenar historial para días que se saltaron sin pasar por admin
+          if (!state.historial) state.historial = []; // Firebase drops empty arrays → null
+          while (state.historial.length < diaReal - 1) {
+            state.historial.push({ dia: state.historial.length + 1, ganador: null });
+          }
+          state = { ...state, diaActual: diaReal };
+          db.ref("game").set(state);
+        }
+      }
+
       setGs(state);
       setScreen(prev => prev === "loading" ? "login" : prev);
     });
@@ -2115,6 +2135,7 @@ function App() {
   const adminAvanzar = () => {
     const next = JSON.parse(JSON.stringify(gs));
     const lb = leaderboard(next);
+    if (!next.historial) next.historial = []; // Firebase drops empty arrays → null
     next.historial.push({dia:next.diaActual, ganador:lb[0]?.id, scores:JSON.parse(JSON.stringify(next.scores))});
     if (gs.diaActual >= 10) {
       // Viaje terminado — activa ceremonia
@@ -2572,10 +2593,10 @@ function App() {
             </div>
           );
         })}
-        {gs.historial.length>0&&(
+        {(gs.historial||[]).length>0&&(
           <>
             <p style={{...P.secLabel,marginTop:20}}>GANADORES DIARIOS</p>
-            {gs.historial.map(h=>{
+            {(gs.historial||[]).map(h=>{
               const gv=VIAJEROS.find(v=>v.id===h.ganador);
               return <div key={h.dia} style={P.histRow}><span style={P.histDia}>Día {h.dia}</span>{gv?<span style={{color:gv.color}}>{(gs?.avatars?.[gv.id]) || ""} {gv.name}</span>:<span style={{color:"#555"}}>—</span>}</div>;
             })}
