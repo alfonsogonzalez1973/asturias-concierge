@@ -1636,6 +1636,7 @@ function renderChips() {
 }
 
 function cambiarDia(idx) {
+  if (idx === -3) window._diaAntesDeTri = diaActivo; // guardar día antes de entrar a trivia
   diaActivo = idx;
   renderNav();
   const triviaRoot = document.getElementById('trivia-root');
@@ -1981,6 +1982,7 @@ function App() {
   const [fotoUploading, setFotoUploading] = useState(false);
   const [fotoUploadError, setFotoUploadError] = useState(null);
   const [fotosDia, setFotosDia] = useState({});
+  const [fotoVerDia, setFotoVerDia] = useState(null); // null = día actual
   const [qIdx, setQIdx] = useState(0);
   const [sel, setSel] = useState(null);
   const [showResult, setShowResult] = useState(false);
@@ -2007,6 +2009,9 @@ function App() {
         setScreen("menu");
       } else if (cur === "menu") {
         setUser(null); setPendingUser(null); setScreen("login");
+      } else if (cur === "login") {
+        cambiarDia(window._diaAntesDeTri || 1);
+        return; // no re-push state; ya salimos de trivia
       }
       history.pushState({ triviaApp: true }, '');
     };
@@ -2285,12 +2290,20 @@ function App() {
     if (!user) { setScreen("login"); return null; }
     const dia=DIAS_T[(gs.diaActual||1)-1] || DIAS_T[0];
     const trivDone=!!(gs.respuestasDia||{})[`trivia_${user.id}_d${gs.diaActual}`];
-    const fotoDone=!!(gs.fotoVotos||{})[`foto_${user.id}_d${gs.diaActual}`];
+    const fotoHoyDone=!!(gs.fotoVotos||{})[`foto_${user.id}_d${gs.diaActual}`];
+    const fotoPendientes = Array.from({length: gs.diaActual - 1}, (_,i)=>i+1).filter(d => {
+      const k=`d${d}`;
+      return (fotosDia[k]||[]).length > 0 && !(gs.fotoVotos||{})[`foto_${user.id}_${k}`];
+    });
+    const fotoDone = fotoHoyDone && fotoPendientes.length === 0;
+    const fotoSub = fotoPendientes.length > 0
+      ? `⚠️ ${fotoPendientes.length} día${fotoPendientes.length>1?'s':''} sin votar`
+      : "Vota la mejor foto del grupo";
     const predDone=!!(gs.respuestasDia||{})[`pred_${user.id}_d${gs.diaActual}`];
     const curDone=!!(gs.respuestasDia||{})[`cur_${user.id}_d${gs.diaActual}`];
     const acts=[
       {emoji:"🎯",label:"Trivia del día",    sub:"5 preguntas · 20 seg c/u",       pts:"hasta 750 pts",      done:trivDone, go:()=>{setQIdx(0);setSel(null);setShowResult(false);setDone(false);setScreen("trivia");}},
-      {emoji:"📸",label:"Foto del día",      sub:"Vota la mejor foto del grupo",    pts:"50 pts al ganador",  done:fotoDone, go:()=>setScreen("foto")},
+      {emoji:"📸",label:"Foto del día",      sub:fotoSub,                           pts:"50 pts al ganador",  done:fotoDone, go:()=>{setFotoVerDia(null);setScreen("foto");}},
       {emoji:"🔮",label:"Predicción",        sub:"Adivina el número del día",       pts:"100 pts si aciertas",done:predDone, go:()=>setScreen("prediccion")},
       {emoji:"💡",label:"Dato curioso",      sub:"Comparte algo que descubriste",   pts:"voto → 150 pts",     done:curDone,  go:()=>setScreen("curiosidad")},
     ];
@@ -2392,7 +2405,8 @@ function App() {
   }
 
   if (screen==="foto") {
-    const diaKey      = `d${gs.diaActual}`;
+    const diaViendo   = fotoVerDia ?? gs.diaActual;
+    const diaKey      = `d${diaViendo}`;
     const fotoKey     = `foto_${user.id}_${diaKey}`;
     const yaSubio     = !!(fotosDia[diaKey] || []).find(f => f.userId === user.id);
     const yaVoto      = !!(gs.fotoVotos||{})[fotoKey];
@@ -2407,13 +2421,22 @@ function App() {
     const maxVotos = Math.max(0, ...Object.values(votosPorFoto));
     const ganadorIdx = Object.entries(votosPorFoto).find(([,v]) => v === maxVotos)?.[0];
 
+    // Días pasados donde hay fotos y el usuario no votó
+    const diasConVotoPendiente = [];
+    for (let d = 1; d < gs.diaActual; d++) {
+      const k = `d${d}`;
+      const tieneVoto = !!(gs.fotoVotos||{})[`foto_${user.id}_${k}`];
+      const tieneFotos = (fotosDia[k] || []).length > 0;
+      if (tieneFotos && !tieneVoto) diasConVotoPendiente.push(d);
+    }
+
     const handleFileChange = async (e) => {
       const file = e.target.files?.[0];
       if (!file) return;
       setFotoUploading(true);
       setFotoUploadError(null);
       try {
-        const url = await uploadToCloudinary(file, gs.diaActual, user.id);
+        const url = await uploadToCloudinary(file, diaViendo, user.id);
         const nuevaFoto = { url, userId: user.id, userName: user.name, ts: Date.now() };
         const nextFotos = { ...fotosDia };
         if (!nextFotos[diaKey]) nextFotos[diaKey] = [];
@@ -2440,23 +2463,53 @@ function App() {
       <div style={P.page}><div style={P.card}>
         <div style={P.cardEmoji}>📸</div>
         <h2 style={P.cardTitle}>Foto del día</h2>
-        <div style={P.fotoUploadBox}>
-          <p style={{...P.cardSub, marginBottom: 6}}>Sube tu mejor foto del día</p>
-          {yaSubio && (
-            <div style={{...P.feedback, background:"rgba(46,174,133,0.12)", borderColor:"#2EAE85", fontSize:13}}>
-              ✓ Tu foto está subida
+
+        {/* Selector de día — aparece si hay días pasados o si estamos viendo un día pasado */}
+        {(diasConVotoPendiente.length > 0 || diaViendo !== gs.diaActual) && (
+          <div style={{marginBottom:14}}>
+            <p style={{...P.cardSub, fontSize:12, marginBottom:8}}>
+              {diasConVotoPendiente.length > 0 ? `⚠️ Tienes votos pendientes en días anteriores` : ""}
+            </p>
+            <div style={{display:"flex", gap:6, flexWrap:"wrap", justifyContent:"center"}}>
+              <button
+                onClick={() => setFotoVerDia(null)}
+                style={{fontSize:12, padding:"5px 12px", borderRadius:20, border:"none", cursor:"pointer",
+                  background: diaViendo === gs.diaActual ? "#C8963E" : "rgba(255,255,255,0.1)",
+                  color: diaViendo === gs.diaActual ? "#000" : "#ccc", fontWeight:600}}>
+                Día {gs.diaActual} (hoy)
+              </button>
+              {diasConVotoPendiente.map(d => (
+                <button key={d}
+                  onClick={() => setFotoVerDia(d)}
+                  style={{fontSize:12, padding:"5px 12px", borderRadius:20, border:"1.5px solid #C8963E", cursor:"pointer",
+                    background: diaViendo === d ? "#C8963E" : "transparent",
+                    color: diaViendo === d ? "#000" : "#C8963E", fontWeight:600}}>
+                  Día {d} ✗
+                </button>
+              ))}
             </div>
-          )}
-          <label style={{...P.btnGold, display:"flex", alignItems:"center", justifyContent:"center", gap:8,
-            cursor: fotoUploading ? "default" : "pointer", opacity: fotoUploading ? 0.6 : 1}}>
-            {fotoUploading ? "Subiendo..." : yaSubio ? "Cambiar mi foto" : "📷  Subir mi foto"}
-            <input type="file" accept="image/*"
-              style={{display:"none"}} onChange={handleFileChange} disabled={fotoUploading} />
-          </label>
-          {fotoUploadError && (
-            <p style={{color:"#E74C3C", fontSize:13, textAlign:"center", margin:0}}>{fotoUploadError}</p>
-          )}
-        </div>
+          </div>
+        )}
+
+        {diaViendo === gs.diaActual && (
+          <div style={P.fotoUploadBox}>
+            <p style={{...P.cardSub, marginBottom: 6}}>Sube tu mejor foto del día</p>
+            {yaSubio && (
+              <div style={{...P.feedback, background:"rgba(46,174,133,0.12)", borderColor:"#2EAE85", fontSize:13}}>
+                ✓ Tu foto está subida
+              </div>
+            )}
+            <label style={{...P.btnGold, display:"flex", alignItems:"center", justifyContent:"center", gap:8,
+              cursor: fotoUploading ? "default" : "pointer", opacity: fotoUploading ? 0.6 : 1}}>
+              {fotoUploading ? "Subiendo..." : yaSubio ? "Cambiar mi foto" : "📷  Subir mi foto"}
+              <input type="file" accept="image/*"
+                style={{display:"none"}} onChange={handleFileChange} disabled={fotoUploading} />
+            </label>
+            {fotoUploadError && (
+              <p style={{color:"#E74C3C", fontSize:13, textAlign:"center", margin:0}}>{fotoUploadError}</p>
+            )}
+          </div>
+        )}
         {fotosDelDia.length > 0 && (
           <div style={P.galeria}>
             <div style={P.galeriaHeader}>
