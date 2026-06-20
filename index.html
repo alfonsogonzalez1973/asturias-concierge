@@ -1872,7 +1872,7 @@ const PREGUNTAS_T = {
     {texto:"¿Cómo se llama el mirador donde fotografiamos Lastres?",opciones:["Mirador de San Roque","Mirador del Faro","Mirador Covadonga","Mirador del Cantábrico"],correcta:0,categoria:"aventura",puntos:150},
     {texto:"¿Cómo se llama el pueblo vinculado al apellido familiar?",opciones:["Migoya","Vallobal","Infiesto","Piloña"],correcta:0,categoria:"cultura",puntos:200},
     {texto:"¿Qué santuario visitamos en Infiesto?",opciones:["Virgen de la Cueva","Virgen de Covadonga","Virgen del Carmen","Virgen del Camino"],correcta:0,categoria:"cultura",puntos:150},
-    {texto:"¿En qué restaurante cenamos esta noche en Oviedo?",opciones:["Casa Fermín","La Pumarada","La Corte de Pelayo","ABARIKE"],correcta:0,categoria:"gastronomia",puntos:100},
+    {texto:"¿En qué sidrería cenamos esta noche en Oviedo?",opciones:["Tierra Astur · El Vasco","La Corte de Pelayo","Casa Fermín","ABARIKE"],correcta:0,categoria:"gastronomia",puntos:100},
   ],
   5:[
     {texto:"¿Cómo se llama la gran plaza frente a la Catedral de Santiago?",opciones:["Plaza del Obradoiro","Plaza Mayor","Plaza de España","Plaza de la Quintana"],correcta:0,categoria:"cultura",puntos:150},
@@ -1898,7 +1898,7 @@ const PREGUNTAS_T = {
   8:[
     {texto:"¿En qué río bajamos en canoa hoy?",opciones:["Río Sella","Río Nalón","Río Narcea","Río Cares"],correcta:0,categoria:"aventura",puntos:100},
     {texto:"¿A qué hora comenzó el descenso del río?",opciones:["11:00h","09:00h","13:00h","10:30h"],correcta:0,categoria:"aventura",puntos:100},
-    {texto:"¿En qué restaurante comimos cerca del Sella?",opciones:["El Corral del Indianu","Casa Gerardo","La Casa de la Fabada","Taberna Narciso"],correcta:0,categoria:"gastronomia",puntos:150},
+    {texto:"¿En qué restaurante comimos cerca de Llanes?",opciones:["Sidrería El Cuera","El Corral del Indianu","Casa Gerardo","La Casa de la Fabada"],correcta:0,categoria:"gastronomia",puntos:150},
     {texto:"¿Qué significa 'Indianu' en Asturias?",opciones:["Asturiano que emigró a América y regresó rico","Un tipo de arquitectura local","Un plato típico asturiano","Un viento del norte"],correcta:0,categoria:"cultura",puntos:200},
     {texto:"¿Llanes está en el oriente o el occidente de Asturias?",opciones:["Oriente asturiano","Occidente asturiano","Centro de Asturias","Costa cantábrica occidental"],correcta:0,categoria:"cultura",puntos:150},
   ],
@@ -1970,7 +1970,7 @@ function initState() {
   VIAJEROS.forEach(v => { scores[v.id] = {total:0,cultura:0,gastronomia:0,aventura:0,naturaleza:0,foto:0,prediccion:0,curiosidad:0,correctas:0,respondidas:0}; });
   const avatars = {};
   VIAJEROS.forEach(v => { avatars[v.id] = null; });
-  return {scores, avatars, diaActual:1, respuestasDia:{}, fotoVotos:{}, historial:[], initialized:true};
+  return {scores, avatars, diaActual:1, respuestasDia:{}, fotoVotos:{}, curVotos:{}, historial:[], initialized:true};
 }
 
 function App() {
@@ -1983,6 +1983,7 @@ function App() {
   const [fotoUploadError, setFotoUploadError] = useState(null);
   const [fotosDia, setFotosDia] = useState({});
   const [fotoVerDia, setFotoVerDia] = useState(null); // null = día actual
+  const [fotoExpand, setFotoExpand] = useState(null); // índice de foto en lightbox
   const [qIdx, setQIdx] = useState(0);
   const [sel, setSel] = useState(null);
   const [showResult, setShowResult] = useState(false);
@@ -2128,7 +2129,34 @@ function App() {
     const next = JSON.parse(JSON.stringify(gs));
     if (!next.respuestasDia) next.respuestasDia = {};
     next.respuestasDia[`cur_${user.id}_d${gs.diaActual}`]={texto:curVal,usuario:user.id};
-    update(next); setCurVal(""); setScreen("menu");
+    update(next); setCurVal("");
+    // No salir del screen — mostrar lista de curiosidades para votar
+  };
+
+  const votarCuriosidad = (autorId) => {
+    const dia = gs.diaActual;
+    const votoKey = `cur_${user.id}_d${dia}`;
+    if ((gs.curVotos||{})[votoKey]) return; // ya votó
+    if (autorId === user.id) return; // no puede votarse a sí mismo
+    const next = JSON.parse(JSON.stringify(gs));
+    if (!next.curVotos) next.curVotos = {};
+    next.curVotos[votoKey] = autorId;
+    // Contar si todos votaron → dar puntos
+    const totalVotos = Object.keys(next.curVotos).filter(k => k.endsWith(`_d${dia}`)).length;
+    if (totalVotos >= VIAJEROS.length) {
+      // Contar votos por autor
+      const conteo = {};
+      Object.values(next.curVotos).filter((_, i) => Object.keys(next.curVotos)[i].endsWith(`_d${dia}`))
+        .forEach(aId => { conteo[aId] = (conteo[aId]||0)+1; });
+      // Ganador
+      const ganadorId = Object.entries(conteo).sort((a,b)=>b[1]-a[1])[0]?.[0];
+      if (ganadorId && next.scores?.[ganadorId] !== undefined) {
+        if (!next.scores[ganadorId]) next.scores[ganadorId]={total:0,curiosidad:0};
+        next.scores[ganadorId].curiosidad = (next.scores[ganadorId].curiosidad||0)+150;
+        next.scores[ganadorId].total = (next.scores[ganadorId].total||0)+150;
+      }
+    }
+    update(next);
   };
 
   const adminBonus = () => {
@@ -2460,7 +2488,41 @@ function App() {
     };
 
     return (
-      <div style={P.page}><div style={P.card}>
+      <div style={P.page}>
+
+        {/* Lightbox */}
+        {fotoExpand !== null && fotosDelDia[fotoExpand] && (
+          <div style={{position:"fixed",top:0,left:0,right:0,bottom:0,background:"rgba(0,0,0,0.93)",
+            zIndex:9999,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:16}}
+            onClick={()=>setFotoExpand(null)}>
+            <img src={fotosDelDia[fotoExpand].url}
+              style={{maxWidth:"100%",maxHeight:"65vh",objectFit:"contain",borderRadius:10}}
+              onClick={e=>e.stopPropagation()} />
+            <div style={{color:"#ccc",fontSize:13,marginTop:10,textAlign:"center"}}>
+              {todosVotaron
+                ? `📸 ${fotosDelDia[fotoExpand].userName}`
+                : `Foto ${fotoExpand + 1} de ${fotosDelDia.length}`}
+              {todosVotaron && String(fotoExpand) === String(ganadorIdx) ? " 🏆" : ""}
+            </div>
+            {!yaVoto && fotosDelDia[fotoExpand]?.userId !== user.id && (
+              <button style={{...P.btnGold, marginTop:14, fontSize:15}}
+                onClick={e=>{e.stopPropagation();handleVotoFotoBlind(fotoExpand);setFotoExpand(null);}}>
+                ✓ Votar esta foto
+              </button>
+            )}
+            {yaVoto && (gs.fotoVotos||{})[fotoKey] === fotoExpand && (
+              <div style={{...P.feedback,background:"rgba(46,174,133,0.15)",borderColor:"#2EAE85",
+                fontSize:13,marginTop:12,maxWidth:280,textAlign:"center"}}>
+                ✓ Esta es tu foto votada
+              </div>
+            )}
+            <button style={{...P.btnGray, marginTop:8, fontSize:13}} onClick={()=>setFotoExpand(null)}>
+              ✕ Cerrar
+            </button>
+          </div>
+        )}
+
+      <div style={P.card}>
         <div style={P.cardEmoji}>📸</div>
         <h2 style={P.cardTitle}>Foto del día</h2>
 
@@ -2529,8 +2591,10 @@ function App() {
                 const esGanadora = todosVotaron && String(i) === String(ganadorIdx);
                 return (
                   <div key={i} style={{...P.galeriaItem, border: esGanadora ? `2px solid #C8963E` : "2px solid transparent", borderRadius:14}}>
-                    <div style={{position:"relative"}}>
-                      <img src={f.url} alt={`Foto ${i+1}`} style={P.galeriaImg} />
+                    <div style={{position:"relative"}} onClick={()=>setFotoExpand(i)}>
+                      <img src={f.url} alt={`Foto ${i+1}`} style={{...P.galeriaImg, cursor:"pointer"}} />
+                      <div style={{position:"absolute",top:6,right:6,background:"rgba(0,0,0,0.5)",borderRadius:20,
+                        padding:"2px 7px",fontSize:11,color:"#fff",pointerEvents:"none"}}>🔍</div>
                       <div style={P.fotoOverlay}>
                         {todosVotaron
                           ? <span style={{...P.fotoLabel, color: VIAJEROS.find(v=>v.id===f.userId)?.color || "#fff"}}>
@@ -2584,28 +2648,164 @@ function App() {
     );
   }
 
-  if (screen==="prediccion") return (
-    <div style={P.page}><div style={P.card}>
-      <div style={P.cardEmoji}>🔮</div>
-      <h2 style={P.cardTitle}>Predicción del día</h2>
-      <p style={P.cardSub}>{PREDICCIONES_T[gs.diaActual]}</p>
-      <input style={P.textInput} placeholder="Tu respuesta..." value={predVal} onChange={e=>setPredVal(e.target.value)} onKeyDown={e=>e.key==="Enter"&&enviarPred()}/>
-      <p style={{...P.cardSub,fontSize:12}}>El admin revela la respuesta al final del día. El más cercano gana 100 pts.</p>
-      <button style={P.btnGold} onClick={enviarPred}>Enviar predicción</button>
-      <button style={P.btnGray} onClick={()=>setScreen("menu")}>Cancelar</button>
-    </div></div>
-  );
+  if (screen==="prediccion") {
+    const predKey = `pred_${user.id}_d${gs.diaActual}`;
+    const yaPredije = !!(gs.respuestasDia||{})[predKey];
+    const todasPreds = VIAJEROS.map(v => {
+      const k = `pred_${v.id}_d${gs.diaActual}`;
+      const r = (gs.respuestasDia||{})[k];
+      return r ? {viajero:v, valor:r.valor} : null;
+    }).filter(Boolean);
+    return (
+      <div style={P.page}><div style={P.card}>
+        <div style={P.cardEmoji}>🔮</div>
+        <h2 style={P.cardTitle}>Predicción del día</h2>
+        <p style={P.cardSub}>{PREDICCIONES_T[gs.diaActual]}</p>
 
-  if (screen==="curiosidad") return (
-    <div style={P.page}><div style={P.card}>
-      <div style={P.cardEmoji}>💡</div>
-      <h2 style={P.cardTitle}>Dato curioso</h2>
-      <p style={P.cardSub}>Algo interesante que descubriste hoy. Esta noche el grupo vota el mejor — el ganador recibe 150 pts.</p>
-      <textarea style={P.textarea} placeholder="Escribe aquí..." value={curVal} onChange={e=>setCurVal(e.target.value)} rows={4}/>
-      <button style={P.btnGold} onClick={enviarCur}>Enviar dato</button>
-      <button style={P.btnGray} onClick={()=>setScreen("menu")}>Cancelar</button>
-    </div></div>
-  );
+        {!yaPredije ? (
+          <>
+            <input style={P.textInput} placeholder="Tu respuesta..." value={predVal}
+              onChange={e=>setPredVal(e.target.value)} onKeyDown={e=>e.key==="Enter"&&enviarPred()}/>
+            <p style={{...P.cardSub,fontSize:12}}>El más cercano al final del día gana 100 pts.</p>
+            <button style={P.btnGold} onClick={enviarPred}>Enviar predicción</button>
+          </>
+        ) : (
+          <div style={{...P.feedback, background:"rgba(46,174,133,0.12)", borderColor:"#2EAE85", fontSize:13, marginBottom:12}}>
+            ✓ Tu predicción: <strong>{(gs.respuestasDia||{})[predKey]?.valor}</strong>
+          </div>
+        )}
+
+        {todasPreds.length > 0 && (
+          <div style={{marginTop:16}}>
+            <p style={P.secLabel}>RESPUESTAS DEL GRUPO ({todasPreds.length}/{VIAJEROS.length})</p>
+            {todasPreds.map(({viajero, valor}) => (
+              <div key={viajero.id} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",
+                background:"rgba(255,255,255,0.04)",borderRadius:10,marginBottom:6,
+                border:`1.5px solid rgba(${viajero.color.replace('#','').match(/../g).map(h=>parseInt(h,16)).join(',')},0.3)`}}>
+                <span style={{fontSize:22}}>{(gs.avatars?.[viajero.id]) || "🎯"}</span>
+                <span style={{color:viajero.color,fontWeight:700,fontSize:14,flex:1}}>{viajero.name}</span>
+                <span style={{color:"#ddd",fontSize:15,fontWeight:600}}>{valor}</span>
+              </div>
+            ))}
+            {todasPreds.length < VIAJEROS.length && (
+              <p style={{...P.cardSub,fontSize:11,textAlign:"center",marginTop:6}}>
+                Faltan {VIAJEROS.length - todasPreds.length} por responder
+              </p>
+            )}
+          </div>
+        )}
+
+        <button style={{...P.btnGray,marginTop:16}} onClick={()=>setScreen("menu")}>Volver al menú</button>
+      </div></div>
+    );
+  }
+
+  if (screen==="curiosidad") {
+    const dia = gs.diaActual;
+    const miKey = `cur_${user.id}_d${dia}`;
+    const yaEnvie = !!(gs.respuestasDia||{})[miKey];
+    const miVotoKey = `cur_${user.id}_d${dia}`;
+    const yaVote = !!(gs.curVotos||{})[miVotoKey];
+    const todasCurs = VIAJEROS.map(v => {
+      const k = `cur_${v.id}_d${dia}`;
+      const r = (gs.respuestasDia||{})[k];
+      return r ? {viajero:v, texto:r.texto} : null;
+    }).filter(Boolean);
+    const votosEmitidos = VIAJEROS.filter(v => (gs.curVotos||{})[`cur_${v.id}_d${dia}`]).length;
+    const todosVotaron = votosEmitidos >= VIAJEROS.length;
+    const conteoCurVotos = {};
+    Object.entries(gs.curVotos||{}).forEach(([k,aId]) => {
+      if (k.endsWith(`_d${dia}`)) conteoCurVotos[aId] = (conteoCurVotos[aId]||0)+1;
+    });
+    const maxCurVotos = Math.max(0,...Object.values(conteoCurVotos));
+    return (
+      <div style={P.page}><div style={P.card}>
+        <div style={P.cardEmoji}>💡</div>
+        <h2 style={P.cardTitle}>Dato curioso</h2>
+
+        {!yaEnvie ? (
+          <>
+            <p style={P.cardSub}>Algo interesante que descubriste hoy. El grupo vota el mejor — ganador: 150 pts.</p>
+            <textarea style={P.textarea} placeholder="Escribe aquí..." value={curVal}
+              onChange={e=>setCurVal(e.target.value)} rows={4}/>
+            <button style={P.btnGold} onClick={enviarCur}>Enviar dato</button>
+          </>
+        ) : (
+          <div style={{...P.feedback, background:"rgba(46,174,133,0.12)", borderColor:"#2EAE85", fontSize:13, marginBottom:4}}>
+            ✓ Tu dato: <em>{(gs.respuestasDia||{})[miKey]?.texto}</em>
+          </div>
+        )}
+
+        {todasCurs.length > 0 && (
+          <div style={{marginTop:16}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+              <p style={P.secLabel}>DATOS DEL GRUPO ({todasCurs.length}/{VIAJEROS.length})</p>
+              {todosVotaron
+                ? <span style={P.revealBadge}>¡Revelados!</span>
+                : <span style={P.blindBadge}>Anónimo</span>
+              }
+            </div>
+            {todasCurs.map(({viajero, texto}, i) => {
+              const esElMio = viajero.id === user.id;
+              const yaVoteEste = (gs.curVotos||{})[miVotoKey] === viajero.id;
+              const votos = conteoCurVotos[viajero.id] || 0;
+              const esGanador = todosVotaron && votos === maxCurVotos && maxCurVotos > 0;
+              return (
+                <div key={viajero.id} style={{background:"rgba(255,255,255,0.04)",borderRadius:12,padding:"12px 14px",
+                  marginBottom:8, border: esGanador ? "1.5px solid #C8963E" : "1px solid rgba(255,255,255,0.08)"}}>
+                  <p style={{color:"#ddd",fontSize:14,margin:"0 0 8px",lineHeight:1.5}}>
+                    {esGanador ? "🏆 " : "💡 "}{texto}
+                  </p>
+                  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                    <span style={{fontSize:12,color: todosVotaron ? viajero.color : "#555"}}>
+                      {todosVotaron ? `${(gs.avatars?.[viajero.id])||""} ${viajero.name}` : `Dato ${i+1}`}
+                    </span>
+                    {!todosVotaron && (
+                      esElMio
+                        ? <span style={{fontSize:11,color:"#555"}}>Es el tuyo</span>
+                        : yaVote
+                          ? <span style={{fontSize:11,color: yaVoteEste ? "#C8963E":"#555"}}>
+                              {yaVoteEste ? "✓ Tu voto" : ""}
+                            </span>
+                          : yaEnvie
+                            ? <button style={{...P.voteFotoBtn, fontSize:12, padding:"4px 10px"}}
+                                onClick={()=>votarCuriosidad(viajero.id)}>
+                                Votar
+                              </button>
+                            : null
+                    )}
+                    {todosVotaron && (
+                      <span style={{fontSize:12,color: esGanador ? "#C8963E":"#888"}}>
+                        {votos} voto{votos!==1?"s":""}
+                        {esGanador?" 🏆":""}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+            {!todosVotaron && !yaVote && yaEnvie && todasCurs.length > 1 && (
+              <p style={{...P.cardSub,fontSize:11,textAlign:"center"}}>
+                Vota el más interesante · anónimo hasta que todos voten ({votosEmitidos}/{VIAJEROS.length})
+              </p>
+            )}
+            {!yaEnvie && todasCurs.length > 0 && (
+              <p style={{...P.cardSub,fontSize:11,textAlign:"center"}}>
+                Envía tu dato primero para poder votar
+              </p>
+            )}
+            {todosVotaron && (
+              <div style={{...P.feedback,background:"rgba(200,150,62,0.15)",borderColor:"#C8963E",fontSize:13,marginTop:4}}>
+                🎉 ¡Revelado! Ganador: {VIAJEROS.find(v=>conteoCurVotos[v.id]===maxCurVotos&&maxCurVotos>0)?.name}
+              </div>
+            )}
+          </div>
+        )}
+
+        <button style={{...P.btnGray,marginTop:16}} onClick={()=>setScreen("menu")}>Volver al menú</button>
+      </div></div>
+    );
+  }
 
   if (screen==="leaderboard") {
     const lb=leaderboard();
