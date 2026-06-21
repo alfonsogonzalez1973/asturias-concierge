@@ -2969,10 +2969,34 @@ function App() {
         })}
         {(gs.historial||[]).length>0&&(
           <>
-            <p style={{...P.secLabel,marginTop:20}}>GANADORES DIARIOS</p>
-            {(gs.historial||[]).map(h=>{
-              const gv=VIAJEROS.find(v=>v.id===h.ganador);
-              return <div key={h.dia} style={P.histRow}><span style={P.histDia}>Día {h.dia}</span>{gv?<span style={{color:gv.color}}>{(gs?.avatars?.[gv.id]) || ""} {gv.name}</span>:<span style={{color:"#555"}}>—</span>}</div>;
+            <p style={{...P.secLabel,marginTop:20}}>⭐ ESTRELLA DEL DÍA</p>
+            {(gs.historial||[]).map((h,i)=>{
+              // Calcular estrella: quien ganó más puntos ese día específico
+              let estrella = null;
+              if (h.scores) {
+                const prevScores = i > 0 ? ((gs.historial[i-1].scores)||{}) : {};
+                let maxDelta = 0;
+                VIAJEROS.forEach(v => {
+                  const ahora = h.scores[v.id]?.total || 0;
+                  const antes = prevScores[v.id]?.total || 0;
+                  const delta = ahora - antes;
+                  if (delta > maxDelta) { maxDelta = delta; estrella = v; }
+                });
+              } else if (h.ganador) {
+                estrella = VIAJEROS.find(v=>v.id===h.ganador) || null;
+              }
+              return (
+                <div key={h.dia} style={P.histRow}>
+                  <span style={P.histDia}>DÍA {h.dia}</span>
+                  {estrella
+                    ? <span style={{color:estrella.color,fontWeight:700,flex:1,paddingLeft:10}}>
+                        {(gs?.avatars?.[estrella.id])||""} {estrella.name}
+                      </span>
+                    : <span style={{color:"#555",flex:1,paddingLeft:10}}>—</span>
+                  }
+                  {estrella && <span style={{fontSize:18}}>⭐</span>}
+                </div>
+              );
             })}
           </>
         )}
