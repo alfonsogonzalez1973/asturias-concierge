@@ -2162,6 +2162,17 @@ function App() {
     // No salir del screen — mostrar lista de curiosidades para votar
   };
 
+  const votarCuriosidadDia = (autorId, dia) => {
+    const votoKey = `cur_${user.id}_d${dia}`;
+    if ((gs.curVotos||{})[votoKey]) return; // ya votó
+    if (autorId === user.id) return; // no puede votarse a sí mismo
+    const next = JSON.parse(JSON.stringify(gs));
+    if (!next.curVotos) next.curVotos = {};
+    next.curVotos[votoKey] = autorId;
+    // Días pasados: no otorgar puntos (día terminado)
+    update(next);
+  };
+
   const votarCuriosidad = (autorId) => {
     const dia = gs.diaActual;
     const votoKey = `cur_${user.id}_d${dia}`;
@@ -2847,7 +2858,8 @@ function App() {
                     return r ? {viajero:v, texto:r.texto} : null;
                   }).filter(Boolean);
                   if (cursDelDia.length === 0) return null;
-                  // Contar votos de ese día
+                  const miVotoKeyD = `cur_${user.id}_d${d}`;
+                  const yaVoteD = !!(gs.curVotos||{})[miVotoKeyD];
                   const conteo = {};
                   Object.entries(gs.curVotos||{}).forEach(([k, aId]) => {
                     if (k.endsWith(`_d${d}`)) conteo[aId] = (conteo[aId]||0)+1;
@@ -2856,29 +2868,53 @@ function App() {
                   const NOMBRES_DIA = ['Oviedo llegada','Covadonga','Senda del Oso','Lastres & Piloña','Santiago','Gijón llegada','Gijón ciudad','Llanes & Sella','León llegada','León despedida'];
                   return (
                     <div key={d} style={{marginBottom:18}}>
-                      <p style={{...P.secLabel, marginBottom:8}}>DÍA {d} · {(NOMBRES_DIA[d-1]||'').toUpperCase()}</p>
-                      {cursDelDia.map(({viajero, texto}) => {
+                      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
+                        <p style={{...P.secLabel, margin:0}}>DÍA {d} · {(NOMBRES_DIA[d-1]||'').toUpperCase()}</p>
+                        {yaVoteD
+                          ? <span style={P.revealBadge}>¡Revelados!</span>
+                          : <span style={P.blindBadge}>Anónimo</span>
+                        }
+                      </div>
+                      {cursDelDia.map(({viajero, texto}, i) => {
+                        const esElMio = viajero.id === user.id;
                         const votos = conteo[viajero.id] || 0;
-                        const esGanador = votos === maxV && maxV > 0;
+                        const esGanador = yaVoteD && votos === maxV && maxV > 0;
+                        const yaVoteEste = (gs.curVotos||{})[miVotoKeyD] === viajero.id;
                         return (
                           <div key={viajero.id} style={{background:"rgba(255,255,255,0.04)",borderRadius:12,
                             padding:"11px 13px",marginBottom:7,
                             border: esGanador ? "1.5px solid #C8963E" : "1px solid rgba(255,255,255,0.08)"}}>
-                            <p style={{color:"#ddd",fontSize:14,margin:"0 0 7px",lineHeight:1.5}}>
+                            <p style={{color:"#ddd",fontSize:14,margin:"0 0 8px",lineHeight:1.5}}>
                               {esGanador ? "🏆 " : "💡 "}{texto}
                             </p>
                             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-                              <span style={{fontSize:12,color:viajero.color}}>
-                                {(gs.avatars?.[viajero.id])||""} {viajero.name}
+                              <span style={{fontSize:12, color: yaVoteD ? viajero.color : "#555"}}>
+                                {yaVoteD ? `${(gs.avatars?.[viajero.id])||""} ${viajero.name}` : `Dato ${i+1}`}
                               </span>
-                              <span style={{fontSize:12,color: esGanador ? "#C8963E":"#888"}}>
-                                {votos} voto{votos!==1?"s":""}
-                                {esGanador?" 🏆":""}
-                              </span>
+                              {!yaVoteD && (
+                                esElMio
+                                  ? <span style={{fontSize:11,color:"#555"}}>Es el tuyo</span>
+                                  : <button style={{...P.voteFotoBtn, fontSize:12, padding:"4px 10px"}}
+                                      onClick={()=>votarCuriosidadDia(viajero.id, d)}>
+                                      Votar
+                                    </button>
+                              )}
+                              {yaVoteD && (
+                                <span style={{fontSize:12,color: esGanador ? "#C8963E":"#888"}}>
+                                  {votos} voto{votos!==1?"s":""}
+                                  {yaVoteEste ? " ✓":""}
+                                  {esGanador?" 🏆":""}
+                                </span>
+                              )}
                             </div>
                           </div>
                         );
                       })}
+                      {!yaVoteD && (
+                        <p style={{...P.cardSub,fontSize:11,textAlign:"center",marginTop:4}}>
+                          Vota para revelar quién escribió cada dato
+                        </p>
+                      )}
                     </div>
                   );
                 })}
