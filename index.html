@@ -1364,7 +1364,7 @@ function renderGaleria() {
           const esGanadora = votosCompletos && votos === maxVotos && maxVotos > 0;
           html += `
             <div style="position:relative;border-radius:12px;overflow:hidden;border:2px solid ${esGanadora ? '#C8963E' : 'rgba(255,255,255,0.08)'}">
-              <img src="${foto.url}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block"/>
+              <img src="${foto.url}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;cursor:pointer" onclick="abrirLightboxGaleria('${foto.url}','${(foto.userName||'Viajero').replace(/'/g,"\\'")}',${votos},${votosCompletos},${esGanadora})"/>
               ${esGanadora ? `<div style="position:absolute;top:6px;right:6px;background:#C8963E;border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700;color:#000">👑 Ganadora</div>` : ''}
               <div style="padding:8px;background:#111827">
                 <div style="font-size:12px;color:#888">${foto.userName || 'Viajero'}</div>
@@ -1390,6 +1390,38 @@ function renderGaleria() {
       contenedor.innerHTML = html;
     });
   });
+}
+
+function abrirLightboxGaleria(url, nombre, votos, votosCompletos, esGanadora) {
+  // Crear overlay si no existe
+  let lb = document.getElementById('galeria-lightbox');
+  if (!lb) {
+    lb = document.createElement('div');
+    lb.id = 'galeria-lightbox';
+    lb.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;';
+    lb.onclick = (e) => { if (e.target === lb) cerrarLightboxGaleria(); };
+    document.body.appendChild(lb);
+  }
+  const votosLabel = votosCompletos
+    ? `<div style="margin-top:8px;font-size:14px;color:${esGanadora?'#C8963E':'#aaa'};font-weight:${esGanadora?700:400}">${esGanadora?'👑 Ganadora · ':''}${votos} voto${votos!==1?'s':''}</div>`
+    : '';
+  lb.innerHTML = `
+    <div style="position:relative;max-width:100%;max-height:80vh;display:flex;align-items:center;justify-content:center;">
+      <img src="${url}" style="max-width:100%;max-height:75vh;border-radius:14px;object-fit:contain;box-shadow:0 8px 40px rgba(0,0,0,0.6);" />
+      ${esGanadora ? '<div style="position:absolute;top:10px;right:10px;background:#C8963E;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700;color:#000">👑 Ganadora</div>' : ''}
+    </div>
+    <div style="margin-top:12px;text-align:center">
+      <div style="font-size:15px;color:#e8e8e8;font-weight:600">${nombre}</div>
+      ${votosLabel}
+    </div>
+    <button onclick="cerrarLightboxGaleria()" style="margin-top:18px;background:rgba(255,255,255,0.12);color:white;border:none;border-radius:24px;padding:10px 28px;font-size:15px;cursor:pointer;">Cerrar</button>
+  `;
+  lb.style.display = 'flex';
+}
+
+function cerrarLightboxGaleria() {
+  const lb = document.getElementById('galeria-lightbox');
+  if (lb) lb.style.display = 'none';
 }
 
 function renderClima() {
@@ -1995,6 +2027,7 @@ function App() {
   const [bonusV, setBonusV] = useState(VIAJEROS[0].id);
   const [bonusPts, setBonusPts] = useState(100);
   const [bonusCat, setBonusCat] = useState("cultura");
+  const [showHistCur, setShowHistCur] = useState(false);
 
   // Back button: intercept browser history to navegar dentro del app
   const screenRef = useRef(screen);
@@ -2005,15 +2038,11 @@ function App() {
     history.pushState({ triviaApp: true }, '');
     const handlePop = () => {
       const cur = screenRef.current;
-      const SUB = ["trivia","foto","prediccion","curiosidad","ya_jugaste","trivia_done","admin","emoji_picker","ceremonia"];
+      const SUB = ["trivia","foto","prediccion","curiosidad","ya_jugaste","trivia_done","admin","emoji_picker","ceremonia","leaderboard"];
       if (SUB.includes(cur)) {
         setScreen("menu");
-      } else if (cur === "menu") {
-        setUser(null); setPendingUser(null); setScreen("login");
-      } else if (cur === "login") {
-        cambiarDia(window._diaAntesDeTri || 1);
-        return; // no re-push state; ya salimos de trivia
       }
+      // En menu o login: simplemente re-push para que nunca salga del app
       history.pushState({ triviaApp: true }, '');
     };
     window.addEventListener('popstate', handlePop);
@@ -2797,6 +2826,62 @@ function App() {
             {todosVotaron && (
               <div style={{...P.feedback,background:"rgba(200,150,62,0.15)",borderColor:"#C8963E",fontSize:13,marginTop:4}}>
                 🎉 ¡Revelado! Ganador: {VIAJEROS.find(v=>conteoCurVotos[v.id]===maxCurVotos&&maxCurVotos>0)?.name}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Historial de días anteriores */}
+        {gs.diaActual > 1 && (
+          <div style={{marginTop:20}}>
+            <button style={{...P.btnGray, fontSize:13, padding:"8px 16px"}}
+              onClick={()=>setShowHistCur(v=>!v)}>
+              {showHistCur ? "▲ Ocultar días anteriores" : "▼ Ver días anteriores"}
+            </button>
+            {showHistCur && (
+              <div style={{marginTop:14}}>
+                {Array.from({length: gs.diaActual - 1}, (_,i) => i+1).reverse().map(d => {
+                  const cursDelDia = VIAJEROS.map(v => {
+                    const k = `cur_${v.id}_d${d}`;
+                    const r = (gs.respuestasDia||{})[k];
+                    return r ? {viajero:v, texto:r.texto} : null;
+                  }).filter(Boolean);
+                  if (cursDelDia.length === 0) return null;
+                  // Contar votos de ese día
+                  const conteo = {};
+                  Object.entries(gs.curVotos||{}).forEach(([k, aId]) => {
+                    if (k.endsWith(`_d${d}`)) conteo[aId] = (conteo[aId]||0)+1;
+                  });
+                  const maxV = Math.max(0, ...Object.values(conteo));
+                  const NOMBRES_DIA = ['Oviedo llegada','Covadonga','Senda del Oso','Lastres & Piloña','Santiago','Gijón llegada','Gijón ciudad','Llanes & Sella','León llegada','León despedida'];
+                  return (
+                    <div key={d} style={{marginBottom:18}}>
+                      <p style={{...P.secLabel, marginBottom:8}}>DÍA {d} · {(NOMBRES_DIA[d-1]||'').toUpperCase()}</p>
+                      {cursDelDia.map(({viajero, texto}) => {
+                        const votos = conteo[viajero.id] || 0;
+                        const esGanador = votos === maxV && maxV > 0;
+                        return (
+                          <div key={viajero.id} style={{background:"rgba(255,255,255,0.04)",borderRadius:12,
+                            padding:"11px 13px",marginBottom:7,
+                            border: esGanador ? "1.5px solid #C8963E" : "1px solid rgba(255,255,255,0.08)"}}>
+                            <p style={{color:"#ddd",fontSize:14,margin:"0 0 7px",lineHeight:1.5}}>
+                              {esGanador ? "🏆 " : "💡 "}{texto}
+                            </p>
+                            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                              <span style={{fontSize:12,color:viajero.color}}>
+                                {(gs.avatars?.[viajero.id])||""} {viajero.name}
+                              </span>
+                              <span style={{fontSize:12,color: esGanador ? "#C8963E":"#888"}}>
+                                {votos} voto{votos!==1?"s":""}
+                                {esGanador?" 🏆":""}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
