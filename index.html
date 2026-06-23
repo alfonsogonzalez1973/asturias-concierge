@@ -2028,6 +2028,8 @@ function App() {
   const [bonusPts, setBonusPts] = useState(100);
   const [bonusCat, setBonusCat] = useState("cultura");
   const [showHistCur, setShowHistCur] = useState(false);
+  const [revisionMode, setRevisionMode] = useState(false);
+  const [revisionDia, setRevisionDia] = useState(null);
 
   // Back button: intercept browser history to navegar dentro del app
   const screenRef = useRef(screen);
@@ -2038,7 +2040,7 @@ function App() {
     history.pushState({ triviaApp: true }, '');
     const handlePop = () => {
       const cur = screenRef.current;
-      const SUB = ["trivia","foto","prediccion","curiosidad","ya_jugaste","trivia_done","admin","emoji_picker","ceremonia","leaderboard"];
+      const SUB = ["trivia","foto","prediccion","curiosidad","ya_jugaste","trivia_done","admin","emoji_picker","ceremonia","leaderboard","revision_select"];
       if (SUB.includes(cur)) {
         setScreen("menu");
       }
@@ -2113,7 +2115,7 @@ function App() {
     return () => clearInterval(timerRef.current);
   }, [screen, qIdx, showResult, done]);
 
-  const preguntas = PREGUNTAS_T[gs?.diaActual] || [];
+  const preguntas = (revisionMode && revisionDia) ? (PREGUNTAS_T[revisionDia] || []) : (PREGUNTAS_T[gs?.diaActual] || []);
 
   const answer = (idx) => {
     clearInterval(timerRef.current);
@@ -2126,10 +2128,27 @@ function App() {
       if (!next.scores) next.scores = {};
       if (!next.scores[user.id]) next.scores[user.id] = {total:0,correctas:0,respondidas:0};
       if (!next.respuestasDia) next.respuestasDia = {};
-      if (correct) { next.scores[user.id].total += pts; next.scores[user.id][q.categoria] = (next.scores[user.id][q.categoria]||0)+pts; next.scores[user.id].correctas += 1; }
-      next.scores[user.id].respondidas += 1;
-      if (qIdx+1 >= preguntas.length) { next.respuestasDia[`trivia_${user.id}_d${gs.diaActual}`]=true; setDone(true); setShowResult(false); }
-      else { setQIdx(i=>i+1); setSel(null); setShowResult(false); }
+      if (revisionMode && revisionDia) {
+        // Modo revisión: puntos suman al total y categoría 'revision', pero NO al score competitivo del día
+        const revKey = `revision_${user.id}_d${revisionDia}`;
+        const yaReviso = !!(next.respuestasDia[revKey]); // ya completó esta revisión antes
+        if (correct && !yaReviso) {
+          next.scores[user.id].total = (next.scores[user.id].total||0) + pts;
+          next.scores[user.id].revision = (next.scores[user.id].revision||0) + pts;
+          next.scores[user.id].correctas = (next.scores[user.id].correctas||0) + 1;
+        }
+        next.scores[user.id].respondidas = (next.scores[user.id].respondidas||0) + 1;
+        if (qIdx+1 >= preguntas.length) {
+          if (!next.respuestasDia[revKey]) next.respuestasDia[revKey] = true;
+          setDone(true); setShowResult(false);
+        } else { setQIdx(i=>i+1); setSel(null); setShowResult(false); }
+      } else {
+        // Modo competitivo normal
+        if (correct) { next.scores[user.id].total = (next.scores[user.id].total||0) + pts; next.scores[user.id][q.categoria] = (next.scores[user.id][q.categoria]||0)+pts; next.scores[user.id].correctas = (next.scores[user.id].correctas||0)+1; }
+        next.scores[user.id].respondidas = (next.scores[user.id].respondidas||0) + 1;
+        if (qIdx+1 >= preguntas.length) { next.respuestasDia[`trivia_${user.id}_d${gs.diaActual}`]=true; setDone(true); setShowResult(false); }
+        else { setQIdx(i=>i+1); setSel(null); setShowResult(false); }
+      }
       update(next);
     }, 2200);
   };
@@ -2405,6 +2424,19 @@ function App() {
             <div style={P.actArrow}>{a.done?"✓":"›"}</div>
           </button>
         ))}
+        {gs.diaActual > 1 && (
+          <div style={{marginTop:16}}>
+            <p style={P.secLabel}>DÍAS ANTERIORES</p>
+            <button style={P.actRow} onClick={()=>setScreen("revision_select")}>
+              <div style={P.actIcon}>🔄</div>
+              <div style={P.actBody}>
+                <div style={P.actLabel}>Repasar trivia pasada</div>
+                <div style={P.actSub}>Días 1–{gs.diaActual-1} · los puntos sí cuentan</div>
+              </div>
+              <div style={P.actArrow}>›</div>
+            </button>
+          </div>
+        )}
         <div style={{marginTop:20, padding:'14px 16px', background:'rgba(255,255,255,0.04)', borderRadius:14, border:'1px solid rgba(255,255,255,0.08)'}}>
           <div style={{fontSize:12, color:'#555', marginBottom:8, textAlign:'center'}}>¿Otro jugador quiere participar desde este teléfono?</div>
           <button style={{...P.btnGold, background:'transparent', border:'1.5px solid #C8963E', color:'#C8963E', width:'100%', fontSize:15}}
@@ -2416,17 +2448,69 @@ function App() {
     );
   }
 
-  if (screen==="trivia") {
-    if (done) return (
-      <div style={P.page}><div style={P.card}>
-        <div style={P.cardEmoji}>🎉</div>
-        <h2 style={P.cardTitle}>¡Trivia completada!</h2>
-        <div style={{...P.bigScore,color:user.color}}>{gs.scores?.[user.id]?.total||0}</div>
-        <p style={P.cardSub}>puntos acumulados en el viaje</p>
-        <button style={P.btnGold} onClick={()=>setScreen("menu")}>Volver al menú</button>
-        <button style={P.btnGray} onClick={()=>setScreen("leaderboard")}>Ver leaderboard 🏆</button>
+  if (screen==="revision_select") {
+    const diasPasados = Array.from({length: gs.diaActual - 1}, (_,i) => i+1);
+    return (
+      <div style={P.page}><div style={P.menuWrap}>
+        <div style={P.diaBar}>
+          <span style={{fontSize:36,lineHeight:1}}>🔄</span>
+          <div>
+            <div style={P.diaBarNum}>DÍAS ANTERIORES</div>
+            <div style={P.diaBarTit}>Repasa y suma puntos</div>
+          </div>
+        </div>
+        <p style={P.secLabel}>SELECCIONA UN DÍA</p>
+        {diasPasados.map(d => {
+          const dia = DIAS_T[d-1];
+          const yaReviso = !!(gs.respuestasDia||{})[`revision_${user.id}_d${d}`];
+          return (
+            <button key={d} style={{...P.actRow, opacity: yaReviso ? 0.55 : 1}}
+              onClick={()=>{
+                setRevisionDia(d); setRevisionMode(true);
+                setQIdx(0); setSel(null); setShowResult(false); setDone(false);
+                setScreen("trivia");
+              }}>
+              <div style={P.actIcon}>{dia?.emoji||'📅'}</div>
+              <div style={P.actBody}>
+                <div style={P.actLabel}>Día {d} · {dia?.titulo}</div>
+                <div style={P.actSub}>{yaReviso ? 'Ya repasaste · sin puntos extra' : '¡Puntos disponibles!'}</div>
+              </div>
+              <div style={P.actArrow}>{yaReviso ? '✓' : '›'}</div>
+            </button>
+          );
+        })}
+        <button style={{...P.btnGray, marginTop:16}} onClick={()=>setScreen("menu")}>← Volver al menú</button>
       </div></div>
     );
+  }
+
+  if (screen==="trivia") {
+    if (done) {
+      const resetRevision = () => { setRevisionMode(false); setRevisionDia(null); };
+      if (revisionMode) return (
+        <div style={P.page}><div style={P.card}>
+          <div style={P.cardEmoji}>📚</div>
+          <h2 style={P.cardTitle}>Repaso Día {revisionDia} completado</h2>
+          <div style={{...P.bigScore,color:user.color}}>{gs.scores?.[user.id]?.total||0}</div>
+          <p style={P.cardSub}>puntos totales acumulados</p>
+          {(gs.scores?.[user.id]?.revision||0) > 0 && (
+            <p style={{...P.cardSub, color:'#c8963e', fontSize:13, marginTop:4}}>{gs.scores?.[user.id]?.revision||0} pts ganados en repasos</p>
+          )}
+          <button style={P.btnGold} onClick={()=>{ resetRevision(); setQIdx(0); setSel(null); setShowResult(false); setDone(false); setScreen("revision_select"); }}>Repasar otro día ›</button>
+          <button style={P.btnGray} onClick={()=>{ resetRevision(); setScreen("menu"); }}>Volver al menú</button>
+        </div></div>
+      );
+      return (
+        <div style={P.page}><div style={P.card}>
+          <div style={P.cardEmoji}>🎉</div>
+          <h2 style={P.cardTitle}>¡Trivia completada!</h2>
+          <div style={{...P.bigScore,color:user.color}}>{gs.scores?.[user.id]?.total||0}</div>
+          <p style={P.cardSub}>puntos acumulados en el viaje</p>
+          <button style={P.btnGold} onClick={()=>setScreen("menu")}>Volver al menú</button>
+          <button style={P.btnGray} onClick={()=>setScreen("leaderboard")}>Ver leaderboard 🏆</button>
+        </div></div>
+      );
+    }
     const q=preguntas[qIdx];
     const cat=CATEGORIAS_T[q.categoria];
     const pct=(timer/20)*100;
